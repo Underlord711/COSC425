@@ -41,7 +41,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // Return the updated JSON data
-    header('Content-Type: application/json');
+    header('Location: Homestart.php');
     echo $updatedJsonData;
 }
 ?>
