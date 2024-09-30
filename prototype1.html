@@ -47,17 +47,19 @@
     <input type="number" id="weight2" value="2" required>
     <br><br>
     <button onclick="generateGraph()">Generate Graph</button>
+    <button onclick="toggleMatrix()" style="display:none;" id="matrixBtn">Show Matrix</button>
     <button onclick="downloadJSON()" style="display:none;" id="downloadBtn">Download JSON</button>
     <br><br>
     <input type="file" id="fileInput" accept=".json" onchange="uploadJSON()">
     <button id="uploadBtn" style="display:none;" onclick="uploadJSON()">Upload JSON</button>
 
     <h2>Generated Graph:</h2>
-    <table id="graphTable"></table>
+    <table id="graphTable" style="display: none;"></table>
     <div id="cy"></div>
 
     <script>
         let graph = {};
+        let isMatrixVisible = false; // Track whether the matrix is visible or not
 
         function generateGraph() {
             const numVertices = parseInt(document.getElementById('numVertices').value);
@@ -109,9 +111,12 @@
                 }
             }
 
-            displayGraph();
             drawCytoscapeGraph();
+            document.getElementById('matrixBtn').style.display = 'inline';
             document.getElementById('downloadBtn').style.display = 'inline';
+            isMatrixVisible = false; // Reset the matrix visibility state
+            document.getElementById('matrixBtn').innerText = 'Show Matrix'; // Reset button text
+            document.getElementById('graphTable').style.display = 'none'; // Hide the matrix by default
         }
 
         function displayGraph() {
@@ -140,6 +145,22 @@
                 }
                 table.appendChild(row);
             }
+        }
+
+        function toggleMatrix() {
+            const table = document.getElementById('graphTable');
+            const matrixBtn = document.getElementById('matrixBtn');
+
+            if (isMatrixVisible) {
+                table.style.display = 'none';
+                matrixBtn.innerText = 'Show Matrix';
+            } else {
+                displayGraph(); // Show the matrix
+                table.style.display = 'table';
+                matrixBtn.innerText = 'Hide Matrix';
+            }
+
+            isMatrixVisible = !isMatrixVisible; // Toggle the state
         }
 
         function updateWeight(source, destination, weightStr) {
@@ -231,6 +252,7 @@
                     displayGraph();
                     drawCytoscapeGraph();
                     document.getElementById('downloadBtn').style.display = 'inline';
+                    document.getElementById('matrixBtn').style.display = 'inline';
                 } catch (e) {
                     alert("Error parsing JSON: " + e.message);
                 }
