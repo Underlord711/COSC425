@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weighted Undirected Graph Generator</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.21.0/cytoscape.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        #cy {
+            width: 800px;
+            height: 600px;
+            border: 1px solid #ccc;
+            margin-top: 20px;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: center;
+        }
+        td.editable {
+            background-color: #f9f9f9;
+            cursor: pointer;
+        }
+        td.editable:focus {
+            outline: 2px solid #66afe9;
+        }
+    </style>
+</head>
+<body>
+    <h1>Weighted Undirected Graph Generator</h1>
+    <label for="numVertices">Number of Vertices:</label>
+    <input type="number" id="numVertices" min="4" required>
+    <br><br>
+    <label for="weight1">Weight for Edge Type 1:</label>
+    <input type="number" id="weight1" value="1" required>
+    <br><br>
+    <label for="weight2">Weight for Edge Type 2:</label>
+    <input type="number" id="weight2" value="2" required>
+    <br><br>
+    <button onclick="generateGraph()">Generate Graph</button>
+    <button onclick="toggleMatrix()" style="display:none;" id="matrixBtn">Show Matrix</button>
+    <button onclick="downloadJSON()" style="display:none;" id="downloadBtn">Download JSON</button>
+    <br><br>
+    <input type="file" id="fileInput" accept=".json" onchange="uploadJSON()">
+    <button id="uploadBtn" style="display:none;" onclick="uploadJSON()">Upload JSON</button>
+
+    <h2>Generated Graph:</h2>
+    <table id="graphTable" style="display: none;"></table>
+    <div id="cy"></div>
+
+    <script>
+        let graph = {};
+        let isMatrixVisible = false; // Track whether the matrix is visible or not
+
+        function generateGraph() {
+            const numVertices = parseInt(document.getElementById('numVertices').value);
+            const weight1 = parseFloat(document.getElementById('weight1').value);
+            const weight2 = parseFloat(document.getElementById('weight2').value);
+
+            graph = {};
+            for (let i = 0; i < numVertices; i++) {
+                const vertex = String.fromCharCode(65 + i);
+                graph[vertex] = {};
+            }
+
+            const edgesCount = Array(numVertices).fill(0);
+            const maxEdgesPerVertex = 3;
+            const totalEdgesNeeded = (numVertices * maxEdgesPerVertex) / 2;
+
+            let edgesCreated = 0;
+
+            while (edgesCreated < totalEdgesNeeded) {
+                let sourceIndex = Math.floor(Math.random() * numVertices);
+                let destinationIndex;
+
+                let attempts = 0;
+                do {
+                    destinationIndex = Math.floor(Math.random() * numVertices);
+                    attempts++;
+                    if (attempts > 100) {
+                        console.log('Too many attempts to find a valid edge.');
+                        break;
+                    }
+                } while (
+                    destinationIndex === sourceIndex || // Prevent self-loops
+                    edgesCount[sourceIndex] >= maxEdgesPerVertex ||
+                    edgesCount[destinationIndex] >= maxEdgesPerVertex ||
+                    graph[String.fromCharCode(65 + sourceIndex)][String.fromCharCode(65 + destinationIndex)]
+                );
+
+                if (edgesCount[sourceIndex] < maxEdgesPerVertex && edgesCount[destinationIndex] < maxEdgesPerVertex) {
+                    const source = String.fromCharCode(65 + sourceIndex);
+                    const destination = String.fromCharCode(65 + destinationIndex);
+                    const weight = Math.random() < 0.5 ? weight1 : weight2;
+
+                    graph[source][destination] = weight;
+                    graph[destination][source] = weight;
+
+                    edgesCount[sourceIndex]++;
+                    edgesCount[destinationIndex]++;
+                    edgesCreated++;
+                }
+            }
+
+            drawCytoscapeGraph();
+            document.getElementById('matrixBtn').style.display = 'inline';
+            document.getElementById('downloadBtn').style.display = 'inline';
+            isMatrixVisible = false; // Reset the matrix visibility state
+            document.getElementById('matrixBtn').innerText = 'Show Matrix'; // Reset button text
+            document.getElementById('graphTable').style.display = 'none'; // Hide the matrix by default
+        }
+
+        function displayGraph() {
+            const table = document.getElementById('graphTable');
+            table.innerHTML = ''; // Clear previous content
+
+            // Create header row
+            const headerRow = document.createElement('tr');
+            headerRow.innerHTML = '<th></th>'; // Top-left cell empty
+            for (let i = 0; i < Object.keys(graph).length; i++) {
+                headerRow.innerHTML += `<th>${String.fromCharCode(65 + i)}</th>`;
+            }
+            table.appendChild(headerRow);
+
+            // Create rows for each vertex
+            for (const [vertex, edges] of Object.entries(graph)) {
+                const row = document.createElement('tr');
+                row.innerHTML = `<td>${vertex}</td>`;
+                for (const targetVertex of Object.keys(graph)) {
+                    if (vertex === targetVertex) {
+                        row.innerHTML += '<td>x</td>'; // Self-loop indicator
+                    } else {
+                        const weight = edges[targetVertex] !== undefined ? edges[targetVertex] : 'x';
+                        row.innerHTML += `<td class="editable" contenteditable="true" onblur="updateWeight('${vertex}', '${targetVertex}', this.innerText)">${weight}</td>`;
+                    }
+                }
+                table.appendChild(row);
+            }
+        }
+
+        function toggleMatrix() {
+            const table = document.getElementById('graphTable');
+            const matrixBtn = document.getElementById('matrixBtn');
+
+            if (isMatrixVisible) {
+                table.style.display = 'none';
+                matrixBtn.innerText = 'Show Matrix';
+            } else {
+                displayGraph(); // Show the matrix
+                table.style.display = 'table';
+                matrixBtn.innerText = 'Hide Matrix';
+            }
+
+            isMatrixVisible = !isMatrixVisible; // Toggle the state
+        }
+
+        function updateWeight(source, destination, weightStr) {
+            const weight = parseFloat(weightStr);
+            if (!isNaN(weight) && weight > 0) {
+                graph[source][destination] = weight;
+                graph[destination][source] = weight; // Ensure undirected edge
+                drawCytoscapeGraph(); // Redraw graph
+            } else if (weightStr === 'x') {
+                delete graph[source][destination];
+                delete graph[destination][source]; // Remove the edge
+                drawCytoscapeGraph(); // Redraw graph
+            } else {
+                alert("Please enter a valid positive number or 'x' to indicate no edge.");
+            }
+        }
+
+        function drawCytoscapeGraph() {
+            const elements = [];
+
+            for (const [source, edges] of Object.entries(graph)) {
+                elements.push({ data: { id: source } });
+                for (const [destination, weight] of Object.entries(edges)) {
+                    if (source !== destination) {
+                        elements.push({ data: { id: destination } });
+                        elements.push({ data: { id: `${source}-${destination}`, source: source, target: destination, label: weight.toFixed(2) } });
+                    }
+                }
+            }
+
+            const cy = cytoscape({
+                container: document.getElementById('cy'),
+                elements: elements,
+                style: [
+                    {
+                        selector: 'node',
+                        style: {
+                            'background-color': '#666',
+                            'label': 'data(id)',
+                            'color': 'green'
+                        }
+                    },
+                    {
+                        selector: 'edge',
+                        style: {
+                            'width': 2,
+                            'line-color': '#ccc',
+                            'label': 'data(label)',
+                            'font-size': '10px',
+                            'text-justification': 'left',
+                            'text-margin-x': 5,
+                            'color': 'red' // Change label color here
+                        }
+                    }
+                ],
+                layout: {
+                    name: 'grid',
+                    rows: Math.ceil(Math.sqrt(Object.keys(graph).length)),
+                }
+            });
+        }
+
+        function downloadJSON() {
+            const jsonStr = JSON.stringify(graph, null, 2);
+            const blob = new Blob([jsonStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'graph.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function uploadJSON() {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+            if (!file) {
+                alert("Please select a file to upload.");
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                try {
+                    const json = JSON.parse(event.target.result);
+                    graph = json;
+                    displayGraph();
+                    drawCytoscapeGraph();
+                    document.getElementById('downloadBtn').style.display = 'inline';
+                    document.getElementById('matrixBtn').style.display = 'inline';
+                } catch (e) {
+                    alert("Error parsing JSON: " + e.message);
+                }
+            };
+            reader.readAsText(file);
+        }
+    </script>
+</body>
+</html>
