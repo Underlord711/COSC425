@@ -5,61 +5,46 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Weighted Undirected Graph Generator</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.21.0/cytoscape.min.js"></script>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-        #cy {
-            width: 800px;
-            height: 600px;
-            border: 1px solid #ccc;
-            margin-top: 20px;
-        }
-        table {
-            border-collapse: collapse;
-            width: 100%;
-            margin-top: 20px;
-        }
-        th, td {
-            border: 1px solid #ccc;
-            padding: 8px;
-            text-align: center;
-        }
-        td.editable {
-            background-color: #f9f9f9;
-            cursor: pointer;
-        }
-        td.editable:focus {
-            outline: 2px solid #66afe9;
-        }
-    </style>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <h1>Weighted Undirected Graph Generator</h1>
-    <label for="numVertices">Number of Vertices:</label>
-    <input type="number" id="numVertices" min="4" required>
-    <br><br>
-    <label for="weight1">Weight for Edge Type 1:</label>
-    <input type="number" id="weight1" value="1" required>
-    <br><br>
-    <label for="weight2">Weight for Edge Type 2:</label>
-    <input type="number" id="weight2" value="2" required>
-    <br><br>
-    <button onclick="generateGraph()">Generate Graph</button>
-    <button onclick="toggleMatrix()" style="display:none;" id="matrixBtn">Show Matrix</button>
-    <button onclick="downloadJSON()" style="display:none;" id="downloadBtn">Download JSON</button>
-    <br><br>
-    <input type="file" id="fileInput" accept=".json" onchange="uploadJSON()">
-    <button id="uploadBtn" style="display:none;" onclick="uploadJSON()">Upload JSON</button>
+<body class="bg-gray-100 p-8">
+    <h1 class="text-3xl font-bold text-maroon-600">Weighted Undirected Graph Generator</h1>
 
-    <h2>Generated Graph:</h2>
-    <table id="graphTable" style="display: none;"></table>
-    <div id="cy"></div>
+    <div class="mt-6">
+        <label for="numVertices" class="block font-semibold">Number of Vertices:</label>
+        <input type="number" id="numVertices" min="4" required class="border border-gray-300 p-2 rounded w-full mt-2">
+    </div>
+
+    <div class="mt-6">
+        <label for="weight1" class="block font-semibold">Weight for Edge Type 1:</label>
+        <input type="number" id="weight1" value="1" required class="border border-gray-300 p-2 rounded w-full mt-2">
+    </div>
+
+    <div class="mt-6">
+        <label for="weight2" class="block font-semibold">Weight for Edge Type 2:</label>
+        <input type="number" id="weight2" value="2" required class="border border-gray-300 p-2 rounded w-full mt-2">
+    </div>
+
+    <div class="mt-6 space-x-4">
+        <button onclick="generateGraph()" class="bg-maroon-600 text-white px-4 py-2 rounded hover:bg-maroon-700">Generate Graph</button>
+        <button onclick="toggleMatrix()" id="matrixBtn" class="hidden bg-gold-500 text-white px-4 py-2 rounded hover:bg-gold-600">Show Matrix</button>
+        <button onclick="downloadJSON()" id="downloadBtn" class="hidden bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700">Download JSON</button>
+    </div>
+
+    <div class="mt-6">
+        <input type="file" id="fileInput" accept=".json" class="border border-gray-300 p-2 rounded w-full">
+        <button id="uploadBtn" onclick="uploadJSON()" class="hidden bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700 mt-2">Upload JSON</button>
+    </div>
+
+    <h2 class="text-2xl font-semibold mt-10">Generated Graph:</h2>
+    <table id="graphTable" class="hidden w-full border-collapse mt-4">
+        <!-- The graph matrix will be dynamically generated here -->
+    </table>
+    <div id="cy" class="w-full h-96 border border-gray-300 mt-4"></div>
 
     <script>
         let graph = {};
-        let isMatrixVisible = false; // Track whether the matrix is visible or not
+        let isMatrixVisible = false;
 
         function generateGraph() {
             const numVertices = parseInt(document.getElementById('numVertices').value);
@@ -91,7 +76,7 @@
                         break;
                     }
                 } while (
-                    destinationIndex === sourceIndex || // Prevent self-loops
+                    destinationIndex === sourceIndex || 
                     edgesCount[sourceIndex] >= maxEdgesPerVertex ||
                     edgesCount[destinationIndex] >= maxEdgesPerVertex ||
                     graph[String.fromCharCode(65 + sourceIndex)][String.fromCharCode(65 + destinationIndex)]
@@ -112,32 +97,30 @@
             }
 
             drawCytoscapeGraph();
-            document.getElementById('matrixBtn').style.display = 'inline';
-            document.getElementById('downloadBtn').style.display = 'inline';
-            isMatrixVisible = false; // Reset the matrix visibility state
-            document.getElementById('matrixBtn').innerText = 'Show Matrix'; // Reset button text
-            document.getElementById('graphTable').style.display = 'none'; // Hide the matrix by default
+            document.getElementById('matrixBtn').classList.remove('hidden');
+            document.getElementById('downloadBtn').classList.remove('hidden');
+            isMatrixVisible = false;
+            document.getElementById('matrixBtn').innerText = 'Show Matrix';
+            document.getElementById('graphTable').classList.add('hidden');
         }
 
         function displayGraph() {
             const table = document.getElementById('graphTable');
-            table.innerHTML = ''; // Clear previous content
+            table.innerHTML = ''; 
 
-            // Create header row
             const headerRow = document.createElement('tr');
-            headerRow.innerHTML = '<th></th>'; // Top-left cell empty
+            headerRow.innerHTML = '<th></th>';
             for (let i = 0; i < Object.keys(graph).length; i++) {
                 headerRow.innerHTML += `<th>${String.fromCharCode(65 + i)}</th>`;
             }
             table.appendChild(headerRow);
 
-            // Create rows for each vertex
             for (const [vertex, edges] of Object.entries(graph)) {
                 const row = document.createElement('tr');
                 row.innerHTML = `<td>${vertex}</td>`;
                 for (const targetVertex of Object.keys(graph)) {
                     if (vertex === targetVertex) {
-                        row.innerHTML += '<td>x</td>'; // Self-loop indicator
+                        row.innerHTML += '<td>x</td>';
                     } else {
                         const weight = edges[targetVertex] !== undefined ? edges[targetVertex] : 'x';
                         row.innerHTML += `<td class="editable" contenteditable="true" onblur="updateWeight('${vertex}', '${targetVertex}', this.innerText)">${weight}</td>`;
@@ -152,30 +135,15 @@
             const matrixBtn = document.getElementById('matrixBtn');
 
             if (isMatrixVisible) {
-                table.style.display = 'none';
+                table.classList.add('hidden');
                 matrixBtn.innerText = 'Show Matrix';
             } else {
-                displayGraph(); // Show the matrix
-                table.style.display = 'table';
+                displayGraph(); 
+                table.classList.remove('hidden');
                 matrixBtn.innerText = 'Hide Matrix';
             }
 
-            isMatrixVisible = !isMatrixVisible; // Toggle the state
-        }
-
-        function updateWeight(source, destination, weightStr) {
-            const weight = parseFloat(weightStr);
-            if (!isNaN(weight) && weight > 0) {
-                graph[source][destination] = weight;
-                graph[destination][source] = weight; // Ensure undirected edge
-                drawCytoscapeGraph(); // Redraw graph
-            } else if (weightStr === 'x') {
-                delete graph[source][destination];
-                delete graph[destination][source]; // Remove the edge
-                drawCytoscapeGraph(); // Redraw graph
-            } else {
-                alert("Please enter a valid positive number or 'x' to indicate no edge.");
-            }
+            isMatrixVisible = !isMatrixVisible;
         }
 
         function drawCytoscapeGraph() {
@@ -198,21 +166,19 @@
                     {
                         selector: 'node',
                         style: {
-                            'background-color': '#666',
+                            'background-color': '#9E1B32',
                             'label': 'data(id)',
-                            'color': 'green'
+                            'color': '#FFF'
                         }
                     },
                     {
                         selector: 'edge',
                         style: {
                             'width': 2,
-                            'line-color': '#ccc',
+                            'line-color': '#FFC72C',
                             'label': 'data(label)',
                             'font-size': '10px',
-                            'text-justification': 'left',
-                            'text-margin-x': 5,
-                            'color': 'red' // Change label color here
+                            'color': '#000'
                         }
                     }
                 ],
@@ -250,9 +216,10 @@
                     const json = JSON.parse(event.target.result);
                     graph = json;
                     displayGraph();
+                    draw
                     drawCytoscapeGraph();
-                    document.getElementById('downloadBtn').style.display = 'inline';
-                    document.getElementById('matrixBtn').style.display = 'inline';
+                    document.getElementById('downloadBtn').classList.remove('hidden');
+                    document.getElementById('matrixBtn').classList.remove('hidden');
                 } catch (e) {
                     alert("Error parsing JSON: " + e.message);
                 }
