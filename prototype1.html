@@ -1,61 +1,86 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Weighted Undirected Graph Generator</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.21.0/cytoscape.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
+        /* Add this CSS for the sticky header effect */
+        th.sticky {
+            position: sticky;
+            top: 0;
+            background-color: white; /* Match the background color to the table */
+            z-index: 1; /* Ensure the header is above other content */
         }
-        #cy {
-            width: 800px;
-            height: 600px;
-            border: 1px solid #ccc;
-            margin-top: 20px;
+
+        /* Optional: Add some shadow to the header */
+        th.sticky + th {
+            box-shadow: 0 2px 2px -2px rgba(0, 0, 0, 0.2);
         }
-        table {
-            border-collapse: collapse;
-            width: 100%;
-            margin-top: 20px;
-        }
-        th, td {
-            border: 1px solid #ccc;
-            padding: 8px;
-            text-align: center;
-        }
-        td.editable {
-            background-color: #f9f9f9;
-            cursor: pointer;
-        }
-        td.editable:focus {
-            outline: 2px solid #66afe9;
+
+        /* Set a fixed height for the matrix container */
+        #matrixContainer {
+            max-height: 300px; /* Adjust height as needed */
+            overflow-y: auto; /* Enable vertical scrolling */
         }
     </style>
 </head>
-<body>
-    <h1>Weighted Undirected Graph Generator</h1>
-    <label for="numVertices">Number of Vertices:</label>
-    <input type="number" id="numVertices" min="4" required>
-    <br><br>
-    <label for="weight1">Weight for Edge Type 1:</label>
-    <input type="number" id="weight1" value="1" required>
-    <br><br>
-    <label for="weight2">Weight for Edge Type 2:</label>
-    <input type="number" id="weight2" value="2" required>
-    <br><br>
-    <button onclick="generateGraph()">Generate Graph</button>
-    <button onclick="toggleMatrix()" style="display:none;" id="matrixBtn">Show Matrix</button>
-    <button onclick="downloadJSON()" style="display:none;" id="downloadBtn">Download JSON</button>
-    <br><br>
-    <input type="file" id="fileInput" accept=".json" onchange="uploadJSON()">
-    <button id="uploadBtn" style="display:none;" onclick="uploadJSON()">Upload JSON</button>
 
-    <h2>Generated Graph:</h2>
-    <table id="graphTable" style="display: none;"></table>
-    <div id="cy"></div>
+<body class="bg-gray-100 p-6">
+    <div class="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-md">
+        <h1 class="text-2xl font-bold mb-4">Weighted Undirected Graph Generator</h1>
+
+        <div class="space-y-4">
+            <div>
+                <label for="numVertices" class="block text-sm font-medium">Number of Vertices:</label>
+                <input type="number" id="numVertices" min="4" required
+                    class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2">
+            </div>
+
+            <div>
+                <label for="weight1" class="block text-sm font-medium">Weight for Edge Type 1:</label>
+                <input type="number" id="weight1" value="1" required
+                    class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2">
+            </div>
+
+            <div>
+                <label for="weight2" class="block text-sm font-medium">Weight for Edge Type 2:</label>
+                <input type="number" id="weight2" value="2" required
+                    class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2">
+            </div>
+
+            <div class="space-x-4">
+                <button onclick="generateGraph()"
+                    class="bg-indigo-500 text-white px-4 py-2 rounded hover:bg-indigo-600 focus:outline-none">Generate
+                    Graph</button>
+                <button onclick="toggleMatrix()" style="display:none;" id="matrixBtn"
+                    class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 focus:outline-none">Show
+                    Matrix</button>
+                <button onclick="downloadJSON()" style="display:none;" id="downloadBtn"
+                    class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 focus:outline-none">Download
+                    JSON</button>
+            </div>
+
+            <div class="mt-4">
+                <input type="file" id="fileInput" accept=".json"
+                    class="block w-full text-sm text-gray-500 border border-gray-300 rounded-lg cursor-pointer">
+                <button id="uploadBtn" style="display:none;" onclick="uploadJSON()"
+                    class="mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none">Upload
+                    JSON</button>
+            </div>
+        </div>
+
+        <h2 class="text-xl font-semibold mt-6">Generated Graph:</h2>
+        <div class="overflow-x-auto overflow-y-auto max-h-96" style="display: none;" id="matrixContainer">
+            <table id="graphTable" class="min-w-full table-auto border-collapse bg-white shadow-md rounded-lg text-sm">
+            </table>
+        </div>
+
+        <div id="cy" class="border border-gray-300 mt-6" style="width: 800px; height: 600px;"></div>
+    </div>
 
     <script>
         let graph = {};
@@ -111,70 +136,54 @@
                 }
             }
 
+            displayGraph();
             drawCytoscapeGraph();
             document.getElementById('matrixBtn').style.display = 'inline';
             document.getElementById('downloadBtn').style.display = 'inline';
-            isMatrixVisible = false; // Reset the matrix visibility state
-            document.getElementById('matrixBtn').innerText = 'Show Matrix'; // Reset button text
-            document.getElementById('graphTable').style.display = 'none'; // Hide the matrix by default
+        }
+
+        function toggleMatrix() {
+            const matrixContainer = document.getElementById('matrixContainer');
+            isMatrixVisible = !isMatrixVisible;
+            matrixContainer.style.display = isMatrixVisible ? 'block' : 'none';
         }
 
         function displayGraph() {
             const table = document.getElementById('graphTable');
             table.innerHTML = ''; // Clear previous content
 
-            // Create header row
+            // Create header row (with an extra cell at the top-left)
             const headerRow = document.createElement('tr');
-            headerRow.innerHTML = '<th></th>'; // Top-left cell empty
+            headerRow.innerHTML = '<th class="border px-4 py-2 sticky"></th>'; // Top-left empty cell
             for (let i = 0; i < Object.keys(graph).length; i++) {
-                headerRow.innerHTML += `<th>${String.fromCharCode(65 + i)}</th>`;
+                headerRow.innerHTML += `<th class="border px-4 py-2 text-center sticky">${String.fromCharCode(65 + i)}</th>`;
             }
             table.appendChild(headerRow);
 
             // Create rows for each vertex
             for (const [vertex, edges] of Object.entries(graph)) {
                 const row = document.createElement('tr');
-                row.innerHTML = `<td>${vertex}</td>`;
+                row.innerHTML = `<th class="border px-4 py-2 text-center">${vertex}</th>`; // Row header (vertex label)
                 for (const targetVertex of Object.keys(graph)) {
                     if (vertex === targetVertex) {
-                        row.innerHTML += '<td>x</td>'; // Self-loop indicator
+                        row.innerHTML += '<td class="border px-4 py-2 text-center">x</td>'; // Self-loop indicator
                     } else {
                         const weight = edges[targetVertex] !== undefined ? edges[targetVertex] : 'x';
-                        row.innerHTML += `<td class="editable" contenteditable="true" onblur="updateWeight('${vertex}', '${targetVertex}', this.innerText)">${weight}</td>`;
+                        row.innerHTML += `<td class="editable border px-4 py-2 text-center" contenteditable="true" onblur="updateWeight('${vertex}', '${targetVertex}', this.innerText)">${weight}</td>`;
                     }
                 }
                 table.appendChild(row);
             }
         }
 
-        function toggleMatrix() {
-            const table = document.getElementById('graphTable');
-            const matrixBtn = document.getElementById('matrixBtn');
-
-            if (isMatrixVisible) {
-                table.style.display = 'none';
-                matrixBtn.innerText = 'Show Matrix';
-            } else {
-                displayGraph(); // Show the matrix
-                table.style.display = 'table';
-                matrixBtn.innerText = 'Hide Matrix';
-            }
-
-            isMatrixVisible = !isMatrixVisible; // Toggle the state
-        }
-
-        function updateWeight(source, destination, weightStr) {
-            const weight = parseFloat(weightStr);
+        function updateWeight(source, target, newWeight) {
+            const weight = parseFloat(newWeight);
             if (!isNaN(weight) && weight > 0) {
-                graph[source][destination] = weight;
-                graph[destination][source] = weight; // Ensure undirected edge
-                drawCytoscapeGraph(); // Redraw graph
-            } else if (weightStr === 'x') {
-                delete graph[source][destination];
-                delete graph[destination][source]; // Remove the edge
-                drawCytoscapeGraph(); // Redraw graph
+                graph[source][target] = weight;
+                graph[target][source] = weight; // Ensure it's undirected
+                drawCytoscapeGraph(); // Refresh the graph visualization
             } else {
-                alert("Please enter a valid positive number or 'x' to indicate no edge.");
+                alert("Invalid weight. Please enter a positive number.");
             }
         }
 
@@ -245,7 +254,7 @@
             }
 
             const reader = new FileReader();
-            reader.onload = function(event) {
+            reader.onload = function (event) {
                 try {
                     const json = JSON.parse(event.target.result);
                     graph = json;
@@ -261,4 +270,5 @@
         }
     </script>
 </body>
+
 </html>
