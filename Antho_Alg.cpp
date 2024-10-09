@@ -60,7 +60,7 @@ tuple<tuple<char, float>, tuple<char, float>, float> relation_eval(const tuple<t
     if (wgtdiff > relwgt)
         relwgtnew = 0;
     else
-        relwgtnew = relwgt
+        relwgtnew = relwgt;
 
     return make_tuple(node1, node2, relwgtnew);
 }
