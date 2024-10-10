@@ -263,6 +263,11 @@
                 ],
                 layout: {
                     name: dummy,
+                    avoidOverlap: true,  // Enable to prevent overlapping
+            nodeOverlap: 0,  // Adjust the amount of overlap allowed (0 means no overlap)
+            spacingFactor: 1.2,  // Increase the spacing between nodes
+            animate: false,  // Smooth transition when layout changes
+            
                 }
             });
         }
