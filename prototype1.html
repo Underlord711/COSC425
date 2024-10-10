@@ -62,10 +62,16 @@
                 <button onclick="downloadJSON()" style="display:none;" id="downloadBtn"
                     class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 focus:outline-none">Download
                     JSON</button>
+                <button onclick="updateDisplay()" style="display:none;" id="updateBtn"
+                    class="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600 focus:outline-none">Switch
+                    Display</button>
+                <button onclick="runAlgorithm()" style="display:none;" id="runAlgorithm"
+                    class="bg-pink-500 text-white px-4 py-2 rounded hover:bg-pink-600 focus:outline-none">Run
+                    Algorithm</button>
             </div>
 
             <div class="mt-4">
-                <input type="file" id="fileInput" accept=".json"
+                <input type="file" id="fileInput" accept=".json" onchange="uploadJSON()"
                     class="block w-full text-sm text-gray-500 border border-gray-300 rounded-lg cursor-pointer">
                 <button id="uploadBtn" style="display:none;" onclick="uploadJSON()"
                     class="mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none">Upload
@@ -74,27 +80,47 @@
         </div>
 
         <h2 class="text-xl font-semibold mt-6">Generated Graph:</h2>
+        <div>Version: <span id="versionDisplay">1</span></div>
         <div class="overflow-x-auto overflow-y-auto max-h-96" style="display: none;" id="matrixContainer">
             <table id="graphTable" class="min-w-full table-auto border-collapse bg-white shadow-md rounded-lg text-sm">
             </table>
         </div>
 
         <div id="cy" class="border border-gray-300 mt-6" style="width: 800px; height: 600px;"></div>
+        <div>
+            <button onclick="previous()" id="prev"
+                class="bg-purple-500 text-white px-2 py-2 rounded hover:bg-purple-600 focus:outline-none">Prev</button>
+            <button onclick="next()" id="next"
+                class="bg-purple-500 text-white px-2 py-2 rounded hover:bg-purple-600 focus:outline-none">Next</button>
+        </div>
+
     </div>
 
     <script>
         let graph = {};
+        let version = 1;
         let isMatrixVisible = false; // Track whether the matrix is visible or not
+        let dummy = 'grid';
+
+        function updateDisplay() {
+            if (dummy == 'grid'){
+                dummy = 'circle';
+            }
+            else{
+                dummy = 'grid';
+            }
+            drawCytoscapeGraph();
+        }
 
         function generateGraph() {
             const numVertices = parseInt(document.getElementById('numVertices').value);
             const weight1 = parseFloat(document.getElementById('weight1').value);
             const weight2 = parseFloat(document.getElementById('weight2').value);
 
-            graph = {};
+            graph = {version1:{}};
             for (let i = 0; i < numVertices; i++) {
                 const vertex = String.fromCharCode(65 + i);
-                graph[vertex] = {};
+                graph['version'+version][vertex] = {weight:Math.random().toFixed(2)}; //Initialing the object for each vertex.
             }
 
             const edgesCount = Array(numVertices).fill(0);
@@ -119,7 +145,7 @@
                     destinationIndex === sourceIndex || // Prevent self-loops
                     edgesCount[sourceIndex] >= maxEdgesPerVertex ||
                     edgesCount[destinationIndex] >= maxEdgesPerVertex ||
-                    graph[String.fromCharCode(65 + sourceIndex)][String.fromCharCode(65 + destinationIndex)]
+                    graph.version1[String.fromCharCode(65 + sourceIndex)][String.fromCharCode(65 + destinationIndex)]
                 );
 
                 if (edgesCount[sourceIndex] < maxEdgesPerVertex && edgesCount[destinationIndex] < maxEdgesPerVertex) {
@@ -127,8 +153,8 @@
                     const destination = String.fromCharCode(65 + destinationIndex);
                     const weight = Math.random() < 0.5 ? weight1 : weight2;
 
-                    graph[source][destination] = weight;
-                    graph[destination][source] = weight;
+                    graph['version'+version][source][destination] = weight;
+                    graph['version'+version][destination][source] = weight;
 
                     edgesCount[sourceIndex]++;
                     edgesCount[destinationIndex]++;
@@ -140,6 +166,8 @@
             drawCytoscapeGraph();
             document.getElementById('matrixBtn').style.display = 'inline';
             document.getElementById('downloadBtn').style.display = 'inline';
+            document.getElementById('updateBtn').style.display = 'inline';
+            document.getElementById('runAlgorithm').style.display = 'inline';
         }
 
         function toggleMatrix() {
@@ -155,16 +183,16 @@
             // Create header row (with an extra cell at the top-left)
             const headerRow = document.createElement('tr');
             headerRow.innerHTML = '<th class="border px-4 py-2 sticky"></th>'; // Top-left empty cell
-            for (let i = 0; i < Object.keys(graph).length; i++) {
+            for (let i = 0; i < Object.keys(graph['version'+version]).length; i++) {
                 headerRow.innerHTML += `<th class="border px-4 py-2 text-center sticky">${String.fromCharCode(65 + i)}</th>`;
             }
             table.appendChild(headerRow);
 
             // Create rows for each vertex
-            for (const [vertex, edges] of Object.entries(graph)) {
+            for (const [vertex, edges] of Object.entries(graph['version'+version])) {
                 const row = document.createElement('tr');
                 row.innerHTML = `<th class="border px-4 py-2 text-center">${vertex}</th>`; // Row header (vertex label)
-                for (const targetVertex of Object.keys(graph)) {
+                for (const targetVertex of Object.keys(graph['version'+version])) {
                     if (vertex === targetVertex) {
                         row.innerHTML += '<td class="border px-4 py-2 text-center">x</td>'; // Self-loop indicator
                     } else {
@@ -179,8 +207,8 @@
         function updateWeight(source, target, newWeight) {
             const weight = parseFloat(newWeight);
             if (!isNaN(weight) && weight > 0) {
-                graph[source][target] = weight;
-                graph[target][source] = weight; // Ensure it's undirected
+                graph['version'+version][source][target] = weight;
+                graph['version'+version][target][source] = weight; // Ensure it's undirected
                 drawCytoscapeGraph(); // Refresh the graph visualization
             } else {
                 alert("Invalid weight. Please enter a positive number.");
@@ -190,11 +218,15 @@
         function drawCytoscapeGraph() {
             const elements = [];
 
-            for (const [source, edges] of Object.entries(graph)) {
-                elements.push({ data: { id: source } });
+            for (const [source, edges] of Object.entries(graph['version'+version])) {
+                elements.push({ data: { id: source, rel: edges.weight}});
+                //console.log(edges.weight);
                 for (const [destination, weight] of Object.entries(edges)) {
+                    if (destination == 'weight'){
+                        continue;
+                    }
                     if (source !== destination) {
-                        elements.push({ data: { id: destination } });
+                        elements.push({ data: { id: destination, rel: graph['version'+version][destination]['weight']} });
                         elements.push({ data: { id: `${source}-${destination}`, source: source, target: destination, label: weight.toFixed(2) } });
                     }
                 }
@@ -202,14 +234,17 @@
 
             const cy = cytoscape({
                 container: document.getElementById('cy'),
-                elements: elements,
+                elements: elements,          
                 style: [
                     {
                         selector: 'node',
                         style: {
-                            'background-color': '#666',
-                            'label': 'data(id)',
-                            'color': 'green'
+                            'background-color': 'grey',
+                            'label' : function(elem){
+                                return elem.data('id') + '\n' + elem.data('rel')},
+                            'color': 'green',
+                            'font-size': '25px',
+                            'text-wrap': 'wrap'
                         }
                     },
                     {
@@ -226,8 +261,7 @@
                     }
                 ],
                 layout: {
-                    name: 'grid',
-                    rows: Math.ceil(Math.sqrt(Object.keys(graph).length)),
+                    name: dummy,
                 }
             });
         }
@@ -258,16 +292,61 @@
                 try {
                     const json = JSON.parse(event.target.result);
                     graph = json;
+                    version=Object.keys(graph).length;
+                    document.getElementById('versionDisplay').innerText = version; // Update displayed version
                     displayGraph();
                     drawCytoscapeGraph();
-                    document.getElementById('downloadBtn').style.display = 'inline';
                     document.getElementById('matrixBtn').style.display = 'inline';
+                    document.getElementById('downloadBtn').style.display = 'inline';
+                    document.getElementById('updateBtn').style.display = 'inline';
+                    document.getElementById('runAlgorithm').style.display = 'inline';
                 } catch (e) {
                     alert("Error parsing JSON: " + e.message);
                 }
             };
             reader.readAsText(file);
         }
+
+        function runAlgorithm(){
+            graph['version'+(version+1)] = JSON.parse(JSON.stringify(graph['version'+version]));
+            version++;
+            document.getElementById('versionDisplay').innerText = version; // Update displayed version
+            for (const [source, edges] of Object.entries(graph['version'+version])){
+                for (const [destination, weight] of Object.entries(edges)){
+                    if (destination=='weight'){
+                        continue;
+                    }
+                    graph['version'+version][source][destination]*=2;                
+                }
+            }
+            displayGraph();
+            drawCytoscapeGraph();
+        }
+
+        function previous(){
+            version--;
+            if (version>0){
+                document.getElementById('versionDisplay').innerText = version; // Update displayed version
+                displayGraph();
+                drawCytoscapeGraph();
+            }
+            else{
+                version++;
+            }
+        }
+
+        function next(){
+            version++;
+            if (version<=Object.keys(graph).length){
+                document.getElementById('versionDisplay').innerText = version; // Update displayed version
+                displayGraph();
+                drawCytoscapeGraph();
+            }
+            else{
+                version--;
+            }
+        }
+
     </script>
 </body>
 
