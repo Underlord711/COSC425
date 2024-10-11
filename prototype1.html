@@ -12,19 +12,23 @@
         th.sticky {
             position: sticky;
             top: 0;
-            background-color: white; /* Match the background color to the table */
-            z-index: 1; /* Ensure the header is above other content */
+            background-color: white;
+            /* Match the background color to the table */
+            z-index: 1;
+            /* Ensure the header is above other content */
         }
 
         /* Optional: Add some shadow to the header */
-        th.sticky + th {
+        th.sticky+th {
             box-shadow: 0 2px 2px -2px rgba(0, 0, 0, 0.2);
         }
 
         /* Set a fixed height for the matrix container */
         #matrixContainer {
-            max-height: 300px; /* Adjust height as needed */
-            overflow-y: auto; /* Enable vertical scrolling */
+            max-height: 300px;
+            /* Adjust height as needed */
+            overflow-y: auto;
+            /* Enable vertical scrolling */
         }
     </style>
 </head>
@@ -103,10 +107,10 @@
         let dummy = 'grid';
 
         function updateDisplay() {
-            if (dummy == 'grid'){
+            if (dummy == 'grid') {
                 dummy = 'circle';
             }
-            else{
+            else {
                 dummy = 'grid';
             }
             drawCytoscapeGraph();
@@ -117,10 +121,10 @@
             const weight1 = parseFloat(document.getElementById('weight1').value);
             const weight2 = parseFloat(document.getElementById('weight2').value);
 
-            graph = {version1:{}};
+            graph = { version1: {} };
             for (let i = 0; i < numVertices; i++) {
                 const vertex = String.fromCharCode(65 + i);
-                graph['version'+version][vertex] = {weight:Math.random().toFixed(2)}; //Initialing the object for each vertex.
+                graph['version' + version][vertex] = { weight: Math.random().toFixed(2) }; //Initialing the object for each vertex.
             }
 
             const edgesCount = Array(numVertices).fill(0);
@@ -153,8 +157,8 @@
                     const destination = String.fromCharCode(65 + destinationIndex);
                     const weight = Math.random() < 0.5 ? weight1 : weight2;
 
-                    graph['version'+version][source][destination] = weight;
-                    graph['version'+version][destination][source] = weight;
+                    graph['version' + version][source][destination] = weight;
+                    graph['version' + version][destination][source] = weight;
 
                     edgesCount[sourceIndex]++;
                     edgesCount[destinationIndex]++;
@@ -183,16 +187,16 @@
             // Create header row (with an extra cell at the top-left)
             const headerRow = document.createElement('tr');
             headerRow.innerHTML = '<th class="border px-4 py-2 sticky"></th>'; // Top-left empty cell
-            for (let i = 0; i < Object.keys(graph['version'+version]).length; i++) {
+            for (let i = 0; i < Object.keys(graph['version' + version]).length; i++) {
                 headerRow.innerHTML += `<th class="border px-4 py-2 text-center sticky">${String.fromCharCode(65 + i)}</th>`;
             }
             table.appendChild(headerRow);
 
             // Create rows for each vertex
-            for (const [vertex, edges] of Object.entries(graph['version'+version])) {
+            for (const [vertex, edges] of Object.entries(graph['version' + version])) {
                 const row = document.createElement('tr');
                 row.innerHTML = `<th class="border px-4 py-2 text-center">${vertex}</th>`; // Row header (vertex label)
-                for (const targetVertex of Object.keys(graph['version'+version])) {
+                for (const targetVertex of Object.keys(graph['version' + version])) {
                     if (vertex === targetVertex) {
                         row.innerHTML += '<td class="border px-4 py-2 text-center">x</td>'; // Self-loop indicator
                     } else {
@@ -206,27 +210,41 @@
 
         function updateWeight(source, target, newWeight) {
             const weight = parseFloat(newWeight);
-            if (!isNaN(weight) && weight > 0) {
-                graph['version'+version][source][target] = weight;
-                graph['version'+version][target][source] = weight; // Ensure it's undirected
-                drawCytoscapeGraph(); // Refresh the graph visualization
+            const str = String(newWeight);
+
+            // copy graph
+            graph['version' + (version + 1)] = JSON.parse(JSON.stringify(graph['version' + version]));
+            version++;
+
+            // update edge
+            if (weight === 0 || str.toLowerCase() === 'x') { 
+                delete graph['version'+version][source][target];
+                delete graph['version'+version][target][source];
+            } else if (!isNaN(weight) && weight > 0) {                
+                graph['version' + version][source][target] = weight;
+                graph['version' + version][target][source] = weight; 
             } else {
-                alert("Invalid weight. Please enter a positive number.");
+                alert("Invalid weight. Please enter a positive number or zero.");
             }
+
+            // update display
+            drawCytoscapeGraph(); 
+            displayGraph();
+            document.getElementById('versionDisplay').innerText = version;
         }
 
         function drawCytoscapeGraph() {
             const elements = [];
 
-            for (const [source, edges] of Object.entries(graph['version'+version])) {
-                elements.push({ data: { id: source, rel: edges.weight}});
+            for (const [source, edges] of Object.entries(graph['version' + version])) {
+                elements.push({ data: { id: source, rel: edges.weight } });
                 //console.log(edges.weight);
                 for (const [destination, weight] of Object.entries(edges)) {
-                    if (destination == 'weight'){
+                    if (destination == 'weight') {
                         continue;
                     }
                     if (source !== destination) {
-                        elements.push({ data: { id: destination, rel: graph['version'+version][destination]['weight']} });
+                        elements.push({ data: { id: destination, rel: graph['version' + version][destination]['weight'] } });
                         elements.push({ data: { id: `${source}-${destination}`, source: source, target: destination, label: weight.toFixed(2) } });
                     }
                 }
@@ -234,14 +252,15 @@
 
             const cy = cytoscape({
                 container: document.getElementById('cy'),
-                elements: elements,          
+                elements: elements,
                 style: [
                     {
                         selector: 'node',
                         style: {
                             'background-color': 'grey',
-                            'label' : function(elem){
-                                return elem.data('id') + '\n' + elem.data('rel')},
+                            'label': function (elem) {
+                                return elem.data('id') + '\n' + elem.data('rel')
+                            },
                             'color': 'green',
                             'font-size': '25px',
                             'text-wrap': 'wrap'
@@ -292,7 +311,7 @@
                 try {
                     const json = JSON.parse(event.target.result);
                     graph = json;
-                    version=Object.keys(graph).length;
+                    version = Object.keys(graph).length;
                     document.getElementById('versionDisplay').innerText = version; // Update displayed version
                     displayGraph();
                     drawCytoscapeGraph();
@@ -307,7 +326,7 @@
             reader.readAsText(file);
         }
 
-        function runAlgorithm(){
+        function runAlgorithm() {
             graph['version'+(version+1)] = JSON.parse(JSON.stringify(graph['version'+version]));
             version++;
             document.getElementById('versionDisplay').innerText = version; // Update displayed version
@@ -323,31 +342,31 @@
             drawCytoscapeGraph();
         }
 
-        function previous(){
+        function previous() {
             version--;
-            if (version>0){
+            if (version > 0) {
                 document.getElementById('versionDisplay').innerText = version; // Update displayed version
                 displayGraph();
                 drawCytoscapeGraph();
             }
-            else{
+            else {
                 version++;
             }
         }
 
-        function next(){
+        function next() {
             version++;
-            if (version<=Object.keys(graph).length){
+            if (version <= Object.keys(graph).length) {
                 document.getElementById('versionDisplay').innerText = version; // Update displayed version
                 displayGraph();
                 drawCytoscapeGraph();
             }
-            else{
+            else {
                 version--;
             }
         }
-
     </script>
+
 </body>
 
 </html>
