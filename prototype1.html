@@ -8,24 +8,30 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.21.0/cytoscape.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Add this CSS for the sticky header effect */
-        th.sticky {
-            position: sticky;
-            top: 0;
-            background-color: white; /* Match the background color to the table */
-            z-index: 1; /* Ensure the header is above other content */
-        }
+/* Sticky column headers */
+th.sticky {
+    position: sticky;
+    top: 0;
+    background-color: white;
+    z-index: 1;
+}
 
-        /* Optional: Add some shadow to the header */
-        th.sticky + th {
-            box-shadow: 0 2px 2px -2px rgba(0, 0, 0, 0.2);
-        }
+/* Sticky row headers */
+th.row-sticky {
+    position: sticky;
+    left: 0;
+    background-color: white;
+    z-index: 2; /* Ensure row headers are above other content, including sticky column headers */
+    box-shadow: 2px 0 2px -2px rgba(0, 0, 0, 0.2); /* Optional shadow for better visibility */
+}
 
-        /* Set a fixed height for the matrix container */
-        #matrixContainer {
-            max-height: 300px; /* Adjust height as needed */
-            overflow-y: auto; /* Enable vertical scrolling */
-        }
+/* Set a fixed height for the matrix container */
+#matrixContainer {
+    max-height: 300px; /* Adjust height as needed */
+    overflow-y: auto; /* Enable vertical scrolling */
+    overflow-x: auto; /* Enable horizontal scrolling */
+}
+
     </style>
 </head>
 
@@ -178,32 +184,33 @@
         }
 
         function displayGraph() {
-            const table = document.getElementById('graphTable');
-            table.innerHTML = ''; // Clear previous content
+    const table = document.getElementById('graphTable');
+    table.innerHTML = ''; // Clear previous content
 
-            // Create header row (with an extra cell at the top-left)
-            const headerRow = document.createElement('tr');
-            headerRow.innerHTML = '<th class="border px-4 py-2 sticky"></th>'; // Top-left empty cell
-            for (let i = 0; i < Object.keys(graph['version'+version]).length; i++) {
-                headerRow.innerHTML += `<th class="border px-4 py-2 text-center sticky">${String.fromCharCode(65 + i)}</th>`;
-            }
-            table.appendChild(headerRow);
+    // Create header row (with an extra cell at the top-left)
+    const headerRow = document.createElement('tr');
+    headerRow.innerHTML = '<th class="border px-4 py-2 sticky"></th>'; // Top-left empty cell
+    for (let i = 0; i < Object.keys(graph['version'+version]).length; i++) {
+        headerRow.innerHTML += `<th class="border px-4 py-2 text-center sticky">${String.fromCharCode(65 + i)}</th>`;
+    }
+    table.appendChild(headerRow);
 
-            // Create rows for each vertex
-            for (const [vertex, edges] of Object.entries(graph['version'+version])) {
-                const row = document.createElement('tr');
-                row.innerHTML = `<th class="border px-4 py-2 text-center">${vertex}</th>`; // Row header (vertex label)
-                for (const targetVertex of Object.keys(graph['version'+version])) {
-                    if (vertex === targetVertex) {
-                        row.innerHTML += '<td class="border px-4 py-2 text-center">x</td>'; // Self-loop indicator
-                    } else {
-                        const weight = edges[targetVertex] !== undefined ? edges[targetVertex] : 'x';
-                        row.innerHTML += `<td class="editable border px-4 py-2 text-center" contenteditable="true" onblur="updateWeight('${vertex}', '${targetVertex}', this.innerText)">${weight}</td>`;
-                    }
-                }
-                table.appendChild(row);
+    // Create rows for each vertex
+    for (const [vertex, edges] of Object.entries(graph['version'+version])) {
+        const row = document.createElement('tr');
+        row.innerHTML = `<th class="border px-4 py-2 text-center row-sticky">${vertex}</th>`; // Row header with sticky class
+        for (const targetVertex of Object.keys(graph['version'+version])) {
+            if (vertex === targetVertex) {
+                row.innerHTML += '<td class="border px-4 py-2 text-center">x</td>'; // Self-loop indicator
+            } else {
+                const weight = edges[targetVertex] !== undefined ? edges[targetVertex] : 'x';
+                row.innerHTML += `<td class="editable border px-4 py-2 text-center" contenteditable="true" onblur="updateWeight('${vertex}', '${targetVertex}', this.innerText)">${weight}</td>`;
             }
         }
+        table.appendChild(row);
+    }
+}
+
 
         function updateWeight(source, target, newWeight) {
             const weight = parseFloat(newWeight);
@@ -265,7 +272,7 @@
                     name: dummy,
                     avoidOverlap: true,  // Enable to prevent overlapping
             nodeOverlap: 0,  // Adjust the amount of overlap allowed (0 means no overlap)
-            spacingFactor: 1.2,  // Increase the spacing between nodes
+            spacingFactor: 3,  // Increase the spacing between nodes
             animate: false,  // Smooth transition when layout changes
             
                 }
