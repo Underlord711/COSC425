@@ -264,6 +264,13 @@
                     name: dummy,
                 }
             });
+            
+            cy.on('tap', 'node', function(evt){
+                var node = evt.target;
+                for (const [destination, weight] of Object.entries(graph['version'+version][node.id()])){
+                    console.log(destination + ' : ' + weight);
+                }
+            });
         }
 
         function downloadJSON() {
