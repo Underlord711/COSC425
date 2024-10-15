@@ -86,19 +86,21 @@ th.row-sticky {
         </div>
 
         <h2 class="text-xl font-semibold mt-6">Generated Graph:</h2>
-        <div class="flex">
-        <div class="flex-none mr-4">Version: <span id="versionDisplay">1</span></div>
-        <div class="flex-none ml-auto ">
-            <button onclick="previous()" id="prev"
-                class="bg-purple-500 text-white px-2 py-2 rounded hover:bg-purple-600 focus:outline-none">Prev</button>
-            <button onclick="next()" id="next"
-                class="bg-purple-500 text-white px-2 py-2 rounded hover:bg-purple-600 focus:outline-none">Next</button>
+        <div class="flex flex-wrap mb-1">
+            <div class="flex-none mr-4">Version: <span id="versionDisplay">1</span></div>
+            
+            <div class="flex-none ml-auto">
+                <button onclick="previous()" id="prev"
+                    class="bg-purple-500 text-white px-2 py-2 rounded hover:bg-purple-600 focus:outline-none">Prev</button>
+                <button onclick="next()" id="next"
+                    class="bg-purple-500 text-white px-2 py-2 rounded hover:bg-purple-600 focus:outline-none">Next</button>
+            </div>
         </div>
-        <div class="overflow-x-auto overflow-y-auto max-h-96" style="display: none;" id="matrixContainer">
-            <table id="graphTable" class="min-w-full table-auto border-collapse bg-white shadow-md rounded-lg text-sm">
-            </table>
-        </div>
-        </div>
+                    <!-- Matrix container: Ensure it stays within the parent -->
+                    <div class="overflow-x-auto overflow-y-auto max-h-96 flex-grow" style="display: none;" id="matrixContainer">
+                        <table id="graphTable" class="min-w-full table-auto border-collapse bg-white shadow-md rounded-lg text-sm">
+                        </table>
+                    </div>
 
         <div id="cy" class="border border-gray-300 mt-6" style="width: auto; height: 600px;"></div>
     </div>
@@ -224,60 +226,54 @@ th.row-sticky {
         }
 
         function drawCytoscapeGraph() {
-            const elements = [];
+    const elements = [];
 
-            for (const [source, edges] of Object.entries(graph['version'+version])) {
-                elements.push({ data: { id: source, rel: edges.weight}});
-                //console.log(edges.weight);
-                for (const [destination, weight] of Object.entries(edges)) {
-                    if (destination == 'weight'){
-                        continue;
-                    }
-                    if (source !== destination) {
-                        elements.push({ data: { id: destination, rel: graph['version'+version][destination]['weight']} });
-                        elements.push({ data: { id: `${source}-${destination}`, source: source, target: destination, label: weight.toFixed(2) } });
-                    }
+    for (const [source, edges] of Object.entries(graph['version' + version])) {
+        elements.push({ data: { id: source } }); // Only use vertex ID, no weight
+        for (const [destination, weight] of Object.entries(edges)) {
+            if (destination === 'weight') continue;
+            if (source !== destination) {
+                elements.push({ data: { id: `${source}-${destination}`, source: source, target: destination } });
+            }
+        }
+    }
+
+    const cy = cytoscape({
+        container: document.getElementById('cy'),
+        elements: elements,
+        style: [
+            {
+                selector: 'node',
+                style: {
+                    'background-color': 'grey',
+                    'label': 'data(id)', 
+                    'color': 'green',
+                    'font-size': '30px', 
+                    'font-weight': 'bold',
+                    'text-valign': 'top', 
+                    'text-halign': 'center', 
+                    'text-margin-y': -10, 
+                }
+            },
+            {
+                selector: 'edge',
+                style: {
+                    'width': 2,
+                    'line-color': '#ccc',
+                    // Remove edge labels entirely
                 }
             }
-
-            const cy = cytoscape({
-                container: document.getElementById('cy'),
-                elements: elements,          
-                style: [
-                    {
-                        selector: 'node',
-                        style: {
-                            'background-color': 'grey',
-                            'label' : function(elem){
-                                return elem.data('id') + '\n' + elem.data('rel')},
-                            'color': 'green',
-                            'font-size': '25px',
-                            'text-wrap': 'wrap'
-                        }
-                    },
-                    {
-                        selector: 'edge',
-                        style: {
-                            'width': 2,
-                            'line-color': '#ccc',
-                            'label': 'data(label)',
-                            'font-size': '10px',
-                            'text-justification': 'left',
-                            'text-margin-x': 5,
-                            'color': 'red' // Change label color here
-                        }
-                    }
-                ],
-                layout: {
-                    name: dummy,
-                    avoidOverlap: true,  // Enable to prevent overlapping
-            nodeOverlap: 0,  // Adjust the amount of overlap allowed (0 means no overlap)
-            spacingFactor: 3,  // Increase the spacing between nodes
-            animate: false,  // Smooth transition when layout changes
-            
-                }
-            });
+        ],
+        layout: {
+            name: dummy,
+            avoidOverlap: true,
+            nodeOverlap: 0,
+            spacingFactor: 3,
+            animate: false,
         }
+    });
+}
+
 
         function downloadJSON() {
             const jsonStr = JSON.stringify(graph, null, 2);
