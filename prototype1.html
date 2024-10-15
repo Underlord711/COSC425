@@ -217,18 +217,18 @@
             version++;
 
             // update edge
-            if (weight === 0 || str.toLowerCase() === 'x') { 
-                delete graph['version'+version][source][target];
-                delete graph['version'+version][target][source];
-            } else if (!isNaN(weight) && weight > 0) {                
+            if (weight === 0 || str.toLowerCase() === 'x') {
+                delete graph['version' + version][source][target];
+                delete graph['version' + version][target][source];
+            } else if (!isNaN(weight) && weight > 0) {
                 graph['version' + version][source][target] = weight;
-                graph['version' + version][target][source] = weight; 
+                graph['version' + version][target][source] = weight;
             } else {
                 alert("Invalid weight. Please enter a positive number or zero.");
             }
 
             // update display
-            drawCytoscapeGraph(); 
+            drawCytoscapeGraph();
             displayGraph();
             document.getElementById('versionDisplay').innerText = version;
         }
@@ -327,19 +327,96 @@
         }
 
         function runAlgorithm() {
-            graph['version'+(version+1)] = JSON.parse(JSON.stringify(graph['version'+version]));
-            version++;
-            document.getElementById('versionDisplay').innerText = version; // Update displayed version
-            for (const [source, edges] of Object.entries(graph['version'+version])){
-                for (const [destination, weight] of Object.entries(edges)){
-                    if (destination=='weight'){
-                        continue;
-                    }
-                    graph['version'+version][source][destination]*=2;                
-                }
+            // select a random source node
+            const nodes = Object.keys(graph['version' + version]);
+            const source = nodes[Math.floor(Math.random() * nodes.length)];
+
+            // get the edges of the selected source node
+            const edges = graph['version' + version][source];
+
+            // select a random target node that does not lead back to the source node
+            let target;
+            const targetNodes = Object.keys(edges);
+            do {
+                target = targetNodes[Math.floor(Math.random() * targetNodes.length)];
+            } while (target === 'weight' || target === source);
+
+            // find weights of the source and target nodes, and the edge weight
+            const sourceWeight = graph['version' + version][source]['weight'];
+            const targetWeight = graph['version' + version][target]['weight'];
+            const edgeWeight = edges[target];
+
+            // find difference in node opinion and compare with edge weight
+            let weightDiff = sourceWeight > targetWeight ? (sourceWeight - targetWeight) : (targetWeight - sourceWeight);
+            weightDiff = parseFloat(weightDiff.toFixed(2));
+            let newWeight = -1;
+
+            // update graph
+            if (weightDiff > edgeWeight) {
+                newWeight = 0;
+                alert(`Source node: ${source} with weight: ${sourceWeight}\nTarget node: ${target} with weight: ${targetWeight}\nEdge weight between ${source} and ${target}: ${edgeWeight}
+                    \nWeight Difference: ${weightDiff}\nNew Weight: ${newWeight}`);
+                
+                updateWeight(source, target, newWeight);
+                replaceEdge(source, target);
+            } else {
+                graph['version' + (version + 1)] = JSON.parse(JSON.stringify(graph['version' + version]));
+                version++;
+                document.getElementById('versionDisplay').innerText = version; // Update displayed version
+
+                let avg = (parseFloat(sourceWeight) + parseFloat(targetWeight)) / 2;
+                avg = avg.toFixed(2);
+                graph['version' + version][source].weight = avg;
+                graph['version' + version][target].weight = avg;
+                alert(`Source node: ${source} with weight: ${sourceWeight}\nTarget node: ${target} with weight: ${targetWeight}\nEdge weight between ${source} and ${target}: ${edgeWeight}
+                    \nWeight Difference: ${weightDiff}\nNew Opinion: ${avg}`);
             }
-            displayGraph();
+
+            // update display
             drawCytoscapeGraph();
+            displayGraph();
+        }
+
+        function replaceEdge(source, target) {
+            // graph['version' + (version + 1)] = JSON.parse(JSON.stringify(graph['version' + version]));
+            // version++;
+            const nodes = Object.keys(graph['version' + version]);
+            let sourceNode, targetNode;
+
+            // get weights from page
+            const weight1 = parseFloat(document.getElementById('weight1').value);
+            const weight2 = parseFloat(document.getElementById('weight2').value);
+            let weightS, weightT;
+
+            // find source and initialize if it doesn't exist
+            do {
+                sourceNode = nodes[Math.floor(Math.random() * nodes.length)];
+            } while (sourceNode === source || sourceNode === target || graph['version' + version][source][sourceNode]);
+
+            if (!graph['version' + version][sourceNode]) {
+                graph['version' + version][sourceNode] = {};
+            }
+
+            // add new edge to source
+            weightS = Math.random() < 0.5 ? weight1 : weight2;
+            graph['version'+version][source][sourceNode] = weightS;
+            graph['version'+version][sourceNode][source] = weightS;
+
+            // repeat for target (preventing second new edge to sourceNode)
+            do {
+                targetNode = nodes[Math.floor(Math.random() * nodes.length)];
+            } while (targetNode === source || targetNode === target || targetNode === sourceNode 
+                    || graph['version' + version][target][targetNode]);
+
+            if (!graph['version' + version][targetNode]) {
+                graph['version' + version][targetNode] = {};
+            }
+
+            weightT = Math.random() < 0.5 ? weight1 : weight2;
+            graph['version'+version][target][targetNode] = weightT;
+            graph['version'+version][targetNode][target] = weightT;
+
+            alert(`${source} to ${sourceNode} = ${weightS}\n${target} to ${targetNode} = ${weightT}`);
         }
 
         function previous() {
