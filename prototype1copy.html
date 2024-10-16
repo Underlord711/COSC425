@@ -46,13 +46,13 @@
 
             <div>
                 <label for="weight1" class="block text-sm font-medium">Weight for Edge Type 1:</label>
-                <input type="number" id="weight1" value="1" required
+                <input type="number" id="weight1" value=".2" required
                     class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2">
             </div>
 
             <div>
                 <label for="weight2" class="block text-sm font-medium">Weight for Edge Type 2:</label>
-                <input type="number" id="weight2" value="2" required
+                <input type="number" id="weight2" value=".9" required
                     class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2">
             </div>
 
@@ -342,49 +342,73 @@
             const sourceWeight = graph['version' + version][source]['weight'];
             const targetWeight = graph['version' + version][target]['weight'];
             const edgeWeight = edges[target];
+            let weightDiff = sourceWeight > targetWeight ? (sourceWeight - targetWeight) : (targetWeight - sourceWeight);
+            weightDiff = parseFloat(weightDiff.toFixed(2));
 
-            const sourceLabel = source.charCodeAt(0); // Convert node label to ASCII
-            const targetLabel = target.charCodeAt(0);
+            let result = relation_eval(sourceWeight, targetWeight, edgeWeight);
 
-            // Package each node as a tuple (array in JS)
-            const node1 = [sourceLabel, sourceWeight];  // ['A', 1.0]
-            const node2 = [targetLabel, targetWeight];  // ['B', 0.8]
+            if (result === 0) {
+                alert(`Source node: ${source} with weight: ${sourceWeight}\nTarget node: ${target} with weight: ${targetWeight}\nEdge weight between ${source} and ${target}: ${edgeWeight}
+                    \nWeight Difference: ${weightDiff}\nNew Weight: ${result}`);
+                
+                updateWeight(source, target, result);
+                replaceEdge(source, target);
+            } else {
+                graph['version' + (version + 1)] = JSON.parse(JSON.stringify(graph['version' + version]));
+                version++;
+                document.getElementById('versionDisplay').innerText = version; // Update displayed version
 
-            // Create the final input tuple (as an array)
-            const inputTuple = [node1, node2, edgeWeight]; // [[label1, weight1], [label2, weight2], edgeWeight]
+                let avg = (parseFloat(sourceWeight) + parseFloat(targetWeight)) / 2;
+                avg = avg.toFixed(2);
+                graph['version' + version][source].weight = avg;
+                graph['version' + version][target].weight = avg;
+                alert(`Source node: ${source} with weight: ${sourceWeight}\nTarget node: ${target} with weight: ${targetWeight}\nEdge weight between ${source} and ${target}: ${edgeWeight}
+                    \nWeight Difference: ${weightDiff}\nNew Opinion: ${avg}`);
+            }
 
-            const result = relation_eval(inputTuple);
-            alert(`${result}`);
-
-            // // Unpack the result from the returned array
-            // const [node1Result, node2Result, newEdgeWeight] = result;
-            // const [label1, weight1] = node1Result;
-            // const [label2, weight2] = node2Result;
-
-            // alert(`New Weight between ${String.fromCharCode(label1)} and ${String.fromCharCode(label2)}: ${newEdgeWeight}`);
-
-            // // Use the WASM result to update the graph
-            // let newWeight;
-            // if (result === 0) {
-            //     newWeight = 0;
-            // } else {
-            //     newWeight = edgeWeight + 0.5;
-            // }
-
-            // updateWeight(source, target, newWeight);
-
-            // // Display the result
-            // alert(`Source: ${source} (Weight: ${sourceWeight})
-            // Target: ${target} (Weight: ${targetWeight})
-            // Edge: ${edgeWeight}
-            // WASM Result: ${result}
-            // New Weight: ${newWeight}`);
-
-            // // Update the graph display
-            // displayGraph();
-            // drawCytoscapeGraph();
+            displayGraph();
+            drawCytoscapeGraph();
         }
 
+        function replaceEdge(source, target) {
+            const nodes = Object.keys(graph['version' + version]);
+            let sourceNode, targetNode;
+
+            // get weights from page
+            const weight1 = parseFloat(document.getElementById('weight1').value);
+            const weight2 = parseFloat(document.getElementById('weight2').value);
+            let weightS, weightT;
+
+            // find source and initialize if it doesn't exist
+            do {
+                sourceNode = nodes[Math.floor(Math.random() * nodes.length)];
+            } while (sourceNode === source || sourceNode === target || graph['version' + version][source][sourceNode]);
+
+            if (!graph['version' + version][sourceNode]) {
+                graph['version' + version][sourceNode] = {};
+            }
+
+            // add new edge to source
+            weightS = Math.random() < 0.5 ? weight1 : weight2;
+            graph['version'+version][source][sourceNode] = weightS;
+            graph['version'+version][sourceNode][source] = weightS;
+
+            // repeat for target (preventing second new edge to sourceNode)
+            do {
+                targetNode = nodes[Math.floor(Math.random() * nodes.length)];
+            } while (targetNode === source || targetNode === target || targetNode === sourceNode 
+                    || graph['version' + version][target][targetNode]);
+
+            if (!graph['version' + version][targetNode]) {
+                graph['version' + version][targetNode] = {};
+            }
+
+            weightT = Math.random() < 0.5 ? weight1 : weight2;
+            graph['version'+version][target][targetNode] = weightT;
+            graph['version'+version][targetNode][target] = weightT;
+
+            alert(`${source} to ${sourceNode} = ${weightS}\n${target} to ${targetNode} = ${weightT}`);
+        }
 
         function previous() {
             version--;
@@ -425,12 +449,12 @@
                 window.relation_eval = Module.cwrap(
                     'relation_eval',
                     'number', // Return type: number (pointer to float)
-                    [[['number', 'number'], ['number', 'number'], 'number']] // Input types
+                    ['number', 'number', 'number'] // Input types
                 );
             }
         };
     </script>
-    <script src="ValAlg.js"></script>
+    <script src="ValAlgTest.js"></script>
 
 </body>
 
