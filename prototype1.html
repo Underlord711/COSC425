@@ -274,46 +274,6 @@ th.row-sticky {
     });
 }
 
-            const cy = cytoscape({
-                container: document.getElementById('cy'),
-                elements: elements,          
-                style: [
-                    {
-                        selector: 'node',
-                        style: {
-                            'background-color': 'grey',
-                            'label' : function(elem){
-                                return elem.data('id') + '\n' + elem.data('rel')},
-                            'color': 'green',
-                            'font-size': '25px',
-                            'text-wrap': 'wrap'
-                        }
-                    },
-                    {
-                        selector: 'edge',
-                        style: {
-                            'width': 2,
-                            'line-color': '#ccc',
-                            'label': 'data(label)',
-                            'font-size': '10px',
-                            'text-justification': 'left',
-                            'text-margin-x': 5,
-                            'color': 'red' // Change label color here
-                        }
-                    }
-                ],
-                layout: {
-                    name: dummy,
-                }
-            });
-            
-            cy.on('tap', 'node', function(evt){
-                var node = evt.target;
-                for (const [destination, weight] of Object.entries(graph['version'+version][node.id()])){
-                    console.log(destination + ' : ' + weight);
-                }
-            });
-        
 
         function downloadJSON() {
             const jsonStr = JSON.stringify(graph, null, 2);
