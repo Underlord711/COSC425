@@ -593,7 +593,13 @@
 			displayGraph();
 			drawCytoscapeGraph();
 		}
-
+=======
+        $('#offBody').on('blur', function(){
+            let tempStr = $('#offBody').html();
+            let tempArr = tempStr.split('<br>');
+            tempArr.splice(1, tempArr.indexOf('Past Edges : '));
+            console.log(tempArr);
+        });
 	</script>
 
 </body>
