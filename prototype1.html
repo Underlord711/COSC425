@@ -318,10 +318,18 @@ th.row-sticky {
                 for (const [destination, weight] of Object.entries(graph['version'+version][node.id()])){
                     text=destination + ' : ' + weight;
                     h2.insertAdjacentHTML("beforeend", text + "<br>");
+                    //$("#offBody").html(text+"<br>");
                 }
             });
+            cy.on('tap', 'edge', function(evt){
+                let text;
+                var edge = evt.target;
+                console.log(edge.data());
+                console.log("Source : " + edge.data('source'));
+                console.log("Destination : " + edge.data('target'));
+                console.log("Weight : " + edge.data('label'));
+            });
 }
-
 
         function downloadJSON() {
             const jsonStr = JSON.stringify(graph, null, 2);
@@ -357,6 +365,7 @@ th.row-sticky {
                     document.getElementById('downloadBtn').style.display = 'inline';
                     document.getElementById('updateBtn').style.display = 'inline';
                     document.getElementById('runAlgorithm').style.display = 'inline';
+                    //$(".onUpdate").style.display = 'inline';
                 } catch (e) {
                     alert("Error parsing JSON: " + e.message);
                 }
