@@ -69,9 +69,11 @@
                 <button onclick="updateDisplay()" style="display:none;" id="updateBtn"
                     class="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600 focus:outline-none">Switch
                     Display</button>
-                <button onclick="runAlgorithm()" style="display:none;" id="runAlgorithm"
+                <button onclick="runAlgorithm(parseInt(document.getElementById('inputValue').value))"
+                    style="display:none;" id="runAlgorithm"
                     class="bg-pink-500 text-white px-4 py-2 rounded hover:bg-pink-600 focus:outline-none">Run
                     Algorithm</button>
+                <input type="number" id="inputValue" value="1" class="border px-2 py-1 rounded" style="display:none;">
             </div>
 
             <div class="mt-4">
@@ -174,6 +176,7 @@
             document.getElementById('downloadBtn').style.display = 'inline';
             document.getElementById('updateBtn').style.display = 'inline';
             document.getElementById('runAlgorithm').style.display = 'inline';
+            document.getElementById('inputValue').style.display = 'inline';
         }
 
         function toggleMatrix() {
@@ -333,64 +336,67 @@
             reader.readAsText(file);
         }
 
-        function runAlgorithm() {
+        function runAlgorithm(number) {
             // select a random source node
-            const nodes = Object.keys(graph['version' + version]);
-            let source;
-            do {
-                source = nodes[Math.floor(Math.random() * nodes.length)];
-            } while (source === 'weight' || source === 'changes');
 
-            // get the edges of the selected source node
-            const edges = graph['version' + version][source];
+            for (let i = 0; i < number; i++) {
+                const nodes = Object.keys(graph['version' + version]);
+                let source;
+                do {
+                    source = nodes[Math.floor(Math.random() * nodes.length)];
+                } while (source === 'weight' || source === 'changes');
 
-            // select a random target node that does not lead back to the source node
-            let target;
-            const targetNodes = Object.keys(edges);
-            do {
-                target = targetNodes[Math.floor(Math.random() * targetNodes.length)];
-            } while (target === 'weight' || target === source || target === 'changes');
+                // get the edges of the selected source node
+                const edges = graph['version' + version][source];
 
-            // find weights of the source and target nodes, and the edge weight
-            const sourceWeight = graph['version' + version][source]['weight'];
-            const targetWeight = graph['version' + version][target]['weight'];
-            const edgeWeight = edges[target];
+                // select a random target node that does not lead back to the source node
+                let target;
+                const targetNodes = Object.keys(edges);
+                do {
+                    target = targetNodes[Math.floor(Math.random() * targetNodes.length)];
+                } while (target === 'weight' || target === source || target === 'changes');
 
-            // find difference in node opinion and compare with edge weight
-            let weightDiff = sourceWeight > targetWeight ? (sourceWeight - targetWeight) : (targetWeight - sourceWeight);
-            weightDiff = parseFloat(weightDiff.toFixed(2));
-            let newWeight = -1;
+                // find weights of the source and target nodes, and the edge weight
+                const sourceWeight = graph['version' + version][source]['weight'];
+                const targetWeight = graph['version' + version][target]['weight'];
+                const edgeWeight = edges[target];
 
-            // update graph
-            if (weightDiff > edgeWeight) {
-                newWeight = 0;
+                // find difference in node opinion and compare with edge weight
+                let weightDiff = sourceWeight > targetWeight ? (sourceWeight - targetWeight) : (targetWeight - sourceWeight);
+                weightDiff = parseFloat(weightDiff.toFixed(2));
+                let newWeight = -1;
 
-                alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${sourceWeight}) ${source} --(${newWeight})-- ${target} (${targetWeight})`);
-                
-                updateWeight(source, target, newWeight);
+                // update graph
+                if (weightDiff > edgeWeight) {
+                    newWeight = 0;
 
-                let changesString = `${source} -${edgeWeight}- ${target} - broken`;
-                graph['version' + version]['changes'] = {};
-                graph['version' + version]['changes'].c1 = changesString;
+                    alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${sourceWeight}) ${source} --(${newWeight})-- ${target} (${targetWeight})`);
 
-                replaceEdge(source, target);
-            } else {
-                graph['version' + (version + 1)] = JSON.parse(JSON.stringify(graph['version' + version]));
-                version++;
-                document.getElementById('versionDisplay').innerText = version; // Update displayed version
+                    updateWeight(source, target, newWeight);
 
-                let avg = (parseFloat(sourceWeight) + parseFloat(targetWeight)) / 2;
-                avg = avg.toFixed(2);
-                graph['version' + version][source].weight = avg;
-                graph['version' + version][target].weight = avg;
+                    let changesString = `${source} -${edgeWeight}- ${target} - broken`;
+                    graph['version' + version]['changes'] = {};
+                    graph['version' + version]['changes'].c1 = changesString;
 
-                // reset changes then update
-                graph['version' + version]['changes'] = {};
+                    replaceEdge(source, target);
+                } else {
+                    graph['version' + (version + 1)] = JSON.parse(JSON.stringify(graph['version' + version]));
+                    version++;
+                    document.getElementById('versionDisplay').innerText = version; // Update displayed version
 
-                let changesString = `${source} ${sourceWeight} & ${target} ${targetWeight} - ${avg}`;
-                graph['version' + version]['changes'].c1 = changesString;
+                    let avg = (parseFloat(sourceWeight) + parseFloat(targetWeight)) / 2;
+                    avg = avg.toFixed(2);
+                    graph['version' + version][source].weight = avg;
+                    graph['version' + version][target].weight = avg;
 
-                alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${avg}) ${source} --(${edgeWeight})-- ${target} (${avg})`);
+                    // reset changes then update
+                    graph['version' + version]['changes'] = {};
+
+                    let changesString = `${source} ${sourceWeight} & ${target} ${targetWeight} - ${avg}`;
+                    graph['version' + version]['changes'].c1 = changesString;
+
+                    alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${avg}) ${source} --(${edgeWeight})-- ${target} (${avg})`);
+                }
             }
 
             // update display
@@ -410,8 +416,8 @@
             // find source and initialize if it doesn't exist
             do {
                 sourceNode = nodes[Math.floor(Math.random() * nodes.length)];
-            } while (sourceNode === source || sourceNode === target 
-                    || graph['version' + version][source][sourceNode] || sourceNode === 'changes');
+            } while (sourceNode === source || sourceNode === target
+            || graph['version' + version][source][sourceNode] || sourceNode === 'changes');
 
             if (!graph['version' + version][sourceNode]) {
                 graph['version' + version][sourceNode] = {};
@@ -419,8 +425,8 @@
 
             // add new edge to source
             weightS = Math.random() < 0.5 ? weight1 : weight2;
-            graph['version'+version][source][sourceNode] = weightS;
-            graph['version'+version][sourceNode][source] = weightS;
+            graph['version' + version][source][sourceNode] = weightS;
+            graph['version' + version][sourceNode][source] = weightS;
 
             let changesString = `${source} -${weightS}- ${sourceNode} - made`;
             graph['version' + version]['changes'].c2 = changesString;
@@ -428,20 +434,20 @@
             // repeat for target (preventing second new edge to sourceNode)
             do {
                 targetNode = nodes[Math.floor(Math.random() * nodes.length)];
-            } while (targetNode === source || targetNode === target || targetNode === sourceNode 
-                    || graph['version' + version][target][targetNode] || targetNode === 'changes');
+            } while (targetNode === source || targetNode === target || targetNode === sourceNode
+            || graph['version' + version][target][targetNode] || targetNode === 'changes');
 
             if (!graph['version' + version][targetNode]) {
                 graph['version' + version][targetNode] = {};
             }
 
             weightT = Math.random() < 0.5 ? weight1 : weight2;
-            graph['version'+version][target][targetNode] = weightT;
-            graph['version'+version][targetNode][target] = weightT;
+            graph['version' + version][target][targetNode] = weightT;
+            graph['version' + version][targetNode][target] = weightT;
 
             changesString = `${target} -${weightT}- ${targetNode} - made`;
             graph['version' + version]['changes'].c3 = changesString;
-            
+
             alert(`made ${source} --(${weightS})-- ${sourceNode}\nmade ${target} --(${weightT})-- ${targetNode}`);
         }
 
