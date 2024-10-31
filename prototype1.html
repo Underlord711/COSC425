@@ -9,6 +9,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.21.0/cytoscape.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <style>
 /* Sticky column headers */
 th.sticky {
@@ -65,16 +66,16 @@ th.row-sticky {
                     class="bg-indigo-500 text-white px-4 py-2 rounded hover:bg-indigo-600 focus:outline-none">Generate
                     Graph</button>
                 <button onclick="toggleMatrix()" style="display:none;" id="matrixBtn"
-                    class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 focus:outline-none">Show
+                    class="updateClass bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 focus:outline-none">Show
                     Matrix</button>
                 <button onclick="downloadJSON()" style="display:none;" id="downloadBtn"
-                    class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 focus:outline-none">Download
+                    class="updateClass bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 focus:outline-none">Download
                     JSON</button>
                 <button onclick="updateDisplay()" style="display:none;" id="updateBtn"
-                    class="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600 focus:outline-none">Switch
+                    class="updateClass bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600 focus:outline-none">Switch
                     </button>
                 <button onclick="runAlgorithm()" style="display:none;" id="runAlgorithm"
-                    class="bg-pink-500 text-white px-4 py-2 rounded hover:bg-pink-600 focus:outline-none">Run
+                    class="updateClass bg-pink-500 text-white px-4 py-2 rounded hover:bg-pink-600 focus:outline-none">Run
                     Algorithm</button>
             </div>
 
@@ -180,12 +181,8 @@ th.row-sticky {
                 }
             }
 
-            displayGraph();
-            drawCytoscapeGraph();
-            document.getElementById('matrixBtn').style.display = 'inline';
-            document.getElementById('downloadBtn').style.display = 'inline';
-            document.getElementById('updateBtn').style.display = 'inline';
-            document.getElementById('runAlgorithm').style.display = 'inline';
+            refresh();
+            $('.updateClass').css('display','inline');
         }
 
         function toggleMatrix() {
@@ -243,9 +240,8 @@ th.row-sticky {
             }
 
             // update display
-            drawCytoscapeGraph();
-            displayGraph();
-            document.getElementById('versionDisplay').innerText = version;
+            refresh();
+            $('versionDisplay').text(version);
         }
 
 
@@ -307,18 +303,14 @@ th.row-sticky {
             cy.on('tap', 'node', function(evt){
                 let text;
                 var node = evt.target;
-                const h2 = document.getElementById("offBody");
-                const h3 = document.getElementById("offcanvasScrollingLabel");
                 var offcanvasElement = document.getElementById('offcanvasScrolling');
-                var bsOffcanvas = new bootstrap.Offcanvas(offcanvasElement); // Create an Offcanvas instance
-                bsOffcanvas.show(); // Show the offcanvas
-                h2.innerHTML="";
-                h3.innerHTML="Node: ";
-                h3.insertAdjacentText("beforeend", node.id());
+                var bsOffcanvas = new bootstrap.Offcanvas(offcanvasElement);
+                bsOffcanvas.show();
+                $('#offBody').text('');
+                $('#offcanvasScrollingLabel').html('Node: ' + node.id());
                 for (const [destination, weight] of Object.entries(graph['version'+version][node.id()])){
                     text=destination + ' : ' + weight;
-                    h2.insertAdjacentHTML("beforeend", text + "<br>");
-                    //$("#offBody").html(text+"<br>");
+                    $("#offBody").append(text+"<br>");
                 }
             });
             cy.on('tap', 'edge', function(evt){
@@ -361,11 +353,7 @@ th.row-sticky {
                     document.getElementById('versionDisplay').innerText = version; // Update displayed version
                     displayGraph();
                     drawCytoscapeGraph();
-                    document.getElementById('matrixBtn').style.display = 'inline';
-                    document.getElementById('downloadBtn').style.display = 'inline';
-                    document.getElementById('updateBtn').style.display = 'inline';
-                    document.getElementById('runAlgorithm').style.display = 'inline';
-                    //$(".onUpdate").style.display = 'inline';
+                    $('.updateClass').css('display','inline');
                 } catch (e) {
                     alert("Error parsing JSON: " + e.message);
                 }
@@ -420,8 +408,7 @@ th.row-sticky {
             }
 
             // update display
-            drawCytoscapeGraph();
-            displayGraph();
+            refresh();
         }
 
 
@@ -470,9 +457,8 @@ th.row-sticky {
         function previous() {
             version--;
             if (version > 0) {
-                document.getElementById('versionDisplay').innerText = version; // Update displayed version
-                displayGraph();
-                drawCytoscapeGraph();
+                $('#versionDisplay').text(version);
+                refresh();
             }
             else {
                 version++;
@@ -482,14 +468,19 @@ th.row-sticky {
         function next() {
             version++;
             if (version <= Object.keys(graph).length) {
-                document.getElementById('versionDisplay').innerText = version; // Update displayed version
-                displayGraph();
-                drawCytoscapeGraph();
+                $('#versionDisplay').text(version);
+                refresh();
             }
             else {
                 version--;
             }
         }
+
+        function refresh(){
+            displayGraph();
+            drawCytoscapeGraph();
+        }
+
     </script>
 
 </body>
