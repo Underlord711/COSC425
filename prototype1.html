@@ -292,10 +292,10 @@ th.row-sticky {
                 ],
                 layout: {
                     name: dummy,
-                    avoidOverlap: true,  // Enable to prevent overlapping
-            nodeOverlap: 0,  // Adjust the amount of overlap allowed (0 means no overlap)
-            spacingFactor: 3,  // Increase the spacing between nodes
-            animate: false,  // Smooth transition when layout changes
+                    avoidOverlap: true, 
+            nodeOverlap: 0,  
+            spacingFactor: 3,  
+            animate: false,
             
                 }
             });
@@ -316,10 +316,11 @@ th.row-sticky {
             cy.on('tap', 'edge', function(evt){
                 let text;
                 var edge = evt.target;
-                console.log(edge.data());
-                console.log("Source : " + edge.data('source'));
-                console.log("Destination : " + edge.data('target'));
-                console.log("Weight : " + edge.data('label'));
+                $('#offBody').text('');
+                $('#offcanvasScrollingLabel').html('Edge: ' + edge.data('id'));
+                $('#offBody').append("Source : " + edge.data('source') + '<br>');
+                $('#offBody').append("Destination : " + edge.data('target')+ '<br>');
+                $('#offBody').append("Weight : " + edge.data('label')+ '<br>');
             });
 }
 
