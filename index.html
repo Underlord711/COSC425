@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,7 +10,33 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.21.0/cytoscape.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-   
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <style>
+/* Sticky column headers */
+th.sticky {
+    position: sticky;
+    top: 0;
+    background-color: white;
+    z-index: 1;
+}
+
+/* Sticky row headers */
+th.row-sticky {
+    position: sticky;
+    left: 0;
+    background-color: white;
+    z-index: 2; /* Ensure row headers are above other content, including sticky column headers */
+    box-shadow: 2px 0 2px -2px rgba(0, 0, 0, 0.2); /* Optional shadow for better visibility */
+}
+
+/* Set a fixed height for the matrix container */
+#matrixContainer {
+    max-height: 300px; /* Adjust height as needed */
+    overflow-y: auto; /* Enable vertical scrolling */
+    overflow-x: auto; /* Enable horizontal scrolling */
+}
+
+    </style>
 </head>
 
 <body class="bg-gray-100 p-6">
@@ -96,6 +123,7 @@
         let version = 1;
         let isMatrixVisible = false; // Track whether the matrix is visible or not
         let dummy = 'grid';
+        let noClass = ['weight'];
 
         function updateDisplay() {
             if (dummy == 'grid') {
@@ -156,12 +184,8 @@
                 }
             }
 
-            displayGraph();
-            drawCytoscapeGraph();
-            document.getElementById('matrixBtn').style.display = 'inline';
-            document.getElementById('downloadBtn').style.display = 'inline';
-            document.getElementById('updateBtn').style.display = 'inline';
-            document.getElementById('runAlgorithm').style.display = 'inline';
+            refresh();
+            $('.updateClass').css('display','inline');
         }
 
         function toggleMatrix() {
@@ -219,9 +243,8 @@
             }
 
             // update display
-            drawCytoscapeGraph();
-            displayGraph();
-            document.getElementById('versionDisplay').innerText = version;
+            refresh();
+            $('versionDisplay').text(version);
         }
 
 
@@ -232,7 +255,7 @@
                 elements.push({ data: { id: source, rel: edges.weight } });
                 //console.log(edges.weight);
                 for (const [destination, weight] of Object.entries(edges)) {
-                    if (destination == 'weight') {
+                    if (noClass.includes(destination)) {
                         continue;
                     }
                     if (source !== destination) {
@@ -253,7 +276,7 @@
                             'label' : function(elem){
                                 return elem.data('id') + '\n' + elem.data('rel')},
                             'color': 'green',
-                            'font-size': '25px',
+                            'font-size': '50px',
                             'text-wrap': 'wrap'
                         }
                     },
@@ -263,7 +286,7 @@
                             'width': 2,
                             'line-color': '#ccc',
                             'label': 'data(label)',
-                            'font-size': '10px',
+                            'font-size': '35px',
                             'text-justification': 'left',
                             'text-margin-x': 5,
                             'color': 'red' // Change label color here
@@ -272,10 +295,10 @@
                 ],
                 layout: {
                     name: dummy,
-                    avoidOverlap: true,  // Enable to prevent overlapping
-            nodeOverlap: 0,  // Adjust the amount of overlap allowed (0 means no overlap)
-            spacingFactor: 3,  // Increase the spacing between nodes
-            animate: false,  // Smooth transition when layout changes
+                    avoidOverlap: true, 
+            nodeOverlap: 0,  
+            spacingFactor: 3,  
+            animate: false,
             
                 }
             });
@@ -283,21 +306,26 @@
             cy.on('tap', 'node', function(evt){
                 let text;
                 var node = evt.target;
-                const h2 = document.getElementById("offBody");
-                const h3 = document.getElementById("offcanvasScrollingLabel");
                 var offcanvasElement = document.getElementById('offcanvasScrolling');
-                var bsOffcanvas = new bootstrap.Offcanvas(offcanvasElement); // Create an Offcanvas instance
-                bsOffcanvas.show(); // Show the offcanvas
-                h2.innerHTML="";
-                h3.innerHTML="Node: ";
-                h3.insertAdjacentText("beforeend", node.id());
+                var bsOffcanvas = new bootstrap.Offcanvas(offcanvasElement);
+                bsOffcanvas.show();
+                $('#offBody').text('');
+                $('#offcanvasScrollingLabel').html('Node: ' + node.id());
                 for (const [destination, weight] of Object.entries(graph['version'+version][node.id()])){
                     text=destination + ' : ' + weight;
-                    h2.insertAdjacentHTML("beforeend", text + "<br>");
+                    $("#offBody").append(text+"<br>");
                 }
             });
+            cy.on('tap', 'edge', function(evt){
+                let text;
+                var edge = evt.target;
+                $('#offBody').text('');
+                $('#offcanvasScrollingLabel').html('Edge: ' + edge.data('id'));
+                $('#offBody').append("Source : " + edge.data('source') + '<br>');
+                $('#offBody').append("Destination : " + edge.data('target')+ '<br>');
+                $('#offBody').append("Weight : " + edge.data('label')+ '<br>');
+            });
 }
-
 
         function downloadJSON() {
             const jsonStr = JSON.stringify(graph, null, 2);
@@ -329,10 +357,7 @@
                     document.getElementById('versionDisplay').innerText = version; // Update displayed version
                     displayGraph();
                     drawCytoscapeGraph();
-                    document.getElementById('matrixBtn').style.display = 'inline';
-                    document.getElementById('downloadBtn').style.display = 'inline';
-                    document.getElementById('updateBtn').style.display = 'inline';
-                    document.getElementById('runAlgorithm').style.display = 'inline';
+                    $('.updateClass').css('display','inline');
                 } catch (e) {
                     alert("Error parsing JSON: " + e.message);
                 }
@@ -387,8 +412,7 @@
             }
 
             // update display
-            drawCytoscapeGraph();
-            displayGraph();
+            refresh();
         }
 
 
@@ -437,9 +461,8 @@
         function previous() {
             version--;
             if (version > 0) {
-                document.getElementById('versionDisplay').innerText = version; // Update displayed version
-                displayGraph();
-                drawCytoscapeGraph();
+                $('#versionDisplay').text(version);
+                refresh();
             }
             else {
                 version++;
@@ -449,14 +472,19 @@
         function next() {
             version++;
             if (version <= Object.keys(graph).length) {
-                document.getElementById('versionDisplay').innerText = version; // Update displayed version
-                displayGraph();
-                drawCytoscapeGraph();
+                $('#versionDisplay').text(version);
+                refresh();
             }
             else {
                 version--;
             }
         }
+
+        function refresh(){
+            displayGraph();
+            drawCytoscapeGraph();
+        }
+
     </script>
 
 </body>
