@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -67,16 +66,16 @@ th.row-sticky {
                     class="bg-indigo-500 text-white px-4 py-2 rounded hover:bg-indigo-600 focus:outline-none">Generate
                     Graph</button>
                 <button onclick="toggleMatrix()" style="display:none;" id="matrixBtn"
-                    class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 focus:outline-none">Show
+                    class="updateClass bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 focus:outline-none">Show
                     Matrix</button>
                 <button onclick="downloadJSON()" style="display:none;" id="downloadBtn"
-                    class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 focus:outline-none">Download
+                    class="updateClass bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 focus:outline-none">Download
                     JSON</button>
                 <button onclick="updateDisplay()" style="display:none;" id="updateBtn"
-                    class="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600 focus:outline-none">Switch
+                    class="updateClass bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600 focus:outline-none">Switch
                     </button>
                 <button onclick="runAlgorithm()" style="display:none;" id="runAlgorithm"
-                    class="bg-pink-500 text-white px-4 py-2 rounded hover:bg-pink-600 focus:outline-none">Run
+                    class="updateClass bg-pink-500 text-white px-4 py-2 rounded hover:bg-pink-600 focus:outline-none">Run
                     Algorithm</button>
             </div>
 
@@ -91,19 +90,18 @@ th.row-sticky {
 
         <h2 class="text-xl font-semibold mt-6">Generated Graph:</h2>
         <div class="flex items-start">
-            <div class="flex-none mr-4">Version: <span id="versionDisplay">1</span></div>
+        <div class="flex-none mr-4">Version: <span id="versionDisplay">1</span></div>
             
             <div id="matrixContainer" class="flex-grow overflow-x-auto overflow-y-auto max-h-96 mx-4 self-center" style="display: none;">
-                <table id="graphTable" class="min-w-full table-auto border-collapse bg-white shadow-md rounded-lg text-sm">
-                </table>
-            </div>
+            <table id="graphTable" class="min-w-full table-auto border-collapse bg-white shadow-md rounded-lg text-sm">
+            </table>
+        </div>
             
             <div class="flex-none ml-auto">
                 <button onclick="previous()" id="prev" class="bg-purple-500 text-white px-2 py-2 rounded hover:bg-purple-600 focus:outline-none">Prev</button>
                 <button onclick="next()" id="next" class="bg-purple-500 text-white px-2 py-2 rounded hover:bg-purple-600 focus:outline-none">Next</button>
             </div>
         </div>
-        
 
         <div id="cy" class="border border-gray-300 mt-6" style="width: auto; height: 600px;"></div>
     </div>
