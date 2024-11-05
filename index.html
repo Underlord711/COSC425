@@ -241,7 +241,7 @@
 
 			// update display
 			refresh();
-			$('versionDisplay').text(version);
+			$('#versionDisplay').text(version);
 		}
 
 
@@ -419,8 +419,8 @@
 
 					let avg = (parseFloat(sourceWeight) + parseFloat(targetWeight)) / 2;
 					avg = avg.toFixed(2);
-					graph['version' + version][source].weight = avg;
-					graph['version' + version][target].weight = avg;
+					graph['version' + version][source]['weight'] = avg;
+					graph['version' + version][target]['weight'] = avg;
 
 					// reset changes then update
 					graph['version' + version]['changes'] = {};
@@ -473,7 +473,7 @@
 				if (sourceNode === source || sourceNode === target || graph['version' + version][source][sourceNode]) {
 					attempts++;
 					if (attempts > 100) {
-						console.log("gra valid target vertex (replace edge)");
+						console.log("Too many attempts to find valid target vertex (replace edge)");
 						changesString = `Failed to make new edge from ${source}`;
 						graph['version' + version]['changes'].c2 = changesString;
 						valid = false;
