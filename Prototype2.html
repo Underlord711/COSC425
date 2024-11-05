@@ -1,76 +1,124 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Weighted Undirected Graph Generator</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.21.0/cytoscape.min.js"></script>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-        #cy {
-            width: 800px;
-            height: 600px;
-            border: 1px solid #ccc;
-            margin-top: 20px;
-        }
-        table {
-            border-collapse: collapse;
-            width: 100%;
-            margin-top: 20px;
-        }
-        th, td {
-            border: 1px solid #ccc;
-            padding: 8px;
-            text-align: center;
-        }
-        td.editable {
-            background-color: #f9f9f9;
-            cursor: pointer;
-        }
-        td.editable:focus {
-            outline: 2px solid #66afe9;
-        }
-    </style>
+    <link rel="stylesheet" href="css/matrix.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
 </head>
-<body>
-    <h1>Weighted Undirected Graph Generator</h1>
-    <div>Version: <span id="versionDisplay">1</span></div>
-    <label for="numVertices">Number of Vertices:</label>
-    <input type="number" id="numVertices" min="4" required>
-    <br><br>
-    <label for="weight1">Weight for Edge Type 1:</label>
-    <input type="number" id="weight1" value="1" required>
-    <br><br>
-    <label for="weight2">Weight for Edge Type 2:</label>
-    <input type="number" id="weight2" value="2" required>
-    <br><br>
-    <button onclick="generateGraph()">Generate Graph</button>
-    <button onclick="runAlgorithm()">Run Algorithm</button>
-    <button onclick="downloadJSON()" style="display:none;" id="downloadBtn">Download JSON</button>
-    <br><br>
-    <input type="file" id="fileInput" accept=".json" onchange="uploadJSON()">
-    <button id="uploadBtn" style="display:none;" onclick="uploadJSON()">Upload JSON</button>
 
-    <h2>Generated Graph:</h2>
-    <table id="graphTable"></table>
-    <div id="cy"></div>
+<body class="bg-light p-4">
+    <div id="mainContent" class="container bg-white p-4 rounded shadow">
+        <h1 class="h4 mb-4 fw-bold">Weighted Undirected Graph Generator</h1>
 
+
+        <div class="mb-3">
+            <label for="numVertices" class="form-label">Number of Vertices:</label>
+            <input type="number" id="numVertices" min="4" required
+                class="form-control">
+        </div>
+
+        <div class="mb-3">
+            <label for="weight1" class="form-label">Weight for Edge Type 1:</label>
+            <input type="number" id="weight1" value="1" required
+                class="form-control">
+        </div>
+
+        <div class="mb-3">
+            <label for="weight2" class="form-label">Weight for Edge Type 2:</label>
+            <input type="number" id="weight2" value="2" required
+                class="form-control">
+        </div>
+
+        <div class="d-flex gap-2 mb-3">
+            <button onclick="generateGraph()" class="btn btn-primary">Generate Graph</button>
+            <button onclick="toggleMatrix()" style="display:none;" id="matrixBtn" class="btn btn-success">Show Matrix</button>
+            <button onclick="downloadJSON()" style="display:none;" id="downloadBtn" class="btn btn-warning">Download JSON</button>
+            <button onclick="updateDisplay()" style="display:none;" id="updateBtn" class="btn btn-secondary">Switch</button>
+            <button onclick="runAlgorithm()" style="display:none;" id="runAlgorithm" class="btn btn-danger">Run Algorithm</button>
+        </div>
+
+        <div class="mb-4">
+            <input type="file" id="fileInput" accept=".json" onchange="uploadJSON()" class="form-control">
+            <button id="uploadBtn" style="display:none;" onclick="uploadJSON()" class="btn btn-info mt-2">Upload JSON</button>
+        </div>
+
+        <h2 class="h5 mt-4">Generated Graph:</h2>
+        <div class="d-flex align-items-start">
+            <div class="me-4">Version: <span id="versionDisplay">1</span></div>
+
+            <div id="matrixContainer" class="overflow-auto mx-4 flex-grow-1" style="display: none; max-height: 400px;">
+                <table id="graphTable" class="table table-striped table-bordered">
+                </table>
+            </div>
+
+            <div class="ms-auto">
+                <button onclick="previous()" id="prev" class="btn btn-secondary">Prev</button>
+                <button onclick="next()" id="next" class="btn btn-secondary">Next</button>
+            </div>
+        </div>
+
+
+        <div id="cy" class="border mt-4" style="height: 600px;"></div>
+    </div>
+
+    <div class="offcanvas offcanvas-start" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel"style="width: 130px;">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasScrollingLabel">Node:</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body" id="offBody">
+            <p></p>
+        </div>
+    </div>
     <script>
+                function setupSidebarAdjustment() {
+            var offcanvasElement = document.getElementById('offcanvasScrolling');
+            var mainContent = document.getElementById('mainContent');
+
+            function adjustMainContentMargin(show) {
+                mainContent.style.marginLeft = show ? '100px' : '0'; // Adjust to width of the sidebar
+            }
+
+            offcanvasElement.addEventListener('show.bs.offcanvas', function () {
+                adjustMainContentMargin(true);
+            });
+
+            offcanvasElement.addEventListener('hide.bs.offcanvas', function () {
+                adjustMainContentMargin(false);
+            });
+        }
+
+        // Initialize sidebar adjustment when the DOM is loaded
+        document.addEventListener('DOMContentLoaded', setupSidebarAdjustment);
         let graph = {};
         let version = 1;
+        let isMatrixVisible = false; // Track whether the matrix is visible or not
+        let dummy = 'grid';
+
+        function updateDisplay() {
+            if (dummy == 'grid') {
+                dummy = 'circle';
+            }
+            else {
+                dummy = 'grid';
+            }
+            drawCytoscapeGraph();
+        }
 
         function generateGraph() {
             const numVertices = parseInt(document.getElementById('numVertices').value);
             const weight1 = parseFloat(document.getElementById('weight1').value);
             const weight2 = parseFloat(document.getElementById('weight2').value);
-
-            graph = { version, graph: {} };
+            graph = {version1:{}};
             for (let i = 0; i < numVertices; i++) {
                 const vertex = String.fromCharCode(65 + i);
-                graph.graph[vertex] = {};
+                graph['version' + version][vertex] = { weight: Math.random().toFixed(2) }; //Initialing the object for each vertex.
             }
 
             const edgesCount = Array(numVertices).fill(0);
@@ -95,7 +143,7 @@
                     destinationIndex === sourceIndex || // Prevent self-loops
                     edgesCount[sourceIndex] >= maxEdgesPerVertex ||
                     edgesCount[destinationIndex] >= maxEdgesPerVertex ||
-                    graph.graph[String.fromCharCode(65 + sourceIndex)][String.fromCharCode(65 + destinationIndex)]
+                    graph.version1[String.fromCharCode(65 + sourceIndex)][String.fromCharCode(65 + destinationIndex)]
                 );
 
                 if (edgesCount[sourceIndex] < maxEdgesPerVertex && edgesCount[destinationIndex] < maxEdgesPerVertex) {
@@ -103,8 +151,8 @@
                     const destination = String.fromCharCode(65 + destinationIndex);
                     const weight = Math.random() < 0.5 ? weight1 : weight2;
 
-                    graph.graph[source][destination] = weight;
-                    graph.graph[destination][source] = weight;
+                    graph['version' + version][source][destination] = weight;
+                    graph['version' + version][destination][source] = weight;
 
                     edgesCount[sourceIndex]++;
                     edgesCount[destinationIndex]++;
@@ -114,69 +162,85 @@
 
             displayGraph();
             drawCytoscapeGraph();
-            document.getElementById('versionDisplay').innerText = graph.version; // Display version
+            document.getElementById('matrixBtn').style.display = 'inline';
             document.getElementById('downloadBtn').style.display = 'inline';
+            document.getElementById('updateBtn').style.display = 'inline';
+            document.getElementById('runAlgorithm').style.display = 'inline';
         }
 
-        function runAlgorithm() {
-            // Example algorithm: simply increment the version
-            graph.version++;
-            document.getElementById('versionDisplay').innerText = graph.version; // Update displayed version
-            // Additional algorithm logic can be added here
-            alert("Algorithm has been run. Version incremented.");
+        function toggleMatrix() {
+            const matrixContainer = document.getElementById('matrixContainer');
+            isMatrixVisible = !isMatrixVisible;
+            matrixContainer.style.display = isMatrixVisible ? 'block' : 'none';
         }
 
         function displayGraph() {
-            const table = document.getElementById('graphTable');
-            table.innerHTML = ''; // Clear previous content
+    const table = document.getElementById('graphTable');
+    table.innerHTML = ''; // Clear previous content
 
-            // Create header row
-            const headerRow = document.createElement('tr');
-            headerRow.innerHTML = '<th></th>'; // Top-left cell empty
-            for (let i = 0; i < Object.keys(graph.graph).length; i++) {
-                headerRow.innerHTML += `<th>${String.fromCharCode(65 + i)}</th>`;
-            }
-            table.appendChild(headerRow);
+    // Create header row (with an extra cell at the top-left)
+    const headerRow = document.createElement('tr');
+    headerRow.innerHTML = '<th class="border px-4 py-2 sticky"></th>'; // Top-left empty cell
+    for (let i = 0; i < Object.keys(graph['version'+version]).length; i++) {
+        headerRow.innerHTML += `<th class="border px-4 py-2 text-center sticky">${String.fromCharCode(65 + i)}</th>`;
+    }
+    table.appendChild(headerRow);
 
-            // Create rows for each vertex
-            for (const [vertex, edges] of Object.entries(graph.graph)) {
-                const row = document.createElement('tr');
-                row.innerHTML = `<td>${vertex}</td>`;
-                for (const targetVertex of Object.keys(graph.graph)) {
-                    if (vertex === targetVertex) {
-                        row.innerHTML += '<td>x</td>'; // Self-loop indicator
-                    } else {
-                        const weight = edges[targetVertex] !== undefined ? edges[targetVertex] : 'x';
-                        row.innerHTML += `<td class="editable" contenteditable="true" onblur="updateWeight('${vertex}', '${targetVertex}', this.innerText)">${weight}</td>`;
-                    }
-                }
-                table.appendChild(row);
-            }
-        }
-
-        function updateWeight(source, destination, weightStr) {
-            const weight = parseFloat(weightStr);
-            if (!isNaN(weight) && weight > 0) {
-                graph.graph[source][destination] = weight;
-                graph.graph[destination][source] = weight; // Ensure undirected edge
-                drawCytoscapeGraph(); // Redraw graph
-            } else if (weightStr === 'x') {
-                delete graph.graph[source][destination];
-                delete graph.graph[destination][source]; // Remove the edge
-                drawCytoscapeGraph(); // Redraw graph
+    // Create rows for each vertex
+    for (const [vertex, edges] of Object.entries(graph['version'+version])) {
+        const row = document.createElement('tr');
+        row.innerHTML = `<th class="border px-4 py-2 text-center row-sticky">${vertex}</th>`; // Row header with sticky class
+        for (const targetVertex of Object.keys(graph['version'+version])) {
+            if (vertex === targetVertex) {
+                row.innerHTML += '<td class="border px-4 py-2 text-center">x</td>'; // Self-loop indicator
             } else {
-                alert("Please enter a valid positive number or 'x' to indicate no edge.");
+                const weight = edges[targetVertex] !== undefined ? edges[targetVertex] : 'x';
+                row.innerHTML += `<td class="editable border px-4 py-2 text-center" contenteditable="true" onblur="updateWeight('${vertex}', '${targetVertex}', this.innerText)">${weight}</td>`;
             }
         }
+        table.appendChild(row);
+    }
+}
+
+
+        function updateWeight(source, target, newWeight) {
+            const weight = parseFloat(newWeight);
+            const str = String(newWeight);
+
+            // copy graph
+            graph['version' + (version + 1)] = JSON.parse(JSON.stringify(graph['version' + version]));
+            version++;
+
+            // update edge
+            if (weight === 0 || str.toLowerCase() === 'x') {
+                delete graph['version' + version][source][target];
+                delete graph['version' + version][target][source];
+            } else if (!isNaN(weight) && weight > 0) {
+                graph['version' + version][source][target] = weight;
+                graph['version' + version][target][source] = weight;
+            } else {
+                alert("Invalid weight. Please enter a positive number or zero.");
+            }
+
+            // update display
+            drawCytoscapeGraph();
+            displayGraph();
+            document.getElementById('versionDisplay').innerText = version;
+        }
+
 
         function drawCytoscapeGraph() {
-            const elements = [];
+    const elements = [];
 
-            for (const [source, edges] of Object.entries(graph.graph)) {
-                elements.push({ data: { id: source } });
+            for (const [source, edges] of Object.entries(graph['version' + version])) {
+                elements.push({ data: { id: source, rel: edges.weight } });
+                //console.log(edges.weight);
                 for (const [destination, weight] of Object.entries(edges)) {
+                    if (destination == 'weight') {
+                        continue;
+                    }
                     if (source !== destination) {
-                        elements.push({ data: { id: destination } });
+                        elements.push({ data: { id: destination, rel: graph['version' + version][destination]['weight'] } });
                         elements.push({ data: { id: `${source}-${destination}`, source: source, target: destination, label: weight.toFixed(2) } });
                     }
                 }
@@ -184,14 +248,17 @@
 
             const cy = cytoscape({
                 container: document.getElementById('cy'),
-                elements: elements,
+                elements: elements,          
                 style: [
                     {
                         selector: 'node',
                         style: {
-                            'background-color': '#666',
-                            'label': 'data(id)',
-                            'color': '#fff'
+                            'background-color': 'grey',
+                            'label' : function(elem){
+                                return elem.data('id') + '\n' + elem.data('rel')},
+                            'color': 'green',
+                            'font-size': '25px',
+                            'text-wrap': 'wrap'
                         }
                     },
                     {
@@ -208,11 +275,33 @@
                     }
                 ],
                 layout: {
-                    name: 'grid',
-                    rows: Math.ceil(Math.sqrt(Object.keys(graph.graph).length)),
+                    name: dummy,
+                    avoidOverlap: true,  // Enable to prevent overlapping
+            nodeOverlap: 0,  // Adjust the amount of overlap allowed (0 means no overlap)
+            spacingFactor: 3,  // Increase the spacing between nodes
+            animate: false,  // Smooth transition when layout changes
+            
                 }
             });
-        }
+            
+            cy.on('tap', 'node', function(evt){
+                let text;
+                var node = evt.target;
+                const h2 = document.getElementById("offBody");
+                const h3 = document.getElementById("offcanvasScrollingLabel");
+                var offcanvasElement = document.getElementById('offcanvasScrolling');
+                var bsOffcanvas = new bootstrap.Offcanvas(offcanvasElement); // Create an Offcanvas instance
+                bsOffcanvas.show(); // Show the offcanvas
+                h2.innerHTML="";
+                h3.innerHTML="Node: ";
+                h3.insertAdjacentText("beforeend", node.id());
+                for (const [destination, weight] of Object.entries(graph['version'+version][node.id()])){
+                    text=destination + ' : ' + weight;
+                    h2.insertAdjacentHTML("beforeend", text + "<br>");
+                }
+            });
+}
+
 
         function downloadJSON() {
             const jsonStr = JSON.stringify(graph, null, 2);
@@ -236,21 +325,144 @@
             }
 
             const reader = new FileReader();
-            reader.onload = function(event) {
+            reader.onload = function (event) {
                 try {
                     const json = JSON.parse(event.target.result);
                     graph = json;
-                    version = graph.version; // Update the version
-                    document.getElementById('versionDisplay').innerText = version; // Display version
+                    version = Object.keys(graph).length;
+                    document.getElementById('versionDisplay').innerText = version; // Update displayed version
                     displayGraph();
                     drawCytoscapeGraph();
+                    document.getElementById('matrixBtn').style.display = 'inline';
                     document.getElementById('downloadBtn').style.display = 'inline';
+                    document.getElementById('updateBtn').style.display = 'inline';
+                    document.getElementById('runAlgorithm').style.display = 'inline';
                 } catch (e) {
                     alert("Error parsing JSON: " + e.message);
                 }
             };
             reader.readAsText(file);
         }
+
+        function runAlgorithm() {
+            // select a random source node
+            const nodes = Object.keys(graph['version' + version]);
+            const source = nodes[Math.floor(Math.random() * nodes.length)];
+
+            // get the edges of the selected source node
+            const edges = graph['version' + version][source];
+
+            // select a random target node that does not lead back to the source node
+            let target;
+            const targetNodes = Object.keys(edges);
+            do {
+                target = targetNodes[Math.floor(Math.random() * targetNodes.length)];
+            } while (target === 'weight' || target === source);
+
+            // find weights of the source and target nodes, and the edge weight
+            const sourceWeight = graph['version' + version][source]['weight'];
+            const targetWeight = graph['version' + version][target]['weight'];
+            const edgeWeight = edges[target];
+
+            // find difference in node opinion and compare with edge weight
+            let weightDiff = sourceWeight > targetWeight ? (sourceWeight - targetWeight) : (targetWeight - sourceWeight);
+            weightDiff = parseFloat(weightDiff.toFixed(2));
+            let newWeight = -1;
+
+            // update graph
+            if (weightDiff > edgeWeight) {
+                newWeight = 0;
+                alert(`Source node: ${source} with weight: ${sourceWeight}\nTarget node: ${target} with weight: ${targetWeight}\nEdge weight between ${source} and ${target}: ${edgeWeight}
+                    \nWeight Difference: ${weightDiff}\nNew Weight: ${newWeight}`);
+                
+                updateWeight(source, target, newWeight);
+                replaceEdge(source, target);
+            } else {
+                graph['version' + (version + 1)] = JSON.parse(JSON.stringify(graph['version' + version]));
+                version++;
+                document.getElementById('versionDisplay').innerText = version; // Update displayed version
+
+                let avg = (parseFloat(sourceWeight) + parseFloat(targetWeight)) / 2;
+                avg = avg.toFixed(2);
+                graph['version' + version][source].weight = avg;
+                graph['version' + version][target].weight = avg;
+                alert(`Source node: ${source} with weight: ${sourceWeight}\nTarget node: ${target} with weight: ${targetWeight}\nEdge weight between ${source} and ${target}: ${edgeWeight}
+                    \nWeight Difference: ${weightDiff}\nNew Opinion: ${avg}`);
+            }
+
+            // update display
+            drawCytoscapeGraph();
+            displayGraph();
+        }
+
+
+        function replaceEdge(source, target) {
+            // graph['version' + (version + 1)] = JSON.parse(JSON.stringify(graph['version' + version]));
+            // version++;
+            const nodes = Object.keys(graph['version' + version]);
+            let sourceNode, targetNode;
+
+            // get weights from page
+            const weight1 = parseFloat(document.getElementById('weight1').value);
+            const weight2 = parseFloat(document.getElementById('weight2').value);
+            let weightS, weightT;
+
+            // find source and initialize if it doesn't exist
+            do {
+                sourceNode = nodes[Math.floor(Math.random() * nodes.length)];
+            } while (sourceNode === source || sourceNode === target || graph['version' + version][source][sourceNode]);
+
+            if (!graph['version' + version][sourceNode]) {
+                graph['version' + version][sourceNode] = {};
+            }
+
+            // add new edge to source
+            weightS = Math.random() < 0.5 ? weight1 : weight2;
+            graph['version'+version][source][sourceNode] = weightS;
+            graph['version'+version][sourceNode][source] = weightS;
+
+            // repeat for target (preventing second new edge to sourceNode)
+            do {
+                targetNode = nodes[Math.floor(Math.random() * nodes.length)];
+            } while (targetNode === source || targetNode === target || targetNode === sourceNode 
+                    || graph['version' + version][target][targetNode]);
+
+            if (!graph['version' + version][targetNode]) {
+                graph['version' + version][targetNode] = {};
+            }
+
+            weightT = Math.random() < 0.5 ? weight1 : weight2;
+            graph['version'+version][target][targetNode] = weightT;
+            graph['version'+version][targetNode][target] = weightT;
+
+            alert(`${source} to ${sourceNode} = ${weightS}\n${target} to ${targetNode} = ${weightT}`);
+        }
+
+        function previous() {
+            version--;
+            if (version > 0) {
+                document.getElementById('versionDisplay').innerText = version; // Update displayed version
+                displayGraph();
+                drawCytoscapeGraph();
+            }
+            else {
+                version++;
+            }
+        }
+
+        function next() {
+            version++;
+            if (version <= Object.keys(graph).length) {
+                document.getElementById('versionDisplay').innerText = version; // Update displayed version
+                displayGraph();
+                drawCytoscapeGraph();
+            }
+            else {
+                version--;
+            }
+        }
     </script>
+
 </body>
+
 </html>
