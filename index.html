@@ -300,13 +300,16 @@ th.row-sticky {
             
                 }
             });
+
+            cy.on('tap', '*', function(evt){
+                var offcanvasElement = document.getElementById('offcanvasScrolling');
+                var bsOffcanvas = new bootstrap.Offcanvas(offcanvasElement);
+                bsOffcanvas.show();
+            })
             
             cy.on('tap', 'node', function(evt){
                 let text;
                 var node = evt.target;
-                var offcanvasElement = document.getElementById('offcanvasScrolling');
-                var bsOffcanvas = new bootstrap.Offcanvas(offcanvasElement);
-                bsOffcanvas.show();
                 $('#offBody').text('');
                 $('#offcanvasScrollingLabel').html('Node: ' + node.id());
                 for (const [destination, weight] of Object.entries(graph['version'+version][node.id()])){
