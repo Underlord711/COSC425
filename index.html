@@ -15,6 +15,20 @@
 </head>
 
 <body class="bg-gray-100 p-6">
+    <div class="dropdown">
+        <span>Menu</span>
+        <ul class="dropdown-content">
+        <li><button onclick="runAlgorithm()">Run Algorithm</button> </li>
+        <li><button onclick="updateDisplay()">Switch display</button></li>
+        <li><button onclick="toggleMatrix()">Toggle Matrix</button></li>
+        <li><button onclick="uploadJSON()">Upload Json</button></li>
+        <li><button onclick="downloadJSON()">Download Json</button></li>
+        <li><button onclick="RunMultiple(parseInt(document.getElementById('inputValue').value, 10))" >Run Multiple</button></li>
+        <input type="number" id="inputValue" placeholder="Enter an integer" class="border px-2 py-1 rounded">
+        </ul>
+      </div>
+
+
     <div class="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-md">
         <h1 class="text-2xl font-bold mb-4">Weighted Undirected Graph Generator</h1>
 
@@ -113,6 +127,11 @@
             const numVertices = parseInt(document.getElementById('numVertices').value);
             const weight1 = parseFloat(document.getElementById('weight1').value);
             const weight2 = parseFloat(document.getElementById('weight2').value);
+
+            if(Object.keys(graph).length !=0){
+                if (confirm('Do you want to save this json file before overwriting graph?')){
+                    downloadJSON();}
+            }
             graph = {version1:{}};
             for (let i = 0; i < numVertices; i++) {
                 const vertex = String.fromCharCode(65 + i);
@@ -458,6 +477,96 @@
             displayGraph();
             drawCytoscapeGraph();
         }
+
+
+
+        function RunMultiple(number) {
+            let diff;
+
+            graph['version' + (version + 1)] = JSON.parse(JSON.stringify(graph['version' + version]));
+            document.getElementById('versionDisplay').innerText = version;
+            version++;
+            for (let i = 0; i < number; i++) {
+                let dest;
+
+                const nodeList = Object.keys(graph['version' + version]);
+
+                if (!nodeList || nodeList.length === 0) {
+                    console.error('Node list is empty.');
+                    return;
+                }
+
+                const node = nodeList[Math.floor(Math.random() * nodeList.length)];
+
+                const edgelist = graph['version' + version][node];
+                if (!edgelist || Object.keys(edgelist).length === 0) {
+                    console.error(`Edge list is empty for node: ${node}`);
+                    return;
+                }
+
+                const edge = Object.keys(edgelist);
+                if (!edge || edge.length === 0) {
+                    console.error(`No edges found for node: ${node}`);
+                    return;
+                }
+
+                // Find a valid destination node (one that is not 'weight' or the same node)
+                do {
+                    dest = edge[Math.floor(Math.random() * edge.length)];
+                } while (dest === 'weight' || dest === node);
+
+                // Check if destination node has weight property
+                if (!graph['version' + version][dest]) {
+                    console.error(`Destination node ${dest} does not exist in the graph.`);
+                    return;
+                }
+
+                // Accessing weights
+                let W1 = graph['version' + version][node]['weight'];
+                let W2 = graph['version' + version][dest]['weight'];
+                let W3 = edgelist[dest];
+
+                if (typeof W1 === 'undefined' || typeof W2 === 'undefined' || typeof W3 === 'undefined') {
+                    console.error('One of the weights (W1, W2, or W3) is undefined.');
+                    return;
+                }
+
+
+                // Calculate the weight difference
+                if (W1 > W2) {
+                    diff = W1 - W2;
+                } else {
+                    diff = W2 - W1;
+                }
+                diff = parseFloat(diff.toFixed(2));
+
+
+                // Handle weight updates based on the difference
+                if (diff > W3) {
+
+                    alert(`Source node: ${node} with weight: ${W1}\nTarget node: ${dest} with weight: ${W2}\nEdge weight: ${W3}
+                \nWeight Difference: ${diff}\nNew Weight: ${0}`);
+            
+                    updateWeight(node, dest, 0);
+                    replaceEdge(node, dest);
+                  
+                } else {
+                    let avg = (parseFloat(W1) + parseFloat(W2)) / 2;
+                    avg = parseFloat(avg.toFixed(2));
+                    graph['version' + version][node].weight = avg;
+                    graph['version' + version][dest].weight = avg;
+                    alert(`Source node: ${node} with weight: ${W1}\nTarget node: ${dest} with weight: ${W2}\nEdge weight: ${W3}
+                 \nWeight Difference: ${diff}\nNew Opinion: ${avg}`);
+                 graph['version' + (version+1)] = JSON.parse(JSON.stringify(graph['version' + version]));
+                document.getElementById('versionDisplay').innerText = version;
+                 displayGraph();
+                 drawCytoscapeGraph();
+                 version++;
+                }
+            }
+
+        }
+
 
     </script>
 
