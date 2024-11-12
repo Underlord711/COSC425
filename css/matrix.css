@@ -1,0 +1,23 @@
+/* Sticky column headers */
+th.sticky {
+    position: sticky;
+    top: 0;
+    background-color: white;
+    z-index: 1;
+}
+
+/* Sticky row headers */
+th.row-sticky {
+    position: sticky;
+    left: 0;
+    background-color: white;
+    z-index: 2; /* Ensure row headers are above other content, including sticky column headers */
+    box-shadow: 2px 0 2px -2px rgba(0, 0, 0, 0.2); /* Optional shadow for better visibility */
+}
+
+/* Set a fixed height for the matrix container */
+#matrixContainer {
+    max-height: 300px; /* Adjust height as needed */
+    overflow-y: auto; /* Enable vertical scrolling */
+    overflow-x: auto; /* Enable horizontal scrolling */
+}
