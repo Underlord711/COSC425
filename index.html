@@ -63,6 +63,15 @@
 				<input type="checkbox" id="allowPastEdges" class="updateClass" style="display:none;" checked>
 				<label id="pastEdgesLabel" for="allowPastEdges" class="updateClass" style="display:none;">Allow Past
 					Edges</label>
+
+				<input type="color" id="nodeColorInput" class="updateClass border px-1 py-1 rounded" style="display:none;" value="#808080">
+				<label for="nodeColorInput" class="updateClass" style="display:none;">Node Color</label>
+
+				<input type="color" id="safeEdgeInput" class="updateClass border px-1 py-1 rounded" style="display:none;" value="#9C9C9C">
+				<label for="safeEdgeInput" class="updateClass" style="display:none;">Safe Edge Color</label>
+
+				<input type="color" id="unsafeEdgeInput" class="updateClass border px-1 py-1 rounded" style="display:none;" value="#9C9C9C">
+				<label for="unsafeEdgeInput" class="updateClass" style="display:none;">Unsafe Edge Color</label>
 			</div>
 
 			<div class="mt-4">
@@ -111,8 +120,12 @@
 		let graph = {};
 		let version = 1;
 		let isMatrixVisible = false; // Track whether the matrix is visible or not
-		let dummy = 'grid';
+		let dummy = 'circle';
 		let noClass = ['weight', 'Past Edges', 'changes'];
+
+		nodeColorInput.addEventListener("change", drawCytoscapeGraph, false);
+		safeEdgeInput.addEventListener("change", drawCytoscapeGraph, false);
+		unsafeEdgeInput.addEventListener("change", drawCytoscapeGraph, false);
 
 		function updateDisplay() {
 			if (dummy == 'grid') {
@@ -201,12 +214,12 @@
 			// Create rows for each vertex
 			for (const [vertex, edges] of Object.entries(graph['version' + version])) {
 				if (noClass.includes(vertex))
-                    continue;
+					continue;
 				const row = document.createElement('tr');
 				row.innerHTML = `<th class="border px-4 py-2 text-center row-sticky">${vertex}</th>`; // Row header with sticky class
 				for (const targetVertex of Object.keys(graph['version' + version])) {
 					if (noClass.includes(targetVertex))
-                    	continue;
+						continue;
 					else if (vertex === targetVertex) {
 						row.innerHTML += '<td class="border px-4 py-2 text-center">x</td>'; // Self-loop indicator
 					} else {
@@ -246,6 +259,9 @@
 
 		function drawCytoscapeGraph() {
 			const elements = [];
+			let nodeColor = $("#nodeColorInput").val();
+			let safeEdgeColor = $("#safeEdgeInput").val();
+			let unsafeEdgeColor = $("#unsafeEdgeInput").val();
 
 			for (const [source, edges] of Object.entries(graph['version' + version])) {
 				if (noClass.includes(source))
@@ -270,7 +286,7 @@
 					{
 						selector: 'node',
 						style: {
-							'background-color': 'grey',
+							'background-color': nodeColor,
 							'label': function (elem) {
 								return elem.data('id') + '\n' + elem.data('rel')
 							},
@@ -283,7 +299,15 @@
 						selector: 'edge',
 						style: {
 							'width': 2,
-							'line-color': '#ccc',
+							'line-color': function(elem) {
+								let s =  graph['version'+version][elem.data('source')]['weight'];
+								let t = graph['version'+version][elem.data('target')]['weight'];
+								let w = elem.data('label');
+								let weightDiff = s > t ? (s - t) : (t -s);
+								weightDiff = parseFloat(weightDiff.toFixed(2));
+
+								return weightDiff > w ? unsafeEdgeColor : safeEdgeColor;
+							},
 							'label': 'data(label)',
 							'font-size': '35px',
 							'text-justification': 'left',
@@ -311,7 +335,7 @@
 				$('#offBody').text('');
 				$('#offcanvasScrollingLabel').html('Node: ' + node.id());
 				for (const [destination, weight] of Object.entries(graph['version' + version][node.id()])) {
-					text = destination + ' : ' + weight;
+					text = destination + ': ' + weight;
 					$("#offBody").append(text + "<br>");
 				}
 			});
@@ -320,9 +344,9 @@
 				var edge = evt.target;
 				$('#offBody').text('');
 				$('#offcanvasScrollingLabel').html('Edge: ' + edge.data('id'));
-				$('#offBody').append("Source : " + edge.data('source') + '<br>');
-				$('#offBody').append("Destination : " + edge.data('target') + '<br>');
-				$('#offBody').append("Weight : " + edge.data('label') + '<br>');
+				$('#offBody').append("Source: " + edge.data('source') + '<br>');
+				$('#offBody').append("Destination: " + edge.data('target') + '<br>');
+				$('#offBody').append("Weight: " + edge.data('label') + '<br>');
 			});
 		}
 
@@ -448,7 +472,7 @@
 			graph['version' + version][target]['Past Edges'] = targetEdges;
 
 			const nodes = Object.keys(graph['version' + version]).filter(node => node !== 'changes');
-			let sourceNode, targetNode, changesString;
+			let sourceNode, targetNode, changesString, alertString = "";
 			let valid = true;
 
 			// get weights from page
@@ -473,6 +497,7 @@
 					if (attempts > 100) {
 						console.log("Too many attempts to find valid target vertex (replace edge)");
 						changesString = `Failed to make new edge from ${source}`;
+						alertString += changesString + '\n';
 						graph['version' + version]['changes'].c2 = changesString;
 						valid = false;
 						break;
@@ -496,6 +521,7 @@
 				graph['version' + version][sourceNode][source] = weightS;
 
 				changesString = `${source} -${weightS}- ${sourceNode} - made`;
+				alertString += changesString + '\n';
 				graph['version' + version]['changes'].c2 = changesString;
 			}
 
@@ -516,6 +542,7 @@
 					if (attempts > 100) {
 						console.log("Too many attempts to find valid target vertex (replace edge 2)");
 						changesString = `Failed to make new edge from ${target}`;
+						alertString += changesString;
 						graph['version' + version]['changes'].c3 = changesString;
 						valid = false;
 						break;
@@ -536,11 +563,12 @@
 				graph['version' + version][targetNode][target] = weightT;
 
 				changesString = `${target} -${weightT}- ${targetNode} - made`;
+				alertString += changesString;
 				graph['version' + version]['changes'].c3 = changesString;
 			}
 
 			if (document.querySelector('#showAlerts').checked) {
-				alert(`made ${source} --(${weightS})-- ${sourceNode}\nmade ${target} --(${weightT})-- ${targetNode}`);
+				alert(alertString);
 			}
 		}
 
