@@ -57,6 +57,10 @@
 				<input type="number" value="1" id="inputValue" class="updateClass border px-2 py-1 rounded max-w-10"
 					style="display:none;">
 
+				<input type="checkbox" id="runAllNodes" class="updateClass" style="display:none;" checked>
+				<label id="alertsLabel" for="runAllNodes" class="updateClass" style="display:none;">Run All
+					Nodes</label>
+
 				<input type="checkbox" id="showAlerts" class="updateClass" style="display:none;" checked>
 				<label id="alertsLabel" for="showAlerts" class="updateClass" style="display:none;">Show Alerts</label>
 
@@ -64,13 +68,16 @@
 				<label id="pastEdgesLabel" for="allowPastEdges" class="updateClass" style="display:none;">Allow Past
 					Edges</label>
 
-				<input type="color" id="nodeColorInput" class="updateClass border px-1 py-1 rounded" style="display:none;" value="#808080">
+				<input type="color" id="nodeColorInput" class="updateClass border px-1 py-1 rounded"
+					style="display:none;" value="#808080">
 				<label for="nodeColorInput" class="updateClass" style="display:none;">Node Color</label>
 
-				<input type="color" id="safeEdgeInput" class="updateClass border px-1 py-1 rounded" style="display:none;" value="#9C9C9C">
+				<input type="color" id="safeEdgeInput" class="updateClass border px-1 py-1 rounded"
+					style="display:none;" value="#9C9C9C">
 				<label for="safeEdgeInput" class="updateClass" style="display:none;">Safe Edge Color</label>
 
-				<input type="color" id="unsafeEdgeInput" class="updateClass border px-1 py-1 rounded" style="display:none;" value="#9C9C9C">
+				<input type="color" id="unsafeEdgeInput" class="updateClass border px-1 py-1 rounded"
+					style="display:none;" value="#9C9C9C">
 				<label for="unsafeEdgeInput" class="updateClass" style="display:none;">Unsafe Edge Color</label>
 			</div>
 
@@ -127,7 +134,7 @@
 		let dummy = 'circle';
 		let noClass = ['weight', 'Past Edges', 'changes'];
 		
-		const changeNotes = [];
+		changeNotes = [];	//Need this for Patch Notes
 
 		nodeColorInput.addEventListener("change", drawCytoscapeGraph, false);
 		safeEdgeInput.addEventListener("change", drawCytoscapeGraph, false);
@@ -193,7 +200,8 @@
 				}
 			}
 
-			graph['version1']['changes'] = {};
+			// graph['version1']['changes'] = {};
+			graph['version1']['changes'] = [];
 
 			refresh();
 			$('.updateClass').css('display', 'inline');
@@ -305,11 +313,11 @@
 						selector: 'edge',
 						style: {
 							'width': 2,
-							'line-color': function(elem) {
-								let s =  graph['version'+version][elem.data('source')]['weight'];
-								let t = graph['version'+version][elem.data('target')]['weight'];
+							'line-color': function (elem) {
+								let s = graph['version' + version][elem.data('source')]['weight'];
+								let t = graph['version' + version][elem.data('target')]['weight'];
 								let w = elem.data('label');
-								let weightDiff = s > t ? (s - t) : (t -s);
+								let weightDiff = s > t ? (s - t) : (t - s);
 								weightDiff = parseFloat(weightDiff.toFixed(2));
 
 								return weightDiff > w ? unsafeEdgeColor : safeEdgeColor;
@@ -332,12 +340,15 @@
 				}
 			});
 
-			cy.on('tap', 'node', function (evt) {
-				let text;
-				var node = evt.target;
+			cy.on('tap', "*", function (evt) {
 				var offcanvasElement = document.getElementById('offcanvasScrolling');
 				var bsOffcanvas = new bootstrap.Offcanvas(offcanvasElement);
 				bsOffcanvas.show();
+			});
+
+			cy.on('tap', 'node', function (evt) {
+				let text;
+				var node = evt.target;
 				$('#offBody').text('');
 				$('#offcanvasScrollingLabel').html('Node: ' + node.id());
 				for (const [destination, weight] of Object.entries(graph['version' + version][node.id()])) {
@@ -396,79 +407,160 @@
 		
 		function addNotes(message)
         	{
-        		const time = new Date().toLocaleString();
-        		changeNotes.push(`[${time}] ${message}`);
+        		changeNotes.push(`${message}`);
         		changeNotes.push(``);
         	}
 
+
 		function runAlgorithm(number) {
 			for (let i = 0; i < number; i++) {
-				// select a random source node
-				const nodes = Object.keys(graph['version' + version]).filter(node => node !== 'changes');
-				let source;
-				do {
-					source = nodes[Math.floor(Math.random() * nodes.length)];
-				} while (
-					noClass.includes(source));
-
-				// get the edges of the selected source node
-				const edges = graph['version' + version][source];
-
-				// select a random target node that does not lead back to the source node
-				let target;
-				const targetNodes = Object.keys(edges);
-				do {
-					target = targetNodes[Math.floor(Math.random() * targetNodes.length)];
-				} while (
-					target === source ||
-					noClass.includes(target));
-
-				// find weights of the source and target nodes, and the edge weight
-				const sourceWeight = graph['version' + version][source]['weight'];
-				const targetWeight = graph['version' + version][target]['weight'];
-				const edgeWeight = edges[target];
-
-				// find difference in node opinion and compare with edge weight
-				let weightDiff = sourceWeight > targetWeight ? (sourceWeight - targetWeight) : (targetWeight - sourceWeight);
-				weightDiff = parseFloat(weightDiff.toFixed(2));
-				let newWeight = -1;
-
-				// update graph
-				if (weightDiff > edgeWeight) {
-					newWeight = 0;
-					
-					addNotes(`(${sourceWeight}) ${source} --(${edgeweight})-- ${target} (${targetWeight})\n-->\n(${sourceWeight}) ${source} --(${newWeight})-- ${target} (${targetWeight})`);
-
-					if (document.querySelector('#showAlerts').checked)
-						alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${sourceWeight}) ${source} --(${newWeight})-- ${target} (${targetWeight})`);
-
-					updateWeight(source, target, newWeight);
-
-					let changesString = `${source} -${edgeWeight}- ${target} - broken`;
-					graph['version' + version]['changes'] = {};
-					graph['version' + version]['changes'].c1 = changesString;
-
-					replaceEdge(source, target);
-				} else {
+				// run number of simulations on one node at a time
+				if (!document.querySelector('#runAllNodes').checked) {
+					// Update displayed version
 					graph['version' + (version + 1)] = JSON.parse(JSON.stringify(graph['version' + version]));
 					version++;
-					document.getElementById('versionDisplay').innerText = version; // Update displayed version
+					document.getElementById('versionDisplay').innerText = version;
 
-					let avg = (parseFloat(sourceWeight) + parseFloat(targetWeight)) / 2;
-					avg = avg.toFixed(2);
-					graph['version' + version][source]['weight'] = avg;
-					graph['version' + version][target]['weight'] = avg;
+					// select a random source node
+					const nodes = Object.keys(graph['version' + version]).filter(node => node !== 'changes');
+					let source;
 
-					addNotes(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${avg}) ${source} --(${edgeWeight})-- ${target} (${avg})`);
+					do {
+						source = nodes[Math.floor(Math.random() * nodes.length)];
+					} while (noClass.includes(source));
 
-					// reset changes then update
-					graph['version' + version]['changes'] = {};
+					// get the edges of the selected source node
+					const edges = graph['version' + version][source];
 
-					let changesString = `${source} ${sourceWeight} & ${target} ${targetWeight} - ${avg}`;
-					graph['version' + version]['changes'].c1 = changesString;
+					// select a random target node that does not lead back to the source node
+					let target;
+					const targetNodes = Object.keys(edges);
+					do {
+						target = targetNodes[Math.floor(Math.random() * targetNodes.length)];
+					} while (
+						target === source ||
+						noClass.includes(target));
 
-					if (document.querySelector('#showAlerts').checked)
-						alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${avg}) ${source} --(${edgeWeight})-- ${target} (${avg})`);
+					// find weights of the source and target nodes, and the edge weight
+					const sourceWeight = graph['version' + version][source]['weight'];
+					const targetWeight = graph['version' + version][target]['weight'];
+					const edgeWeight = edges[target];
+
+					// find difference in node opinion and compare with edge weight
+					let weightDiff = sourceWeight > targetWeight ? (sourceWeight - targetWeight) : (targetWeight - sourceWeight);
+					weightDiff = parseFloat(weightDiff.toFixed(2));
+					let newWeight = -1;
+					let c = [];
+
+					// update graph
+					if (weightDiff > edgeWeight) {
+						newWeight = 0;
+						
+						addNotes(`(${sourceWeight}) ${source} --(${edgeweight})-- ${target} (${targetWeight})\n-->\n(${sourceWeight}) ${source} --(${newWeight})-- ${target} (${targetWeight})`);
+
+						if (document.querySelector('#showAlerts').checked)
+						{
+							alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${sourceWeight}) ${source} --(${newWeight})-- ${target} (${targetWeight})`);
+						}
+
+						delete graph['version' + version][source][target];
+						delete graph['version' + version][target][source];
+
+						let changesString = `${source} -${edgeWeight}- ${target} - broken`;
+						c.push(changesString);
+						graph['version' + version]['changes'] = c;
+
+						replaceEdge(source, target);
+					} else {
+						let avg = (parseFloat(sourceWeight) + parseFloat(targetWeight)) / 2;
+						avg = avg.toFixed(2);
+						graph['version' + version][source]['weight'] = avg;
+						graph['version' + version][target]['weight'] = avg;
+						
+						addNotes(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${avg}) ${source} --(${edgeWeight})-- ${target} (${avg})`);
+
+						// reset changes then update
+
+						let changesString = `${source} ${sourceWeight} & ${target} ${targetWeight} - ${avg}`;
+						c.push(changesString);
+						graph['version' + version]['changes'] = c;
+
+						if (document.querySelector('#showAlerts').checked)
+						{
+							alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${avg}) ${source} --(${edgeWeight})-- ${target} (${avg})`);
+						}
+							
+					}
+				}
+				// run number of simulations on every node in the graph
+				else {
+					graph['version' + (version + 1)] = JSON.parse(JSON.stringify(graph['version' + version]));
+					version++;
+					document.getElementById('versionDisplay').innerText = version;
+
+					const nodes = Object.keys(graph['version' + version]).filter(node => node !== 'changes');
+					let source;
+					let c = [];
+
+					for (const node of nodes) {
+						source = node;
+						// get the edges of the selected source node
+						const edges = graph['version' + version][source];
+
+						// select a random target node that does not lead back to the source node
+						let target;
+						const targetNodes = Object.keys(edges);
+						do {
+							target = targetNodes[Math.floor(Math.random() * targetNodes.length)];
+						} while (
+							target === source ||
+							noClass.includes(target));
+
+						// find weights of the source and target nodes, and the edge weight
+						const sourceWeight = graph['version' + version][source]['weight'];
+						const targetWeight = graph['version' + version][target]['weight'];
+						const edgeWeight = edges[target];
+
+						// find difference in node opinion and compare with edge weight
+						let weightDiff = sourceWeight > targetWeight ? (sourceWeight - targetWeight) : (targetWeight - sourceWeight);
+						weightDiff = parseFloat(weightDiff.toFixed(2));
+						let newWeight = -1;
+
+						// update graph
+						if (weightDiff > edgeWeight) {
+							newWeight = 0;
+							
+							addNotes(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${sourceWeight}) ${source} --(${newWeight})-- ${target} (${targetWeight})`);
+
+							if (document.querySelector('#showAlerts').checked)
+								alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${sourceWeight}) ${source} --(${newWeight})-- ${target} (${targetWeight})`);
+
+							delete graph['version' + version][source][target];
+							delete graph['version' + version][target][source];
+
+							let changesString = `${source} -${edgeWeight}- ${target} - broken`;
+							c.push(changesString);
+							graph['version' + version]['changes'] = c;
+
+							replaceEdge(source, target);
+						} else {
+							let avg = (parseFloat(sourceWeight) + parseFloat(targetWeight)) / 2;
+							avg = avg.toFixed(2);
+							graph['version' + version][source]['weight'] = avg;
+							graph['version' + version][target]['weight'] = avg;
+							
+							addNotes(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${avg}) ${source} --(${edgeWeight})-- ${target} (${avg})`);
+
+							// reset changes then update
+
+							let changesString = `${source} ${sourceWeight} & ${target} ${targetWeight} - ${avg}`;
+							c.push(changesString);
+							graph['version' + version]['changes'] = c;
+
+							if (document.querySelector('#showAlerts').checked)
+								alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${avg}) ${source} --(${edgeWeight})-- ${target} (${avg})`);
+						}
+					}
 				}
 			}
 
@@ -480,6 +572,8 @@
 		function replaceEdge(source, target) {
 			// add source and target to past edges
 			// need to add an if statement or something based on checkbox to check past edges for randomly chosen new edge
+			let c = graph['version' + version]['changes'];
+
 			let sourceEdges = graph['version' + version][source]['Past Edges'];
 			if (!sourceEdges.includes(target)) sourceEdges.push(target);
 			graph['version' + version][source]['Past Edges'] = sourceEdges;
@@ -515,7 +609,8 @@
 						console.log("Too many attempts to find valid target vertex (replace edge)");
 						changesString = `Failed to make new edge from ${source}`;
 						alertString += changesString + '\n';
-						graph['version' + version]['changes'].c2 = changesString;
+						c.push(changesString);
+						graph['version' + version]['changes'] = c;
 						valid = false;
 						break;
 					}
@@ -539,7 +634,8 @@
 
 				changesString = `${source} -${weightS}- ${sourceNode} - made`;
 				alertString += changesString + '\n';
-				graph['version' + version]['changes'].c2 = changesString;
+				c.push(changesString);
+				graph['version' + version]['changes'] = c;
 			}
 
 			// repeat for target
@@ -560,7 +656,8 @@
 						console.log("Too many attempts to find valid target vertex (replace edge 2)");
 						changesString = `Failed to make new edge from ${target}`;
 						alertString += changesString;
-						graph['version' + version]['changes'].c3 = changesString;
+						c.push(changesString);
+						graph['version' + version]['changes'] = c;
 						valid = false;
 						break;
 					}
@@ -581,7 +678,8 @@
 
 				changesString = `${target} -${weightT}- ${targetNode} - made`;
 				alertString += changesString;
-				graph['version' + version]['changes'].c3 = changesString;
+				c.push(changesString);
+				graph['version' + version]['changes'] = c;
 			}
 
 			if (document.querySelector('#showAlerts').checked) {
