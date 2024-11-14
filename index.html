@@ -109,10 +109,10 @@
 	<div class="offcanvas offcanvas-start !w-[200px]" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1"
 		id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel">
 		<div class="offcanvas-header">
-			<h5 class="offcanvas-title" id="offcanvasScrollingLabel">Node: </h5>
+			<h5 class="offcanvas-title" id="offcanvasScrollingLabel" contenteditable='true'>Node: </h5>
 			<button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
 		</div>
-		<div class="offcanvas-body" id="offBody">
+		<div class="offcanvas-body" contenteditable='true' id="offBody">
 			<p></p>
 		</div>
 	</div>
@@ -287,7 +287,7 @@
                     {
                         selector: 'node',
                         style: {
-                            'background-color': 'grey',
+                            'background-color': nodeColor,
                             'label' : function(elem){
                                 return elem.data('id') + '\n' + elem.data('rel')},
                             'color': 'green',
@@ -299,7 +299,16 @@
                         selector: 'edge',
                         style: {
                             'width': 2,
-                            'line-color': '#ccc',
+                            'line-color': function(elem){
+                                let s = graph['version' + version][elem.data('source')]['weight'];
+                                let t = graph['version' + version][elem.data('target')]['weight'];
+                                let w = elem.data('label');
+                                let weightDiff = s > t ? (s - t) : (t - s);
+                                weightDiff = parseFloat(weightDiff.toFixed(2));
+
+                                return weightDiff > w ? unsafeEdgeColor : safeEdgeColor;
+
+                            },
                             'label': 'data(label)',
                             'font-size': '35px',
                             'text-justification': 'left',
@@ -596,9 +605,16 @@
 =======
         $('#offBody').on('blur', function(){
             let tempStr = $('#offBody').html();
-            let tempArr = tempStr.split('<br>');
-            tempArr.splice(1, tempArr.indexOf('Past Edges : '));
-            console.log(tempArr);
+            let tempArr = new Set(tempStr.split('<br>'));
+            tempArr.delete('Past Edges : ');
+            tempArr.delete('');
+            let label = $('#offcanvasScrollingLabel').text().split(' ');
+            let node = label[label.length-1];
+            tempArr.forEach(function(value){
+                let stuff = value.split(' : ');
+                graph['version'+version][node][stuff[0]]=parseFloat(stuff[1]);
+            });
+            refresh();
         });
 	</script>
 
