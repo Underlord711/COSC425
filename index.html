@@ -18,13 +18,13 @@
     <div class="dropdown">
         <span>Menu</span>
         <ul class="dropdown-content">
-        <li><button onclick="runAlgorithm()">Run Algorithm</button> </li>
-        <li><button onclick="updateDisplay()">Switch display</button></li>
-        <li><button onclick="toggleMatrix()">Toggle Matrix</button></li>
-        <li><button onclick="uploadJSON()">Upload Json</button></li>
         <li><button onclick="downloadJSON()">Download Json</button></li>
-        <li><button onclick="RunMultiple(parseInt(document.getElementById('inputValue').value, 10))" >Run Multiple</button></li>
-        <input type="number" id="inputValue" placeholder="Enter an integer" class="border px-2 py-1 rounded">
+        <li><button onclick="uploadJSON()">Upload Json</button></li>
+        <input type="file" id="fileInput" accept=".json" onchange="uploadJSON()"
+                    class="block w-full text-sm text-gray-500 border border-gray-300 rounded-lg cursor-pointer">
+                <button id="uploadBtn" style="display:none;" onclick="uploadJSON()"
+                    class="mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none">Upload
+                    JSON</button>
         </ul>
       </div>
 
