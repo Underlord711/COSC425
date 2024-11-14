@@ -194,7 +194,6 @@
 				}
 			}
 
-			// graph['version1']['changes'] = {};
 			graph['version1']['changes'] = [];
 
 			refresh();
@@ -320,7 +319,7 @@
 							'font-size': '35px',
 							'text-justification': 'left',
 							'text-margin-x': 5,
-							'color': 'red' // Change label color here
+							'color': 'black' // Change label color here
 						}
 					}
 				],
@@ -446,22 +445,25 @@
 						if (document.querySelector('#showAlerts').checked)
 							alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${sourceWeight}) ${source} --(${newWeight})-- ${target} (${targetWeight})`);
 
+						// delete broken edge from json
 						delete graph['version' + version][source][target];
 						delete graph['version' + version][target][source];
 
+						// add change info to json
 						let changesString = `${source} -${edgeWeight}- ${target} - broken`;
 						c.push(changesString);
 						graph['version' + version]['changes'] = c;
 
+						// make new edges from source and target
 						replaceEdge(source, target);
 					} else {
+						// calculate new edge weight if not broken
 						let avg = (parseFloat(sourceWeight) + parseFloat(targetWeight)) / 2;
 						avg = avg.toFixed(2);
 						graph['version' + version][source]['weight'] = avg;
 						graph['version' + version][target]['weight'] = avg;
 
-						// reset changes then update
-
+						// add change info to json
 						let changesString = `${source} ${sourceWeight} & ${target} ${targetWeight} - ${avg}`;
 						c.push(changesString);
 						graph['version' + version]['changes'] = c;
@@ -472,16 +474,20 @@
 				}
 				// run number of simulations on every node in the graph
 				else {
+					// update graph version once for all nodes
 					graph['version' + (version + 1)] = JSON.parse(JSON.stringify(graph['version' + version]));
 					version++;
 					document.getElementById('versionDisplay').innerText = version;
 
+					// get list of nodes
 					const nodes = Object.keys(graph['version' + version]).filter(node => node !== 'changes');
 					let source;
 					let c = [];
 
+					// run algorithm on each node
 					for (const node of nodes) {
 						source = node;
+
 						// get the edges of the selected source node
 						const edges = graph['version' + version][source];
 
@@ -511,22 +517,25 @@
 							if (document.querySelector('#showAlerts').checked)
 								alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${sourceWeight}) ${source} --(${newWeight})-- ${target} (${targetWeight})`);
 
+							// delete broken edge from json
 							delete graph['version' + version][source][target];
 							delete graph['version' + version][target][source];
 
+							// add change info to json
 							let changesString = `${source} -${edgeWeight}- ${target} - broken`;
 							c.push(changesString);
 							graph['version' + version]['changes'] = c;
 
+							// make new edges from source and target
 							replaceEdge(source, target);
 						} else {
+							// calculate new edge weight if not broken
 							let avg = (parseFloat(sourceWeight) + parseFloat(targetWeight)) / 2;
 							avg = avg.toFixed(2);
 							graph['version' + version][source]['weight'] = avg;
 							graph['version' + version][target]['weight'] = avg;
 
-							// reset changes then update
-
+							// add changes to json
 							let changesString = `${source} ${sourceWeight} & ${target} ${targetWeight} - ${avg}`;
 							c.push(changesString);
 							graph['version' + version]['changes'] = c;
@@ -545,7 +554,6 @@
 
 		function replaceEdge(source, target) {
 			// add source and target to past edges
-			// need to add an if statement or something based on checkbox to check past edges for randomly chosen new edge
 			let c = graph['version' + version]['changes'];
 
 			let sourceEdges = graph['version' + version][source]['Past Edges'];
