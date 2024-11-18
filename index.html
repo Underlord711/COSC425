@@ -116,10 +116,10 @@
 	<div class="offcanvas offcanvas-start !w-[200px]" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1"
 		id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel">
 		<div class="offcanvas-header">
-			<h5 class="offcanvas-title" id="offcanvasScrollingLabel">Node: </h5>
+			<h5 class="offcanvas-title" id="offcanvasScrollingLabel" contenteditable='true'>Node: </h5>
 			<button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
 		</div>
-		<div class="offcanvas-body" id="offBody">
+		<div class="offcanvas-body" contenteditable='true' id="offBody">
 			<p></p>
 		</div>
 	</div>
@@ -287,79 +287,79 @@
 				}
 			}
 
-			const cy = cytoscape({
-				container: document.getElementById('cy'),
-				elements: elements,
-				style: [
-					{
-						selector: 'node',
-						style: {
-							'background-color': nodeColor,
-							'label': function (elem) {
-								return elem.data('id') + '\n' + elem.data('rel')
-							},
-							'color': 'green',
-							'font-size': '50px',
-							'text-wrap': 'wrap'
-						}
-					},
-					{
-						selector: 'edge',
-						style: {
-							'width': 2,
-							'line-color': function (elem) {
-								let s = graph['version' + version][elem.data('source')]['weight'];
-								let t = graph['version' + version][elem.data('target')]['weight'];
-								let w = elem.data('label');
-								let weightDiff = s > t ? (s - t) : (t - s);
-								weightDiff = parseFloat(weightDiff.toFixed(2));
+            const cy = cytoscape({
+                container: document.getElementById('cy'),
+                elements: elements,          
+                style: [
+                    {
+                        selector: 'node',
+                        style: {
+                            'background-color': nodeColor,
+                            'label' : function(elem){
+                                return elem.data('id') + '\n' + elem.data('rel')},
+                            'color': 'green',
+                            'font-size': '50px',
+                            'text-wrap': 'wrap'
+                        }
+                    },
+                    {
+                        selector: 'edge',
+                        style: {
+                            'width': 2,
+                            'line-color': function(elem){
+                                let s = graph['version' + version][elem.data('source')]['weight'];
+                                let t = graph['version' + version][elem.data('target')]['weight'];
+                                let w = elem.data('label');
+                                let weightDiff = s > t ? (s - t) : (t - s);
+                                weightDiff = parseFloat(weightDiff.toFixed(2));
 
-								return weightDiff > w ? unsafeEdgeColor : safeEdgeColor;
-							},
-							'label': 'data(label)',
-							'font-size': '35px',
-							'text-justification': 'left',
-							'text-margin-x': 5,
-							'color': 'black' // Change label color here
-						}
-					}
-				],
-				layout: {
-					name: dummy,
-					avoidOverlap: true,
-					nodeOverlap: 0,
-					spacingFactor: 3,
-					animate: false,
+                                return weightDiff > w ? unsafeEdgeColor : safeEdgeColor;
 
-				}
-			});
+                            },
+                            'label': 'data(label)',
+                            'font-size': '35px',
+                            'text-justification': 'left',
+                            'text-margin-x': 5,
+                            'color': 'red' // Change label color here
+                        }
+                    }
+                ],
+                layout: {
+                    name: dummy,
+                    avoidOverlap: true, 
+            nodeOverlap: 0,  
+            spacingFactor: 3,  
+            animate: false,
+            
+                }
+            });
 
-			cy.on('tap', "*", function (evt) {
-				var offcanvasElement = document.getElementById('offcanvasScrolling');
-				var bsOffcanvas = new bootstrap.Offcanvas(offcanvasElement);
-				bsOffcanvas.show();
-			});
-
-			cy.on('tap', 'node', function (evt) {
-				let text;
-				var node = evt.target;
-				$('#offBody').text('');
-				$('#offcanvasScrollingLabel').html('Node: ' + node.id());
-				for (const [destination, weight] of Object.entries(graph['version' + version][node.id()])) {
-					text = destination + ': ' + weight;
-					$("#offBody").append(text + "<br>");
-				}
-			});
-			cy.on('tap', 'edge', function (evt) {
-				let text;
-				var edge = evt.target;
-				$('#offBody').text('');
-				$('#offcanvasScrollingLabel').html('Edge: ' + edge.data('id'));
-				$('#offBody').append("Source: " + edge.data('source') + '<br>');
-				$('#offBody').append("Destination: " + edge.data('target') + '<br>');
-				$('#offBody').append("Weight: " + edge.data('label') + '<br>');
-			});
-		}
+            cy.on('tap', '*', function(evt){
+                var offcanvasElement = document.getElementById('offcanvasScrolling');
+                var bsOffcanvas = new bootstrap.Offcanvas(offcanvasElement);
+                bsOffcanvas.show();
+            })
+            
+            cy.on('tap', 'node', function(evt){
+                let text;
+                var node = evt.target;
+                $('#offBody').text('');
+                $('#offcanvasScrollingLabel').html('Node: ' + node.id());
+                for (const [destination, weight] of Object.entries(graph['version'+version][node.id()])){
+                    text=destination + ' : ' + weight;
+                    $("#offBody").append(text+"<br>");
+                }
+            });
+            cy.on('tap', 'edge', function(evt){
+                let text;
+                var edge = evt.target;
+                $('#offBody').text('');
+                $('#offcanvasScrollingLabel').html('Edge: ' + edge.data('id'));
+                $('#offBody').append("Source : " + edge.data('source') + '<br>');
+                $('#offBody').append("Destination : " + edge.data('target')+ '<br>');
+                $('#offBody').append("Weight : " + edge.data('label')+ '<br>');
+            });
+}
 
 		function downloadJSON() {
 			const jsonStr = JSON.stringify(graph, null, 2);
@@ -697,6 +697,19 @@
 			drawCytoscapeGraph();
 		}
 
+        $('#offBody').on('blur', function(){
+            let tempStr = $('#offBody').html();
+            let tempArr = new Set(tempStr.split('<br>'));
+            tempArr.delete('Past Edges : ');
+            tempArr.delete('');
+            let label = $('#offcanvasScrollingLabel').text().split(' ');
+            let node = label[label.length-1];
+            tempArr.forEach(function(value){
+                let stuff = value.split(' : ');
+                graph['version'+version][node][stuff[0]]=parseFloat(stuff[1]);
+            });
+            refresh();
+        });
 	</script>
 
 </body>
