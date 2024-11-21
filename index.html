@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 
+
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -33,7 +34,7 @@
 
 			<div>
 				<label for="weight2" class="block text-sm font-medium">Weight for Edge Type 2:</label>
-				<input type="number" id="weight2" value="0.7" required
+				<input type="number" id="weight2" value="0.9" required
 					class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2">
 			</div>
 
@@ -115,10 +116,10 @@
 	<div class="offcanvas offcanvas-start !w-[200px]" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1"
 		id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel">
 		<div class="offcanvas-header">
-			<h5 class="offcanvas-title" id="offcanvasScrollingLabel">Node: </h5>
+			<h5 class="offcanvas-title" id="offcanvasScrollingLabel" contenteditable='true'>Node: </h5>
 			<button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
 		</div>
-		<div class="offcanvas-body" id="offBody">
+		<div class="offcanvas-body" contenteditable='true' id="offBody">
 			<p></p>
 		</div>
 	</div>
@@ -314,6 +315,7 @@
 								weightDiff = parseFloat(weightDiff.toFixed(2));
 
 								return weightDiff > w ? unsafeEdgeColor : safeEdgeColor;
+
 							},
 							'label': 'data(label)',
 							'font-size': '35px',
@@ -333,11 +335,11 @@
 				}
 			});
 
-			cy.on('tap', "*", function (evt) {
+			cy.on('tap', '*', function (evt) {
 				var offcanvasElement = document.getElementById('offcanvasScrolling');
 				var bsOffcanvas = new bootstrap.Offcanvas(offcanvasElement);
 				bsOffcanvas.show();
-			});
+			})
 
 			cy.on('tap', 'node', function (evt) {
 				let text;
@@ -345,7 +347,7 @@
 				$('#offBody').text('');
 				$('#offcanvasScrollingLabel').html('Node: ' + node.id());
 				for (const [destination, weight] of Object.entries(graph['version' + version][node.id()])) {
-					text = destination + ': ' + weight;
+					text = destination + ' : ' + weight;
 					$("#offBody").append(text + "<br>");
 				}
 			});
@@ -354,9 +356,9 @@
 				var edge = evt.target;
 				$('#offBody').text('');
 				$('#offcanvasScrollingLabel').html('Edge: ' + edge.data('id'));
-				$('#offBody').append("Source: " + edge.data('source') + '<br>');
-				$('#offBody').append("Destination: " + edge.data('target') + '<br>');
-				$('#offBody').append("Weight: " + edge.data('label') + '<br>');
+				$('#offBody').append("Source : " + edge.data('source') + '<br>');
+				$('#offBody').append("Destination : " + edge.data('target') + '<br>');
+				$('#offBody').append("Weight : " + edge.data('label') + '<br>');
 			});
 		}
 
@@ -458,18 +460,43 @@
 						replaceEdge(source, target);
 					} else {
 						// calculate new edge weight if not broken
-						let avg = (parseFloat(sourceWeight) + parseFloat(targetWeight)) / 2;
-						avg = avg.toFixed(2);
-						graph['version' + version][source]['weight'] = avg;
-						graph['version' + version][target]['weight'] = avg;
+						if (sourceWeight === 1 || targetWeight === 1) {
+							let avg = (parseFloat(sourceWeight) + parseFloat(targetWeight)) / 2;
+							avg = avg.toFixed(2);
 
-						// add change info to json
-						let changesString = `${source} ${sourceWeight} & ${target} ${targetWeight} - ${avg}`;
-						c.push(changesString);
-						graph['version' + version]['changes'] = c;
+							if (sourceWeight !== 1) {
+								graph['version' + version][source]['weight'] = avg;
+								let changesString = `${source} ${sourceWeight} - ${avg}, ${target} ${targetWeight} unchanged`;
+								c.push(changesString);
+								graph['version' + version]['changes'] = c;
 
-						if (document.querySelector('#showAlerts').checked)
-							alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${avg}) ${source} --(${edgeWeight})-- ${target} (${avg})`);
+								if (document.querySelector('#showAlerts').checked)
+									alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${avg}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})`);
+
+							} else {
+								graph['version' + version][target]['weight'] = avg;
+								let changesString = `${source} ${sourceWeight} unchanged, ${target} ${targetWeight} - ${avg}`;
+								c.push(changesString);
+								graph['version' + version]['changes'] = c;
+
+								if (document.querySelector('#showAlerts').checked)
+									alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${avg})`);
+							}
+
+						} else {
+							let avg = (parseFloat(sourceWeight) + parseFloat(targetWeight)) / 2;
+							avg = avg.toFixed(2);
+							graph['version' + version][source]['weight'] = avg;
+							graph['version' + version][target]['weight'] = avg;
+
+							// add change info to json
+							let changesString = `${source} ${sourceWeight} & ${target} ${targetWeight} - ${avg}`;
+							c.push(changesString);
+							graph['version' + version]['changes'] = c;
+
+							if (document.querySelector('#showAlerts').checked)
+								alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${avg}) ${source} --(${edgeWeight})-- ${target} (${avg})`);
+						}
 					}
 				}
 				// run number of simulations on every node in the graph
@@ -550,7 +577,6 @@
 			// update display
 			refresh();
 		}
-
 
 		function replaceEdge(source, target) {
 			// add source and target to past edges
@@ -696,6 +722,19 @@
 			drawCytoscapeGraph();
 		}
 
+		$('#offBody').on('blur', function () {
+			let tempStr = $('#offBody').html();
+			let tempArr = new Set(tempStr.split('<br>'));
+			tempArr.delete('Past Edges : ');
+			tempArr.delete('');
+			let label = $('#offcanvasScrollingLabel').text().split(' ');
+			let node = label[label.length - 1];
+			tempArr.forEach(function (value) {
+				let stuff = value.split(' : ');
+				graph['version' + version][node][stuff[0]] = parseFloat(stuff[1]);
+			});
+			refresh();
+		});
 	</script>
 
 </body>
