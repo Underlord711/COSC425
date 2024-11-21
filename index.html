@@ -460,11 +460,14 @@
 						replaceEdge(source, target);
 					} else {
 						// calculate new edge weight if not broken
+
+						// check if either node has weight of 1
 						if (sourceWeight === 1 || targetWeight === 1) {
 							let avg = (parseFloat(sourceWeight) + parseFloat(targetWeight)) / 2;
 							avg = avg.toFixed(2);
 
 							if (sourceWeight !== 1) {
+								// update source if it is not 1
 								graph['version' + version][source]['weight'] = avg;
 								let changesString = `${source} ${sourceWeight} - ${avg}, ${target} ${targetWeight} unchanged`;
 								c.push(changesString);
@@ -472,8 +475,8 @@
 
 								if (document.querySelector('#showAlerts').checked)
 									alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${avg}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})`);
-
 							} else {
+								// update target if it is not 1
 								graph['version' + version][target]['weight'] = avg;
 								let changesString = `${source} ${sourceWeight} unchanged, ${target} ${targetWeight} - ${avg}`;
 								c.push(changesString);
@@ -484,6 +487,7 @@
 							}
 
 						} else {
+							// if neither node weight is 1, update both to be average
 							let avg = (parseFloat(sourceWeight) + parseFloat(targetWeight)) / 2;
 							avg = avg.toFixed(2);
 							graph['version' + version][source]['weight'] = avg;
@@ -557,18 +561,47 @@
 							replaceEdge(source, target);
 						} else {
 							// calculate new edge weight if not broken
-							let avg = (parseFloat(sourceWeight) + parseFloat(targetWeight)) / 2;
-							avg = avg.toFixed(2);
-							graph['version' + version][source]['weight'] = avg;
-							graph['version' + version][target]['weight'] = avg;
 
-							// add changes to json
-							let changesString = `${source} ${sourceWeight} & ${target} ${targetWeight} - ${avg}`;
-							c.push(changesString);
-							graph['version' + version]['changes'] = c;
+							// check if either node has weight of 1
+							if (sourceWeight === 1 || targetWeight === 1) {
+								let avg = (parseFloat(sourceWeight) + parseFloat(targetWeight)) / 2;
+								avg = avg.toFixed(2);
 
-							if (document.querySelector('#showAlerts').checked)
-								alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${avg}) ${source} --(${edgeWeight})-- ${target} (${avg})`);
+								if (sourceWeight !== 1) {
+									// update source if it is not 1
+									graph['version' + version][source]['weight'] = avg;
+									let changesString = `${source} ${sourceWeight} - ${avg}, ${target} ${targetWeight} unchanged`;
+									c.push(changesString);
+									graph['version' + version]['changes'] = c;
+
+									if (document.querySelector('#showAlerts').checked)
+										alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${avg}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})`);
+								} else {
+									// update target if it is not 1
+									graph['version' + version][target]['weight'] = avg;
+									let changesString = `${source} ${sourceWeight} unchanged, ${target} ${targetWeight} - ${avg}`;
+									c.push(changesString);
+									graph['version' + version]['changes'] = c;
+
+									if (document.querySelector('#showAlerts').checked)
+										alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${avg})`);
+								}
+
+							} else {
+								// if neither node weight is 1, update both to be average
+								let avg = (parseFloat(sourceWeight) + parseFloat(targetWeight)) / 2;
+								avg = avg.toFixed(2);
+								graph['version' + version][source]['weight'] = avg;
+								graph['version' + version][target]['weight'] = avg;
+
+								// add change info to json
+								let changesString = `${source} ${sourceWeight} & ${target} ${targetWeight} - ${avg}`;
+								c.push(changesString);
+								graph['version' + version]['changes'] = c;
+
+								if (document.querySelector('#showAlerts').checked)
+									alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${avg}) ${source} --(${edgeWeight})-- ${target} (${avg})`);
+							}
 						}
 					}
 				}
