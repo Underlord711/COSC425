@@ -130,6 +130,7 @@
 		let isMatrixVisible = false; // Track whether the matrix is visible or not
 		let dummy = 'circle';
 		let noClass = ['weight', 'Past Edges', 'changes'];
+		const MAX_WEIGHT = 0.8;
 
 		nodeColorInput.addEventListener("change", drawCytoscapeGraph, false);
 		safeEdgeInput.addEventListener("change", drawCytoscapeGraph, false);
@@ -149,11 +150,26 @@
 			const numVertices = parseInt(document.getElementById('numVertices').value);
 			const weight1 = parseFloat(document.getElementById('weight1').value);
 			const weight2 = parseFloat(document.getElementById('weight2').value);
+			let one = false;
 			graph = { version1: {} };
 			for (let i = 0; i < numVertices; i++) {
 				const vertex = String.fromCharCode(65 + i);
-				graph['version' + version][vertex] = { weight: Math.random().toFixed(2) }; //Initialing the object for each vertex.
+				let w = Math.random().toFixed(2);
+
+				if (w > MAX_WEIGHT && !one) {
+					w = 1;
+					one = true;
+				} else if (w > MAX_WEIGHT) {
+					w = MAX_WEIGHT;
+				}
+
+				graph['version' + version][vertex] = { weight: w }; //Initialing the object for each vertex.
 				graph['version' + version][vertex]['Past Edges'] = [];
+			}
+
+			if (!one) {
+				let vertex = Math.floor(Math.random() * numVertices);
+				graph['version' + version][vertex]['weight'] = 1;
 			}
 
 			const edgesCount = Array(numVertices).fill(0);
@@ -401,10 +417,9 @@
 		}
 
 		function runAlgorithm(number) {
-			for (let i = 0; i < number; i++) {
-				// run number of simulations on one node at a time
-				if (!document.querySelector('#runAllNodes').checked) {
-					// Update displayed version
+			if (!document.querySelector('#runAllNodes').checked) {		// run single node
+				for (let i = 0; i < number; i++) {
+					// update displayed version every iteration
 					graph['version' + (version + 1)] = JSON.parse(JSON.stringify(graph['version' + version]));
 					version++;
 					document.getElementById('versionDisplay').innerText = version;
@@ -430,23 +445,17 @@
 						noClass.includes(target));
 
 					// find weights of the source and target nodes, and the edge weight
-					const sourceWeight = graph['version' + version][source]['weight'];
-					const targetWeight = graph['version' + version][target]['weight'];
-					const edgeWeight = edges[target];
+					const sourceWeight = parseFloat(graph['version' + version][source]['weight']);
+					const targetWeight = parseFloat(graph['version' + version][target]['weight']);
+					const edgeWeight = parseFloat(edges[target]);
 
 					// find difference in node opinion and compare with edge weight
 					let weightDiff = sourceWeight > targetWeight ? (sourceWeight - targetWeight) : (targetWeight - sourceWeight);
 					weightDiff = parseFloat(weightDiff.toFixed(2));
-					let newWeight = -1;
 					let c = [];
 
 					// update graph
 					if (weightDiff > edgeWeight) {
-						newWeight = 0;
-
-						if (document.querySelector('#showAlerts').checked)
-							alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${sourceWeight}) ${source} --(${newWeight})-- ${target} (${targetWeight})`);
-
 						// delete broken edge from json
 						delete graph['version' + version][source][target];
 						delete graph['version' + version][target][source];
@@ -456,6 +465,9 @@
 						c.push(changesString);
 						graph['version' + version]['changes'] = c;
 
+						if (document.querySelector('#showAlerts').checked)
+							alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${sourceWeight}) ${source} --(${0})-- ${target} (${targetWeight})`);
+
 						// make new edges from source and target
 						replaceEdge(source, target);
 					} else {
@@ -463,11 +475,12 @@
 
 						// check if either node has weight of 1
 						if (sourceWeight === 1 || targetWeight === 1) {
-							let avg = (parseFloat(sourceWeight) + parseFloat(targetWeight)) / 2;
-							avg = avg.toFixed(2);
+							let avg = edgeWeight / 4;
+							avg = parseFloat(avg.toFixed(2));
 
 							if (sourceWeight !== 1) {
 								// update source if it is not 1
+								avg = parseFloat(avg + sourceWeight);
 								graph['version' + version][source]['weight'] = avg;
 								let changesString = `${source} ${sourceWeight} - ${avg}, ${target} ${targetWeight} unchanged`;
 								c.push(changesString);
@@ -477,6 +490,7 @@
 									alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${avg}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})`);
 							} else {
 								// update target if it is not 1
+								avg = parseFloat(avg + targetWeight);
 								graph['version' + version][target]['weight'] = avg;
 								let changesString = `${source} ${sourceWeight} unchanged, ${target} ${targetWeight} - ${avg}`;
 								c.push(changesString);
@@ -487,24 +501,37 @@
 							}
 
 						} else {
-							// if neither node weight is 1, update both to be average
-							let avg = (parseFloat(sourceWeight) + parseFloat(targetWeight)) / 2;
-							avg = avg.toFixed(2);
-							graph['version' + version][source]['weight'] = avg;
-							graph['version' + version][target]['weight'] = avg;
+							// if neither node weight is 1, update both
+							let avg = edgeWeight / 4;
+							avg = parseFloat(avg.toFixed(2));
+							let newS, newT;
+
+							if (sourceWeight > targetWeight) {
+								newS = parseFloat(sourceWeight - avg) > 0 ? parseFloat(sourceWeight - avg) : 0;
+								newT = parseFloat(targetWeight + avg) > MAX_WEIGHT ? MAX_WEIGHT : parseFloat(targetWeight + avg);
+							} else {
+								newS = parseFloat(sourceWeight + avg) > MAX_WEIGHT ? MAX_WEIGHT : parseFloat(sourceWeight + avg);
+								newT = parseFloat(targetWeight - avg) > 0 ? parseFloat(targetWeight - avg) : 0;
+							}
+
+							newS = parseFloat(newS.toFixed(2));
+							newT = parseFloat(newT.toFixed(2));
+
+							graph['version' + version][source]['weight'] = newS;
+							graph['version' + version][target]['weight'] = newT;
 
 							// add change info to json
-							let changesString = `${source} ${sourceWeight} & ${target} ${targetWeight} - ${avg}`;
+							let changesString = `${source} ${sourceWeight} - ${newS} & ${target} ${targetWeight} - ${newT}`;
 							c.push(changesString);
 							graph['version' + version]['changes'] = c;
 
 							if (document.querySelector('#showAlerts').checked)
-								alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${avg}) ${source} --(${edgeWeight})-- ${target} (${avg})`);
+								alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${newS}) ${source} --(${edgeWeight})-- ${target} (${newT})`);
 						}
 					}
 				}
-				// run number of simulations on every node in the graph
-				else {
+			} else {													// run all nodes
+				for (let i = 0; i < number; i++) {
 					// update graph version once for all nodes
 					graph['version' + (version + 1)] = JSON.parse(JSON.stringify(graph['version' + version]));
 					version++;
@@ -532,21 +559,19 @@
 							noClass.includes(target));
 
 						// find weights of the source and target nodes, and the edge weight
-						const sourceWeight = graph['version' + version][source]['weight'];
-						const targetWeight = graph['version' + version][target]['weight'];
-						const edgeWeight = edges[target];
+						const sourceWeight = parseFloat(graph['version' + version][source]['weight']);
+						const targetWeight = parseFloat(graph['version' + version][target]['weight']);
+						const edgeWeight = parseFloat(edges[target]);
 
 						// find difference in node opinion and compare with edge weight
 						let weightDiff = sourceWeight > targetWeight ? (sourceWeight - targetWeight) : (targetWeight - sourceWeight);
 						weightDiff = parseFloat(weightDiff.toFixed(2));
-						let newWeight = -1;
 
 						// update graph
 						if (weightDiff > edgeWeight) {
-							newWeight = 0;
 
 							if (document.querySelector('#showAlerts').checked)
-								alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${sourceWeight}) ${source} --(${newWeight})-- ${target} (${targetWeight})`);
+								alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${sourceWeight}) ${source} --(${0})-- ${target} (${targetWeight})`);
 
 							// delete broken edge from json
 							delete graph['version' + version][source][target];
@@ -564,11 +589,12 @@
 
 							// check if either node has weight of 1
 							if (sourceWeight === 1 || targetWeight === 1) {
-								let avg = (parseFloat(sourceWeight) + parseFloat(targetWeight)) / 2;
-								avg = avg.toFixed(2);
+								let avg = edgeWeight / 4;
+								avg = parseFloat(avg.toFixed(2));
 
 								if (sourceWeight !== 1) {
 									// update source if it is not 1
+									avg = parseFloat(avg + sourceWeight);
 									graph['version' + version][source]['weight'] = avg;
 									let changesString = `${source} ${sourceWeight} - ${avg}, ${target} ${targetWeight} unchanged`;
 									c.push(changesString);
@@ -578,6 +604,7 @@
 										alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${avg}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})`);
 								} else {
 									// update target if it is not 1
+									avg = parseFloat(avg + targetWeight);
 									graph['version' + version][target]['weight'] = avg;
 									let changesString = `${source} ${sourceWeight} unchanged, ${target} ${targetWeight} - ${avg}`;
 									c.push(changesString);
@@ -588,26 +615,37 @@
 								}
 
 							} else {
-								// if neither node weight is 1, update both to be average
-								let avg = (parseFloat(sourceWeight) + parseFloat(targetWeight)) / 2;
-								avg = avg.toFixed(2);
-								graph['version' + version][source]['weight'] = avg;
-								graph['version' + version][target]['weight'] = avg;
+								// if neither node weight is 1, update both 
+								let avg = edgeWeight / 4;
+								avg = parseFloat(avg.toFixed(2));
+								let newS, newT;
+
+								if (sourceWeight > targetWeight) {
+									newS = parseFloat(sourceWeight - avg) > 0 ? parseFloat(sourceWeight - avg) : 0;
+									newT = parseFloat(targetWeight + avg) > MAX_WEIGHT ? MAX_WEIGHT : parseFloat(targetWeight + avg)
+								} else {
+									newS = parseFloat(sourceWeight + avg) > MAX_WEIGHT ? MAX_WEIGHT : parseFloat(sourceWeight + avg);
+									newT = parseFloat(targetWeight - avg) > 0 ? parseFloat(targetWeight - avg) : 0;
+								}
+
+								newS = parseFloat(newS.toFixed(2));
+								newT = parseFloat(newT.toFixed(2));
+
+								graph['version' + version][source]['weight'] = newS;
+								graph['version' + version][target]['weight'] = newT;
 
 								// add change info to json
-								let changesString = `${source} ${sourceWeight} & ${target} ${targetWeight} - ${avg}`;
+								let changesString = `${source} ${sourceWeight} - ${newS} & ${target} ${targetWeight} - ${newT}`;
 								c.push(changesString);
 								graph['version' + version]['changes'] = c;
 
 								if (document.querySelector('#showAlerts').checked)
-									alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${avg}) ${source} --(${edgeWeight})-- ${target} (${avg})`);
+									alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${newS}) ${source} --(${edgeWeight})-- ${target} (${newT})`);
 							}
 						}
 					}
 				}
 			}
-
-			// update display
 			refresh();
 		}
 
@@ -669,7 +707,7 @@
 				}
 
 				// Create the new edge here
-				weightS = Math.random() < 0.5 ? weight1 : weight2;
+				weightS = weight1;
 				graph['version' + version][source][sourceNode] = weightS;
 				graph['version' + version][sourceNode][source] = weightS;
 
@@ -713,7 +751,7 @@
 					graph['version' + version][targetNode] = {};
 				}
 
-				weightT = Math.random() < 0.5 ? weight1 : weight2;
+				weightT = weight1;
 				graph['version' + version][target][targetNode] = weightT;
 				graph['version' + version][targetNode][target] = weightT;
 
