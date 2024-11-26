@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 
-
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -34,7 +33,7 @@
 
 			<div>
 				<label for="weight2" class="block text-sm font-medium">Weight for Edge Type 2:</label>
-				<input type="number" id="weight2" value="0.9" required
+				<input type="number" id="weight2" value="0.7" required
 					class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2">
 			</div>
 
@@ -88,6 +87,10 @@
 				<button id="uploadBtn" style="display:none;" onclick="uploadJSON()"
 					class="mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none">Upload
 					JSON</button>
+					
+				<button onclick="patchNotes()" id="patchBtn"
+                    class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 focus:outline-none">Patch Notes</button>
+                    
 			</div>
 		</div>
 
@@ -130,6 +133,8 @@
 		let isMatrixVisible = false; // Track whether the matrix is visible or not
 		let dummy = 'circle';
 		let noClass = ['weight', 'Past Edges', 'changes'];
+		
+		changeNotes = [];	//Need this for Patch Notes
 
 		nodeColorInput.addEventListener("change", drawCytoscapeGraph, false);
 		safeEdgeInput.addEventListener("change", drawCytoscapeGraph, false);
@@ -195,6 +200,7 @@
 				}
 			}
 
+			// graph['version1']['changes'] = {};
 			graph['version1']['changes'] = [];
 
 			refresh();
@@ -287,79 +293,79 @@
 				}
 			}
 
-            const cy = cytoscape({
-                container: document.getElementById('cy'),
-                elements: elements,          
-                style: [
-                    {
-                        selector: 'node',
-                        style: {
-                            'background-color': nodeColor,
-                            'label' : function(elem){
-                                return elem.data('id') + '\n' + elem.data('rel')},
-                            'color': 'green',
-                            'font-size': '50px',
-                            'text-wrap': 'wrap'
-                        }
-                    },
-                    {
-                        selector: 'edge',
-                        style: {
-                            'width': 2,
-                            'line-color': function(elem){
-                                let s = graph['version' + version][elem.data('source')]['weight'];
-                                let t = graph['version' + version][elem.data('target')]['weight'];
-                                let w = elem.data('label');
-                                let weightDiff = s > t ? (s - t) : (t - s);
-                                weightDiff = parseFloat(weightDiff.toFixed(2));
+			const cy = cytoscape({
+				container: document.getElementById('cy'),
+				elements: elements,
+				style: [
+					{
+						selector: 'node',
+						style: {
+							'background-color': nodeColor,
+							'label': function (elem) {
+								return elem.data('id') + '\n' + elem.data('rel')
+							},
+							'color': 'green',
+							'font-size': '50px',
+							'text-wrap': 'wrap'
+						}
+					},
+					{
+						selector: 'edge',
+						style: {
+							'width': 2,
+							'line-color': function (elem) {
+								let s = graph['version' + version][elem.data('source')]['weight'];
+								let t = graph['version' + version][elem.data('target')]['weight'];
+								let w = elem.data('label');
+								let weightDiff = s > t ? (s - t) : (t - s);
+								weightDiff = parseFloat(weightDiff.toFixed(2));
 
-                                return weightDiff > w ? unsafeEdgeColor : safeEdgeColor;
+								return weightDiff > w ? unsafeEdgeColor : safeEdgeColor;
+							},
+							'label': 'data(label)',
+							'font-size': '35px',
+							'text-justification': 'left',
+							'text-margin-x': 5,
+							'color': 'red' // Change label color here
+						}
+					}
+				],
+				layout: {
+					name: dummy,
+					avoidOverlap: true,
+					nodeOverlap: 0,
+					spacingFactor: 3,
+					animate: false,
 
-                            },
-                            'label': 'data(label)',
-                            'font-size': '35px',
-                            'text-justification': 'left',
-                            'text-margin-x': 5,
-                            'color': 'black' // Change label color here
-                        }
-                    }
-                ],
-                layout: {
-                    name: dummy,
-                    avoidOverlap: true, 
-            nodeOverlap: 0,  
-            spacingFactor: 3,  
-            animate: false,
-            
-                }
-            });
+				}
+			});
 
-            cy.on('tap', '*', function(evt){
-                var offcanvasElement = document.getElementById('offcanvasScrolling');
-                var bsOffcanvas = new bootstrap.Offcanvas(offcanvasElement);
-                bsOffcanvas.show();
-            })
-            
-            cy.on('tap', 'node', function(evt){
-                let text;
-                var node = evt.target;
-                $('#offBody').text('');
-                $('#offcanvasScrollingLabel').html('Node: ' + node.id());
-                for (const [destination, weight] of Object.entries(graph['version'+version][node.id()])){
-                    text=destination + ' : ' + weight;
-                    $("#offBody").append(text+"<br>");
-                }
-            });
-            cy.on('tap', 'edge', function(evt){
-                let text;
-                var edge = evt.target;
-                $('#offBody').text('');
-                $('#offcanvasScrollingLabel').html('Edge: ' + edge.data('id'));
-                $('#offBody').append("Source : " + edge.data('source') + '<br>');
-                $('#offBody').append("Destination : " + edge.data('target')+ '<br>');
-                $('#offBody').append("Weight : " + edge.data('label')+ '<br>');
-            });
-}
+			cy.on('tap', "*", function (evt) {
+				var offcanvasElement = document.getElementById('offcanvasScrolling');
+				var bsOffcanvas = new bootstrap.Offcanvas(offcanvasElement);
+				bsOffcanvas.show();
+			});
+
+			cy.on('tap', 'node', function (evt) {
+				let text;
+				var node = evt.target;
+				$('#offBody').text('');
+				$('#offcanvasScrollingLabel').html('Node: ' + node.id());
+				for (const [destination, weight] of Object.entries(graph['version' + version][node.id()])) {
+					text = destination + ': ' + weight;
+					$("#offBody").append(text + "<br>");
+				}
+			});
+			cy.on('tap', 'edge', function (evt) {
+				let text;
+				var edge = evt.target;
+				$('#offBody').text('');
+				$('#offcanvasScrollingLabel').html('Edge: ' + edge.data('id'));
+				$('#offBody').append("Source: " + edge.data('source') + '<br>');
+				$('#offBody').append("Destination: " + edge.data('target') + '<br>');
+				$('#offBody').append("Weight: " + edge.data('label') + '<br>');
+			});
+		}
 
 		function downloadJSON() {
 			const jsonStr = JSON.stringify(graph, null, 2);
@@ -398,6 +404,13 @@
 			};
 			reader.readAsText(file);
 		}
+		
+		function addNotes(message)
+        	{
+        		changeNotes.push(`${message}`);
+        		changeNotes.push(``);
+        	}
+
 
 		function runAlgorithm(number) {
 			for (let i = 0; i < number; i++) {
@@ -442,9 +455,13 @@
 					// update graph
 					if (weightDiff > edgeWeight) {
 						newWeight = 0;
+						
+						addNotes(`(${sourceWeight}) ${source} --(${edgeweight})-- ${target} (${targetWeight})\n-->\n(${sourceWeight}) ${source} --(${newWeight})-- ${target} (${targetWeight})`);
 
 						if (document.querySelector('#showAlerts').checked)
+						{
 							alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${sourceWeight}) ${source} --(${newWeight})-- ${target} (${targetWeight})`);
+						}
 
 						// delete broken edge from json
 						delete graph['version' + version][source][target];
@@ -463,14 +480,20 @@
 						avg = avg.toFixed(2);
 						graph['version' + version][source]['weight'] = avg;
 						graph['version' + version][target]['weight'] = avg;
+						
+						addNotes(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${avg}) ${source} --(${edgeWeight})-- ${target} (${avg})`);
 
-						// add change info to json
+						// reset changes then update
+
 						let changesString = `${source} ${sourceWeight} & ${target} ${targetWeight} - ${avg}`;
 						c.push(changesString);
 						graph['version' + version]['changes'] = c;
 
 						if (document.querySelector('#showAlerts').checked)
+						{
 							alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${avg}) ${source} --(${edgeWeight})-- ${target} (${avg})`);
+						}
+							
 					}
 				}
 				// run number of simulations on every node in the graph
@@ -514,6 +537,8 @@
 						// update graph
 						if (weightDiff > edgeWeight) {
 							newWeight = 0;
+							
+							addNotes(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${sourceWeight}) ${source} --(${newWeight})-- ${target} (${targetWeight})`);
 
 							if (document.querySelector('#showAlerts').checked)
 								alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${sourceWeight}) ${source} --(${newWeight})-- ${target} (${targetWeight})`);
@@ -535,8 +560,11 @@
 							avg = avg.toFixed(2);
 							graph['version' + version][source]['weight'] = avg;
 							graph['version' + version][target]['weight'] = avg;
+							
+							addNotes(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${avg}) ${source} --(${edgeWeight})-- ${target} (${avg})`);
 
-							// add changes to json
+							// reset changes then update
+
 							let changesString = `${source} ${sourceWeight} & ${target} ${targetWeight} - ${avg}`;
 							c.push(changesString);
 							graph['version' + version]['changes'] = c;
@@ -555,6 +583,7 @@
 
 		function replaceEdge(source, target) {
 			// add source and target to past edges
+			// need to add an if statement or something based on checkbox to check past edges for randomly chosen new edge
 			let c = graph['version' + version]['changes'];
 
 			let sourceEdges = graph['version' + version][source]['Past Edges'];
@@ -697,7 +726,7 @@
 			drawCytoscapeGraph();
 		}
 
-        $('#offBody').on('blur', function(){
+		$('#offBody').on('blur', function(){
             let tempStr = $('#offBody').html();
             let tempArr = new Set(tempStr.split('<br>'));
             tempArr.delete('Past Edges : ');
@@ -710,6 +739,17 @@
             });
             refresh();
         });
+		function patchNotes() {
+        		if(changeNotes.length == 0)
+        		{
+        			alert("No changes yet.");
+        		}
+        		else
+        		{
+        			alert("Changes:\n\n" + changeNotes.join("\n"));
+        		}
+        	}
+
 	</script>
 
 </body>
