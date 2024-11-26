@@ -33,7 +33,7 @@
 
 			<div>
 				<label for="weight2" class="block text-sm font-medium">Weight for Edge Type 2:</label>
-				<input type="number" id="weight2" value="0.7" required
+				<input type="number" id="weight2" value="0.9" required
 					class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2">
 			</div>
 
@@ -68,6 +68,7 @@
 				<label id="pastEdgesLabel" for="allowPastEdges" class="updateClass" style="display:none;">Allow Past
 					Edges</label>
 
+
 				<input type="color" id="nodeColorInput" class="updateClass border px-1 py-1 rounded"
 					style="display:none;" value="#808080">
 				<label for="nodeColorInput" class="updateClass" style="display:none;">Node Color</label>
@@ -79,6 +80,8 @@
 				<input type="color" id="unsafeEdgeInput" class="updateClass border px-1 py-1 rounded"
 					style="display:none;" value="#9C9C9C">
 				<label for="unsafeEdgeInput" class="updateClass" style="display:none;">Unsafe Edge Color</label>
+				<button onclick="patchNotes()" id="patchBtn"
+				class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 focus:outline-none updateClass" style="display:none;">Patch Notes</button>
 			</div>
 
 			<div class="mt-4">
@@ -87,9 +90,7 @@
 				<button id="uploadBtn" style="display:none;" onclick="uploadJSON()"
 					class="mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none">Upload
 					JSON</button>
-					
-				<button onclick="patchNotes()" id="patchBtn"
-                    class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 focus:outline-none">Patch Notes</button>
+				
                     
 			</div>
 		</div>
