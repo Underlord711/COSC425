@@ -475,12 +475,13 @@
 
 						// check if either node has weight of 1
 						if (sourceWeight === 1 || targetWeight === 1) {
-							let avg = edgeWeight / 4;
+							let avg = weightDiff / 4;
 							avg = parseFloat(avg.toFixed(2));
 
 							if (sourceWeight !== 1) {
 								// update source if it is not 1
 								avg = parseFloat(avg + sourceWeight);
+								avg = parseFloat(avg.toFixed(2));
 								graph['version' + version][source]['weight'] = avg;
 								let changesString = `${source} ${sourceWeight} - ${avg}, ${target} ${targetWeight} unchanged`;
 								c.push(changesString);
@@ -491,6 +492,7 @@
 							} else {
 								// update target if it is not 1
 								avg = parseFloat(avg + targetWeight);
+								avg = parseFloat(avg.toFixed(2));
 								graph['version' + version][target]['weight'] = avg;
 								let changesString = `${source} ${sourceWeight} unchanged, ${target} ${targetWeight} - ${avg}`;
 								c.push(changesString);
@@ -502,7 +504,7 @@
 
 						} else {
 							// if neither node weight is 1, update both
-							let avg = edgeWeight / 4;
+							let avg = weightDiff / 4;
 							avg = parseFloat(avg.toFixed(2));
 							let newS, newT;
 
@@ -589,12 +591,13 @@
 
 							// check if either node has weight of 1
 							if (sourceWeight === 1 || targetWeight === 1) {
-								let avg = edgeWeight / 4;
+								let avg = weightDiff / 4;
 								avg = parseFloat(avg.toFixed(2));
 
 								if (sourceWeight !== 1) {
 									// update source if it is not 1
 									avg = parseFloat(avg + sourceWeight);
+									avg = parseFloat(avg.toFixed(2));
 									graph['version' + version][source]['weight'] = avg;
 									let changesString = `${source} ${sourceWeight} - ${avg}, ${target} ${targetWeight} unchanged`;
 									c.push(changesString);
@@ -605,6 +608,7 @@
 								} else {
 									// update target if it is not 1
 									avg = parseFloat(avg + targetWeight);
+									avg = parseFloat(avg.toFixed(2));
 									graph['version' + version][target]['weight'] = avg;
 									let changesString = `${source} ${sourceWeight} unchanged, ${target} ${targetWeight} - ${avg}`;
 									c.push(changesString);
@@ -616,7 +620,7 @@
 
 							} else {
 								// if neither node weight is 1, update both 
-								let avg = edgeWeight / 4;
+								let avg = weightDiff / 4;
 								avg = parseFloat(avg.toFixed(2));
 								let newS, newT;
 
@@ -662,13 +666,11 @@
 			graph['version' + version][target]['Past Edges'] = targetEdges;
 
 			const nodes = Object.keys(graph['version' + version]).filter(node => node !== 'changes');
-			let sourceNode, targetNode, changesString, alertString = "";
+			let sourceNode, changesString, alertString = "";
 			let valid = true;
 
 			// get weights from page
-			const weight1 = parseFloat(document.getElementById('weight1').value);
-			const weight2 = parseFloat(document.getElementById('weight2').value);
-			let weightS, weightT, attempts = 100;
+			let weightS, attempts = 100;
 
 			// find source node
 			// allow 100 attempts to find valid node based on whether remaking past edges is allowed
@@ -706,57 +708,13 @@
 					graph['version' + version][sourceNode] = {};
 				}
 
-				// Create the new edge here
-				weightS = weight1;
+				// create the new edge here
+				weightS = parseFloat(document.getElementById('weight1').value);
 				graph['version' + version][source][sourceNode] = weightS;
 				graph['version' + version][sourceNode][source] = weightS;
 
 				changesString = `${source} -${weightS}- ${sourceNode} - made`;
 				alertString += changesString + '\n';
-				c.push(changesString);
-				graph['version' + version]['changes'] = c;
-			}
-
-			// repeat for target
-			attempts = 0;
-			valid = true;
-
-			do {
-				targetNode = nodes[Math.floor(Math.random() * nodes.length)];
-
-				if (!document.querySelector('#allowPastEdges').checked && targetEdges.includes(targetNode)) {
-					attempts++;
-					continue;
-				}
-
-				if (targetNode === target || targetNode === source || targetNode === sourceNode || graph['version' + version][target][targetNode]) {
-					attempts++;
-					if (attempts > 100) {
-						console.log("Too many attempts to find valid target vertex (replace edge 2)");
-						changesString = `Failed to make new edge from ${target}`;
-						alertString += changesString;
-						c.push(changesString);
-						graph['version' + version]['changes'] = c;
-						valid = false;
-						break;
-					}
-					continue;
-				}
-
-				break;
-			} while (true);
-
-			if (target !== targetNode) {
-				if (!graph['version' + version][targetNode]) {
-					graph['version' + version][targetNode] = {};
-				}
-
-				weightT = weight1;
-				graph['version' + version][target][targetNode] = weightT;
-				graph['version' + version][targetNode][target] = weightT;
-
-				changesString = `${target} -${weightT}- ${targetNode} - made`;
-				alertString += changesString;
 				c.push(changesString);
 				graph['version' + version]['changes'] = c;
 			}
