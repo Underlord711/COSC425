@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 
+
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -33,6 +34,7 @@
 
 			<div>
 				<label for="weight2" class="block text-sm font-medium">Weight for Edge Type 2:</label>
+				<input type="number" id="weight2" value="0.9" required
 				<input type="number" id="weight2" value="0.9" required
 					class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2">
 			</div>
@@ -121,8 +123,10 @@
 		id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel">
 		<div class="offcanvas-header">
 			<h5 class="offcanvas-title" id="offcanvasScrollingLabel" contenteditable='true'>Node: </h5>
+			<h5 class="offcanvas-title" id="offcanvasScrollingLabel" contenteditable='true'>Node: </h5>
 			<button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
 		</div>
+		<div class="offcanvas-body" contenteditable='true' id="offBody">
 		<div class="offcanvas-body" contenteditable='true' id="offBody">
 			<p></p>
 		</div>
@@ -134,6 +138,7 @@
 		let isMatrixVisible = false; // Track whether the matrix is visible or not
 		let dummy = 'circle';
 		let noClass = ['weight', 'Past Edges', 'changes'];
+		const MAX_WEIGHT = 0.8;
 		
 		changeNotes = [];	//Need this for Patch Notes
 
@@ -155,11 +160,26 @@
 			const numVertices = parseInt(document.getElementById('numVertices').value);
 			const weight1 = parseFloat(document.getElementById('weight1').value);
 			const weight2 = parseFloat(document.getElementById('weight2').value);
+			let one = false;
 			graph = { version1: {} };
 			for (let i = 0; i < numVertices; i++) {
 				const vertex = String.fromCharCode(65 + i);
-				graph['version' + version][vertex] = { weight: Math.random().toFixed(2) }; //Initialing the object for each vertex.
+				let w = Math.random().toFixed(2);
+
+				if (w > MAX_WEIGHT && !one) {
+					w = 1;
+					one = true;
+				} else if (w > MAX_WEIGHT) {
+					w = MAX_WEIGHT;
+				}
+
+				graph['version' + version][vertex] = { weight: w }; //Initialing the object for each vertex.
 				graph['version' + version][vertex]['Past Edges'] = [];
+			}
+
+			if (!one) {
+				let vertex = Math.floor(Math.random() * numVertices);
+				graph['version' + version][vertex]['weight'] = 1;
 			}
 
 			const edgesCount = Array(numVertices).fill(0);
@@ -322,6 +342,7 @@
 								weightDiff = parseFloat(weightDiff.toFixed(2));
 
 								return weightDiff > w ? unsafeEdgeColor : safeEdgeColor;
+
 							},
 							'label': 'data(label)',
 							'font-size': '35px',
@@ -341,11 +362,11 @@
 				}
 			});
 
-			cy.on('tap', "*", function (evt) {
+			cy.on('tap', '*', function (evt) {
 				var offcanvasElement = document.getElementById('offcanvasScrolling');
 				var bsOffcanvas = new bootstrap.Offcanvas(offcanvasElement);
 				bsOffcanvas.show();
-			});
+			})
 
 			cy.on('tap', 'node', function (evt) {
 				let text;
@@ -353,7 +374,7 @@
 				$('#offBody').text('');
 				$('#offcanvasScrollingLabel').html('Node: ' + node.id());
 				for (const [destination, weight] of Object.entries(graph['version' + version][node.id()])) {
-					text = destination + ': ' + weight;
+					text = destination + ' : ' + weight;
 					$("#offBody").append(text + "<br>");
 				}
 			});
@@ -362,9 +383,9 @@
 				var edge = evt.target;
 				$('#offBody').text('');
 				$('#offcanvasScrollingLabel').html('Edge: ' + edge.data('id'));
-				$('#offBody').append("Source: " + edge.data('source') + '<br>');
-				$('#offBody').append("Destination: " + edge.data('target') + '<br>');
-				$('#offBody').append("Weight: " + edge.data('label') + '<br>');
+				$('#offBody').append("Source : " + edge.data('source') + '<br>');
+				$('#offBody').append("Destination : " + edge.data('target') + '<br>');
+				$('#offBody').append("Weight : " + edge.data('label') + '<br>');
 			});
 		}
 
@@ -414,10 +435,9 @@
 
 
 		function runAlgorithm(number) {
-			for (let i = 0; i < number; i++) {
-				// run number of simulations on one node at a time
-				if (!document.querySelector('#runAllNodes').checked) {
-					// Update displayed version
+			if (!document.querySelector('#runAllNodes').checked) {		// run single node
+				for (let i = 0; i < number; i++) {
+					// update displayed version every iteration
 					graph['version' + (version + 1)] = JSON.parse(JSON.stringify(graph['version' + version]));
 					version++;
 					document.getElementById('versionDisplay').innerText = version;
@@ -443,14 +463,13 @@
 						noClass.includes(target));
 
 					// find weights of the source and target nodes, and the edge weight
-					const sourceWeight = graph['version' + version][source]['weight'];
-					const targetWeight = graph['version' + version][target]['weight'];
-					const edgeWeight = edges[target];
+					const sourceWeight = parseFloat(graph['version' + version][source]['weight']);
+					const targetWeight = parseFloat(graph['version' + version][target]['weight']);
+					const edgeWeight = parseFloat(edges[target]);
 
 					// find difference in node opinion and compare with edge weight
 					let weightDiff = sourceWeight > targetWeight ? (sourceWeight - targetWeight) : (targetWeight - sourceWeight);
 					weightDiff = parseFloat(weightDiff.toFixed(2));
-					let newWeight = -1;
 					let c = [];
 
 					// update graph
@@ -473,32 +492,75 @@
 						c.push(changesString);
 						graph['version' + version]['changes'] = c;
 
+						if (document.querySelector('#showAlerts').checked)
+							alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${sourceWeight}) ${source} --(${0})-- ${target} (${targetWeight})`);
+
 						// make new edges from source and target
 						replaceEdge(source, target);
 					} else {
 						// calculate new edge weight if not broken
-						let avg = (parseFloat(sourceWeight) + parseFloat(targetWeight)) / 2;
-						avg = avg.toFixed(2);
-						graph['version' + version][source]['weight'] = avg;
-						graph['version' + version][target]['weight'] = avg;
-						
-						addNotes(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${avg}) ${source} --(${edgeWeight})-- ${target} (${avg})`);
 
-						// reset changes then update
+						// check if either node has weight of 1
+						if (sourceWeight === 1 || targetWeight === 1) {
+							let avg = weightDiff / 4;
+							avg = parseFloat(avg.toFixed(2));
 
-						let changesString = `${source} ${sourceWeight} & ${target} ${targetWeight} - ${avg}`;
-						c.push(changesString);
-						graph['version' + version]['changes'] = c;
+							if (sourceWeight !== 1) {
+								// update source if it is not 1
+								avg = parseFloat(avg + sourceWeight);
+								avg = parseFloat(avg.toFixed(2));
+								graph['version' + version][source]['weight'] = avg;
+								let changesString = `${source} ${sourceWeight} - ${avg}, ${target} ${targetWeight} unchanged`;
+								c.push(changesString);
+								graph['version' + version]['changes'] = c;
 
-						if (document.querySelector('#showAlerts').checked)
-						{
-							alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${avg}) ${source} --(${edgeWeight})-- ${target} (${avg})`);
+								if (document.querySelector('#showAlerts').checked)
+									alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${avg}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})`);
+							} else {
+								// update target if it is not 1
+								avg = parseFloat(avg + targetWeight);
+								avg = parseFloat(avg.toFixed(2));
+								graph['version' + version][target]['weight'] = avg;
+								let changesString = `${source} ${sourceWeight} unchanged, ${target} ${targetWeight} - ${avg}`;
+								c.push(changesString);
+								graph['version' + version]['changes'] = c;
+
+								if (document.querySelector('#showAlerts').checked)
+									alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${avg})`);
+							}
+
+						} else {
+							// if neither node weight is 1, update both
+							let avg = weightDiff / 4;
+							avg = parseFloat(avg.toFixed(2));
+							let newS, newT;
+
+							if (sourceWeight > targetWeight) {
+								newS = parseFloat(sourceWeight - avg) > 0 ? parseFloat(sourceWeight - avg) : 0;
+								newT = parseFloat(targetWeight + avg) > MAX_WEIGHT ? MAX_WEIGHT : parseFloat(targetWeight + avg);
+							} else {
+								newS = parseFloat(sourceWeight + avg) > MAX_WEIGHT ? MAX_WEIGHT : parseFloat(sourceWeight + avg);
+								newT = parseFloat(targetWeight - avg) > 0 ? parseFloat(targetWeight - avg) : 0;
+							}
+
+							newS = parseFloat(newS.toFixed(2));
+							newT = parseFloat(newT.toFixed(2));
+
+							graph['version' + version][source]['weight'] = newS;
+							graph['version' + version][target]['weight'] = newT;
+
+							// add change info to json
+							let changesString = `${source} ${sourceWeight} - ${newS} & ${target} ${targetWeight} - ${newT}`;
+							c.push(changesString);
+							graph['version' + version]['changes'] = c;
+
+							if (document.querySelector('#showAlerts').checked)
+								alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${newS}) ${source} --(${edgeWeight})-- ${target} (${newT})`);
 						}
-							
 					}
 				}
-				// run number of simulations on every node in the graph
-				else {
+			} else {													// run all nodes
+				for (let i = 0; i < number; i++) {
 					// update graph version once for all nodes
 					graph['version' + (version + 1)] = JSON.parse(JSON.stringify(graph['version' + version]));
 					version++;
@@ -526,14 +588,13 @@
 							noClass.includes(target));
 
 						// find weights of the source and target nodes, and the edge weight
-						const sourceWeight = graph['version' + version][source]['weight'];
-						const targetWeight = graph['version' + version][target]['weight'];
-						const edgeWeight = edges[target];
+						const sourceWeight = parseFloat(graph['version' + version][source]['weight']);
+						const targetWeight = parseFloat(graph['version' + version][target]['weight']);
+						const edgeWeight = parseFloat(edges[target]);
 
 						// find difference in node opinion and compare with edge weight
 						let weightDiff = sourceWeight > targetWeight ? (sourceWeight - targetWeight) : (targetWeight - sourceWeight);
 						weightDiff = parseFloat(weightDiff.toFixed(2));
-						let newWeight = -1;
 
 						// update graph
 						if (weightDiff > edgeWeight) {
@@ -542,7 +603,7 @@
 							addNotes(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${sourceWeight}) ${source} --(${newWeight})-- ${target} (${targetWeight})`);
 
 							if (document.querySelector('#showAlerts').checked)
-								alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${sourceWeight}) ${source} --(${newWeight})-- ${target} (${targetWeight})`);
+								alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${sourceWeight}) ${source} --(${0})-- ${target} (${targetWeight})`);
 
 							// delete broken edge from json
 							delete graph['version' + version][source][target];
@@ -557,30 +618,70 @@
 							replaceEdge(source, target);
 						} else {
 							// calculate new edge weight if not broken
-							let avg = (parseFloat(sourceWeight) + parseFloat(targetWeight)) / 2;
-							avg = avg.toFixed(2);
-							graph['version' + version][source]['weight'] = avg;
-							graph['version' + version][target]['weight'] = avg;
-							
-							addNotes(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${avg}) ${source} --(${edgeWeight})-- ${target} (${avg})`);
 
-							// reset changes then update
+							// check if either node has weight of 1
+							if (sourceWeight === 1 || targetWeight === 1) {
+								let avg = weightDiff / 4;
+								avg = parseFloat(avg.toFixed(2));
 
-							let changesString = `${source} ${sourceWeight} & ${target} ${targetWeight} - ${avg}`;
-							c.push(changesString);
-							graph['version' + version]['changes'] = c;
+								if (sourceWeight !== 1) {
+									// update source if it is not 1
+									avg = parseFloat(avg + sourceWeight);
+									avg = parseFloat(avg.toFixed(2));
+									graph['version' + version][source]['weight'] = avg;
+									let changesString = `${source} ${sourceWeight} - ${avg}, ${target} ${targetWeight} unchanged`;
+									c.push(changesString);
+									graph['version' + version]['changes'] = c;
 
-							if (document.querySelector('#showAlerts').checked)
-								alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${avg}) ${source} --(${edgeWeight})-- ${target} (${avg})`);
+									if (document.querySelector('#showAlerts').checked)
+										alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${avg}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})`);
+								} else {
+									// update target if it is not 1
+									avg = parseFloat(avg + targetWeight);
+									avg = parseFloat(avg.toFixed(2));
+									graph['version' + version][target]['weight'] = avg;
+									let changesString = `${source} ${sourceWeight} unchanged, ${target} ${targetWeight} - ${avg}`;
+									c.push(changesString);
+									graph['version' + version]['changes'] = c;
+
+									if (document.querySelector('#showAlerts').checked)
+										alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${avg})`);
+								}
+
+							} else {
+								// if neither node weight is 1, update both 
+								let avg = weightDiff / 4;
+								avg = parseFloat(avg.toFixed(2));
+								let newS, newT;
+
+								if (sourceWeight > targetWeight) {
+									newS = parseFloat(sourceWeight - avg) > 0 ? parseFloat(sourceWeight - avg) : 0;
+									newT = parseFloat(targetWeight + avg) > MAX_WEIGHT ? MAX_WEIGHT : parseFloat(targetWeight + avg)
+								} else {
+									newS = parseFloat(sourceWeight + avg) > MAX_WEIGHT ? MAX_WEIGHT : parseFloat(sourceWeight + avg);
+									newT = parseFloat(targetWeight - avg) > 0 ? parseFloat(targetWeight - avg) : 0;
+								}
+
+								newS = parseFloat(newS.toFixed(2));
+								newT = parseFloat(newT.toFixed(2));
+
+								graph['version' + version][source]['weight'] = newS;
+								graph['version' + version][target]['weight'] = newT;
+
+								// add change info to json
+								let changesString = `${source} ${sourceWeight} - ${newS} & ${target} ${targetWeight} - ${newT}`;
+								c.push(changesString);
+								graph['version' + version]['changes'] = c;
+
+								if (document.querySelector('#showAlerts').checked)
+									alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${newS}) ${source} --(${edgeWeight})-- ${target} (${newT})`);
+							}
 						}
 					}
 				}
 			}
-
-			// update display
 			refresh();
 		}
-
 
 		function replaceEdge(source, target) {
 			// add source and target to past edges
@@ -596,13 +697,11 @@
 			graph['version' + version][target]['Past Edges'] = targetEdges;
 
 			const nodes = Object.keys(graph['version' + version]).filter(node => node !== 'changes');
-			let sourceNode, targetNode, changesString, alertString = "";
+			let sourceNode, changesString, alertString = "";
 			let valid = true;
 
 			// get weights from page
-			const weight1 = parseFloat(document.getElementById('weight1').value);
-			const weight2 = parseFloat(document.getElementById('weight2').value);
-			let weightS, weightT, attempts = 100;
+			let weightS, attempts = 100;
 
 			// find source node
 			// allow 100 attempts to find valid node based on whether remaking past edges is allowed
@@ -640,57 +739,13 @@
 					graph['version' + version][sourceNode] = {};
 				}
 
-				// Create the new edge here
-				weightS = Math.random() < 0.5 ? weight1 : weight2;
+				// create the new edge here
+				weightS = parseFloat(document.getElementById('weight1').value);
 				graph['version' + version][source][sourceNode] = weightS;
 				graph['version' + version][sourceNode][source] = weightS;
 
 				changesString = `${source} -${weightS}- ${sourceNode} - made`;
 				alertString += changesString + '\n';
-				c.push(changesString);
-				graph['version' + version]['changes'] = c;
-			}
-
-			// repeat for target
-			attempts = 0;
-			valid = true;
-
-			do {
-				targetNode = nodes[Math.floor(Math.random() * nodes.length)];
-
-				if (!document.querySelector('#allowPastEdges').checked && targetEdges.includes(targetNode)) {
-					attempts++;
-					continue;
-				}
-
-				if (targetNode === target || targetNode === source || targetNode === sourceNode || graph['version' + version][target][targetNode]) {
-					attempts++;
-					if (attempts > 100) {
-						console.log("Too many attempts to find valid target vertex (replace edge 2)");
-						changesString = `Failed to make new edge from ${target}`;
-						alertString += changesString;
-						c.push(changesString);
-						graph['version' + version]['changes'] = c;
-						valid = false;
-						break;
-					}
-					continue;
-				}
-
-				break;
-			} while (true);
-
-			if (target !== targetNode) {
-				if (!graph['version' + version][targetNode]) {
-					graph['version' + version][targetNode] = {};
-				}
-
-				weightT = Math.random() < 0.5 ? weight1 : weight2;
-				graph['version' + version][target][targetNode] = weightT;
-				graph['version' + version][targetNode][target] = weightT;
-
-				changesString = `${target} -${weightT}- ${targetNode} - made`;
-				alertString += changesString;
 				c.push(changesString);
 				graph['version' + version]['changes'] = c;
 			}
@@ -751,6 +806,43 @@
         		}
         	}
 
+		$('#offBody').on('blur', function(){
+            let tempStr = $('#offBody').html();
+            let tempArr = new Set(tempStr.split('<br>'));
+            tempArr.delete('Past Edges : ');
+            tempArr.delete('');
+            let label = $('#offcanvasScrollingLabel').text().split(' ');
+            let node = label[label.length-1];
+            tempArr.forEach(function(value){
+                let stuff = value.split(' : ');
+                graph['version'+version][node][stuff[0]]=parseFloat(stuff[1]);
+            });
+            refresh();
+        });
+		function patchNotes() {
+        		if(changeNotes.length == 0)
+        		{
+        			alert("No changes yet.");
+        		}
+        		else
+        		{
+        			alert("Changes:\n\n" + changeNotes.join("\n"));
+        		}
+        	}
+
+		$('#offBody').on('blur', function () {
+			let tempStr = $('#offBody').html();
+			let tempArr = new Set(tempStr.split('<br>'));
+			tempArr.delete('Past Edges : ');
+			tempArr.delete('');
+			let label = $('#offcanvasScrollingLabel').text().split(' ');
+			let node = label[label.length - 1];
+			tempArr.forEach(function (value) {
+				let stuff = value.split(' : ');
+				graph['version' + version][node][stuff[0]] = parseFloat(stuff[1]);
+			});
+			refresh();
+		});
 	</script>
 
 </body>
