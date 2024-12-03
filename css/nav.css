@@ -1,0 +1,63 @@
+/* styles.css */
+
+/* Basic Reset */
+body, ul, li, a, button {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+/* Navbar styles */
+nav {
+    background-color: gold; /* Gold background for navbar */
+    padding: 15x;
+    border: 3px solid maroon;
+}
+
+nav ul {
+    display: flex;
+    justify-content: flex-start; /* Align items to the left */
+    padding: 0;
+}
+
+nav ul li {
+    margin: 0 15px; /* Adds spacing between list items */
+}
+
+/* Style for anchor links */
+nav ul li a {
+    color: white; /* White text */
+    text-decoration: none; /* Removes underline */
+    font-size: 18px;
+    padding: 15px 20px; /* Increase padding to make the link taller */
+    display: block;
+}
+
+/* Hover effect for anchor links */
+nav ul li a:hover {
+    background-color: #f4a261; /* Slight change for hover effect */
+    border-radius: 5px; /* Rounded corners on hover */
+}
+
+/* Style for buttons */
+nav ul li button {
+    background-color: maroon; /* Maroon background for buttons */
+    color: white; /* White text */
+    padding: 15px 20px; /* Increase padding to make the button taller */
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+/* Remove hover effect for buttons */
+nav ul li button:hover {
+    background-color: maroon; /* Keep the same maroon color on hover */
+    border: 2px solid white; /* No border color change */
+}
+/* Style the logo */
+.navbar-logo {
+    height: 100px;
+    width: auto;
+    display: block;
+}
+

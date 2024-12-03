@@ -1,6 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
 
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Navbar</title>
+    <link rel="stylesheet" href="css/nav.css"> <!-- Link to your CSS file -->
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav>
+        <ul>
+		<li><img src="photos/bury.jpeg" alt="Logo" class="navbar-logo mt-3"></li>
+		<li><button onclick="generateGraph()" class="mt-3">Generate graph</button></li>
+		<li><button onclick="runAllNodes()" class="mt-3">Run all</button></li>
+		<li><button onclick="updateDisplay()" class="mt-3">Switch view</button></li>
+            <li><button onclick="toggleMatrix()" class="mt-3">Show matrix</button></li>
+			<li><button onclick="downloadJSON()" class="mt-3">Download JSON</button></li>
+            <li><button onclick="uploadJSON()" class="mt-3">Upload JSON</button></li>
+        </ul>
+    </nav>
+</body>
+</html>
+
+
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,18 +40,7 @@
 
 <body class="bg-gray-100 p-6">
 
-	 <div class="dropdown">
-        <span>Menu</span>
-        <ul class="dropdown-content">
-        <li><button onclick="downloadJSON()">Download Json</button></li>
-        <li><button onclick="uploadJSON()">Upload Json</button></li>
-        <input type="file" id="fileInput" accept=".json" onchange="uploadJSON()"
-                    class="block w-full text-sm text-gray-500 border border-gray-300 rounded-lg cursor-pointer">
-                <button id="uploadBtn" style="display:none;" onclick="uploadJSON()"
-                    class="mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none">Upload
-                    JSON</button>
-        </ul>
-      </div>
+
 
 	<div class="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-md">
 		<h1 class="text-2xl font-bold mb-4">Weighted Undirected Graph Generator</h1>
