@@ -62,8 +62,8 @@
 				<label id="alertsLabel" for="runAllNodes" class="updateClass" style="display:none;">Run All
 					Nodes</label>
 
-				<input type="checkbox" id="showAlerts" class="updateClass" style="display:none;" checked>
-				<label id="alertsLabel" for="showAlerts" class="updateClass" style="display:none;">Show Alerts</label>
+				<!-- <input type="checkbox" id="showAlerts" class="updateClass" style="display:none;" checked>
+				<label id="alertsLabel" for="showAlerts" class="updateClass" style="display:none;">Show Alerts</label> -->
 
 				<input type="checkbox" id="allowPastEdges" class="updateClass" style="display:none;" checked>
 				<label id="pastEdgesLabel" for="allowPastEdges" class="updateClass" style="display:none;">Allow Past
@@ -472,13 +472,11 @@
 					// update graph
 					if (weightDiff > edgeWeight) {
 						newWeight = 0;
-						
-						addNotes(`(${sourceWeight}) ${source} --(${edgeweight})-- ${target} (${targetWeight})\n-->\n(${sourceWeight}) ${source} --(${newWeight})-- ${target} (${targetWeight})`);
 
-						if (document.querySelector('#showAlerts').checked)
-						{
-							alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${sourceWeight}) ${source} --(${newWeight})-- ${target} (${targetWeight})`);
-						}
+						// if (document.querySelector('#showAlerts').checked)
+						// {
+						// 	alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${sourceWeight}) ${source} --(${newWeight})-- ${target} (${targetWeight})`);
+						// }
 
 						// delete broken edge from json
 						delete graph['version' + version][source][target];
@@ -487,10 +485,11 @@
 						// add change info to json
 						let changesString = `${source} -${edgeWeight}- ${target} - broken`;
 						c.push(changesString);
+						addNotes(changesString);
 						graph['version' + version]['changes'] = c;
 
-						if (document.querySelector('#showAlerts').checked)
-							alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${sourceWeight}) ${source} --(${0})-- ${target} (${targetWeight})`);
+						// if (document.querySelector('#showAlerts').checked)
+						// 	alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${sourceWeight}) ${source} --(${0})-- ${target} (${targetWeight})`);
 
 						// make new edges from source and target
 						replaceEdge(source, target);
@@ -509,10 +508,11 @@
 								graph['version' + version][source]['weight'] = avg;
 								let changesString = `${source} ${sourceWeight} - ${avg}, ${target} ${targetWeight} unchanged`;
 								c.push(changesString);
+								addNotes(changesString);
 								graph['version' + version]['changes'] = c;
 
-								if (document.querySelector('#showAlerts').checked)
-									alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${avg}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})`);
+								// if (document.querySelector('#showAlerts').checked)
+								// 	alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${avg}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})`);
 							} else {
 								// update target if it is not 1
 								avg = parseFloat(avg + targetWeight);
@@ -520,10 +520,11 @@
 								graph['version' + version][target]['weight'] = avg;
 								let changesString = `${source} ${sourceWeight} unchanged, ${target} ${targetWeight} - ${avg}`;
 								c.push(changesString);
+								addNotes(changesString);
 								graph['version' + version]['changes'] = c;
 
-								if (document.querySelector('#showAlerts').checked)
-									alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${avg})`);
+								// if (document.querySelector('#showAlerts').checked)
+								// 	alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${avg})`);
 							}
 
 						} else {
@@ -549,10 +550,11 @@
 							// add change info to json
 							let changesString = `${source} ${sourceWeight} - ${newS} & ${target} ${targetWeight} - ${newT}`;
 							c.push(changesString);
+							addNotes(changesString);
 							graph['version' + version]['changes'] = c;
 
-							if (document.querySelector('#showAlerts').checked)
-								alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${newS}) ${source} --(${edgeWeight})-- ${target} (${newT})`);
+							// if (document.querySelector('#showAlerts').checked)
+							// 	alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${newS}) ${source} --(${edgeWeight})-- ${target} (${newT})`);
 						}
 					}
 				}
@@ -597,10 +599,8 @@
 						if (weightDiff > edgeWeight) {
 							newWeight = 0;
 							
-							addNotes(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${sourceWeight}) ${source} --(${newWeight})-- ${target} (${targetWeight})`);
-
-							if (document.querySelector('#showAlerts').checked)
-								alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${sourceWeight}) ${source} --(${0})-- ${target} (${targetWeight})`);
+							// if (document.querySelector('#showAlerts').checked)
+							// 	alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${sourceWeight}) ${source} --(${0})-- ${target} (${targetWeight})`);
 
 							// delete broken edge from json
 							delete graph['version' + version][source][target];
@@ -609,6 +609,7 @@
 							// add change info to json
 							let changesString = `${source} -${edgeWeight}- ${target} - broken`;
 							c.push(changesString);
+							addNotes(changesString);
 							graph['version' + version]['changes'] = c;
 
 							// make new edges from source and target
@@ -628,10 +629,11 @@
 									graph['version' + version][source]['weight'] = avg;
 									let changesString = `${source} ${sourceWeight} - ${avg}, ${target} ${targetWeight} unchanged`;
 									c.push(changesString);
+									addNotes(changesString);
 									graph['version' + version]['changes'] = c;
 
-									if (document.querySelector('#showAlerts').checked)
-										alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${avg}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})`);
+									// if (document.querySelector('#showAlerts').checked)
+									// 	alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${avg}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})`);
 								} else {
 									// update target if it is not 1
 									avg = parseFloat(avg + targetWeight);
@@ -639,10 +641,11 @@
 									graph['version' + version][target]['weight'] = avg;
 									let changesString = `${source} ${sourceWeight} unchanged, ${target} ${targetWeight} - ${avg}`;
 									c.push(changesString);
+									addNotes(changesString);
 									graph['version' + version]['changes'] = c;
 
-									if (document.querySelector('#showAlerts').checked)
-										alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${avg})`);
+									// if (document.querySelector('#showAlerts').checked)
+									// 	alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${avg})`);
 								}
 
 							} else {
@@ -668,10 +671,11 @@
 								// add change info to json
 								let changesString = `${source} ${sourceWeight} - ${newS} & ${target} ${targetWeight} - ${newT}`;
 								c.push(changesString);
+								addNotes(changesString);
 								graph['version' + version]['changes'] = c;
 
-								if (document.querySelector('#showAlerts').checked)
-									alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${newS}) ${source} --(${edgeWeight})-- ${target} (${newT})`);
+								// if (document.querySelector('#showAlerts').checked)
+								// 	alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${newS}) ${source} --(${edgeWeight})-- ${target} (${newT})`);
 							}
 						}
 					}
@@ -719,6 +723,7 @@
 						changesString = `Failed to make new edge from ${source}`;
 						alertString += changesString + '\n';
 						c.push(changesString);
+						addNotes(changesString);
 						graph['version' + version]['changes'] = c;
 						valid = false;
 						break;
@@ -744,12 +749,13 @@
 				changesString = `${source} -${weightS}- ${sourceNode} - made`;
 				alertString += changesString + '\n';
 				c.push(changesString);
+				addNotes(changesString);
 				graph['version' + version]['changes'] = c;
 			}
 
-			if (document.querySelector('#showAlerts').checked) {
-				alert(alertString);
-			}
+			// if (document.querySelector('#showAlerts').checked) {
+			// 	alert(alertString);
+			// }
 		}
 
 		function previous() {
