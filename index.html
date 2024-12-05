@@ -183,6 +183,10 @@
 			const numVertices = parseInt(document.getElementById('numVertices').value);
 			const weight1 = parseFloat(document.getElementById('weight1').value);
 			const weight2 = parseFloat(document.getElementById('weight2').value);
+			if(Object.keys(graph).length !=0){
+                if (confirm('Do you want to save this json file before overwriting graph?')){
+                    downloadJSON();}
+            }
 			let one = false;
 			graph = { version1: {} };
 			for (let i = 0; i < numVertices; i++) {
