@@ -48,9 +48,9 @@
 				<button onclick="downloadJSON()" style="display:none;" id="downloadBtn"
 					class="updateClass bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 focus:outline-none">Download
 					JSON</button>
-				<button onclick="updateDisplay()" style="display:none;" id="updateBtn"
+				<!-- <button onclick="updateDisplay()" style="display:none;" id="updateBtn"
 					class="updateClass bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600 focus:outline-none">Switch
-				</button>
+				</button> -->
 				<button onclick="runAlgorithm(parseInt(document.getElementById('inputValue').value))"
 					style="display:none;" id="runAlgorithm"
 					class="updateClass bg-pink-500 text-white px-4 py-2 rounded hover:bg-pink-600 focus:outline-none">Run
@@ -145,15 +145,15 @@
 		safeEdgeInput.addEventListener("change", drawCytoscapeGraph, false);
 		unsafeEdgeInput.addEventListener("change", drawCytoscapeGraph, false);
 
-		function updateDisplay() {
-			if (dummy == 'grid') {
-				dummy = 'circle';
-			}
-			else {
-				dummy = 'grid';
-			}
-			drawCytoscapeGraph();
-		}
+		// function updateDisplay() {
+		// 	if (dummy == 'grid') {
+		// 		dummy = 'circle';
+		// 	}
+		// 	else {
+		// 		dummy = 'grid';
+		// 	}
+		// 	drawCytoscapeGraph();
+		// }
 
 		function generateGraph() {
 			const numVertices = parseInt(document.getElementById('numVertices').value);
