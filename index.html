@@ -13,12 +13,10 @@
     <nav>
         <ul>
 		<li><img src="photos/bury.jpeg" alt="Logo" class="navbar-logo mt-3"></li>
-		<li><button onclick="generateGraph()" class="mt-3">Generate graph</button></li>
-		<li><button onclick="runAllNodes()" class="mt-3">Run all</button></li>
-		<li><button onclick="updateDisplay()" class="mt-3">Switch view</button></li>
-            <li><button onclick="toggleMatrix()" class="mt-3">Show matrix</button></li>
-			<li><button onclick="downloadJSON()" class="mt-3">Download JSON</button></li>
-            <li><button onclick="uploadJSON()" class="mt-3">Upload JSON</button></li>
+		<li><button onclick="generateGraph()" class="underline mt-3" >Generate graph</button></li>
+		<li><button onclick="uploadJSON()" class="underline mt-3">Upload JSON</button></li>
+            <li><button onclick="toggleMatrix()" class="updateClass underline mt-3"style ="display:none;">Show matrix</button></li>
+			<li><button onclick="downloadJSON()" class="updateClass underline mt-3"style ="display:none;">Download JSON</button></li>
         </ul>
     </nav>
 </body>
@@ -65,7 +63,7 @@
 			</div>
 
 			<div class="space-x-4">
-				<button onclick="generateGraph()"
+				<!-- <button onclick="generateGraph()"
 					class="bg-indigo-500 text-white px-4 py-2 rounded hover:bg-indigo-600 focus:outline-none">Generate
 					Graph</button>
 				<button onclick="toggleMatrix()" style="display:none;" id="matrixBtn"
@@ -76,7 +74,7 @@
 					JSON</button>
 				<button onclick="updateDisplay()" style="display:none;" id="updateBtn"
 					class="updateClass bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600 focus:outline-none">Switch
-				</button>
+				</button> -->
 				<button onclick="runAlgorithm(parseInt(document.getElementById('inputValue').value))"
 					style="display:none;" id="runAlgorithm"
 					class="updateClass bg-pink-500 text-white px-4 py-2 rounded hover:bg-pink-600 focus:outline-none">Run

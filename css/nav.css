@@ -9,7 +9,7 @@ body, ul, li, a, button {
 
 /* Navbar styles */
 nav {
-    background-color: gold; /* Gold background for navbar */
+    background-color: maroon; /* Gold background for navbar */
     padding: 15x;
     border: 3px solid maroon;
 }
