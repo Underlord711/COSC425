@@ -1,6 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
 
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Navbar</title>
+    <link rel="stylesheet" href="css/nav.css"> <!-- Link to your CSS file -->
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav>
+        <ul>
+		<li><img src="photos/bury.jpeg" alt="Logo" class="navbar-logo mt-3"></li>
+		<li><button onclick="generateGraph()" class="underline mt-3" >Generate graph</button></li>
+		<li><button onclick="uploadJSON()" class="underline mt-3">Upload JSON</button></li>
+            <li><button onclick="toggleMatrix()" class="updateClass underline mt-3"style ="display:none;">Show matrix</button></li>
+			<li><button onclick="downloadJSON()" class="updateClass underline mt-3"style ="display:none;">Download JSON</button></li>
+        </ul>
+    </nav>
+</body>
+</html>
+
 
 <head>
 	<meta charset="UTF-8">
@@ -16,6 +37,9 @@
 </head>
 
 <body class="bg-gray-100 p-6">
+
+
+
 	<div class="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-md">
 		<h1 class="text-2xl font-bold mb-4">Weighted Undirected Graph Generator</h1>
 
@@ -39,7 +63,7 @@
 			</div>
 
 			<div class="space-x-4">
-				<button onclick="generateGraph()"
+				<!-- <button onclick="generateGraph()"
 					class="bg-indigo-500 text-white px-4 py-2 rounded hover:bg-indigo-600 focus:outline-none">Generate
 					Graph</button>
 				<button onclick="toggleMatrix()" style="display:none;" id="matrixBtn"
@@ -48,7 +72,7 @@
 				<button onclick="downloadJSON()" style="display:none;" id="downloadBtn"
 					class="updateClass bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 focus:outline-none">Download
 					JSON</button>
-				<!-- <button onclick="updateDisplay()" style="display:none;" id="updateBtn"
+				<button onclick="updateDisplay()" style="display:none;" id="updateBtn"
 					class="updateClass bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600 focus:outline-none">Switch
 				</button> -->
 				<button onclick="runAlgorithm(parseInt(document.getElementById('inputValue').value))"
@@ -159,6 +183,10 @@
 			const numVertices = parseInt(document.getElementById('numVertices').value);
 			const weight1 = parseFloat(document.getElementById('weight1').value);
 			const weight2 = parseFloat(document.getElementById('weight2').value);
+			if(Object.keys(graph).length !=0){
+                if (confirm('Do you want to save this json file before overwriting graph?')){
+                    downloadJSON();}
+            }
 			let one = false;
 			graph = { version1: {} };
 			for (let i = 0; i < numVertices; i++) {
@@ -435,7 +463,7 @@
 
 		function runAlgorithm(number) {
 			if (!document.querySelector('#runAllNodes').checked) {		// run single node
-				for (let i = 0; i < number; i++) {
+			for (let i = 0; i < number; i++) {
 					// update displayed version every iteration
 					graph['version' + (version + 1)] = JSON.parse(JSON.stringify(graph['version' + version]));
 					version++;
@@ -507,7 +535,7 @@
 								// update source if it is not 1
 								avg = parseFloat(avg + sourceWeight);
 								avg = parseFloat(avg.toFixed(2));
-								graph['version' + version][source]['weight'] = avg;
+						graph['version' + version][source]['weight'] = avg;
 								let changesString = `${source} ${sourceWeight} - ${avg}, ${target} ${targetWeight} unchanged`;
 								c.push(changesString);
 								addNotes(changesString);
@@ -519,7 +547,7 @@
 								// update target if it is not 1
 								avg = parseFloat(avg + targetWeight);
 								avg = parseFloat(avg.toFixed(2));
-								graph['version' + version][target]['weight'] = avg;
+						graph['version' + version][target]['weight'] = avg;
 								let changesString = `${source} ${sourceWeight} unchanged, ${target} ${targetWeight} - ${avg}`;
 								c.push(changesString);
 								addNotes(changesString);
@@ -551,9 +579,9 @@
 
 							// add change info to json
 							let changesString = `${source} ${sourceWeight} - ${newS} & ${target} ${targetWeight} - ${newT}`;
-							c.push(changesString);
+						c.push(changesString);
 							addNotes(changesString);
-							graph['version' + version]['changes'] = c;
+						graph['version' + version]['changes'] = c;
 
 							// if (document.querySelector('#showAlerts').checked)
 							// 	alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${newS}) ${source} --(${edgeWeight})-- ${target} (${newT})`);
@@ -600,7 +628,7 @@
 						// update graph
 						if (weightDiff > edgeWeight) {
 							newWeight = 0;
-							
+
 							// if (document.querySelector('#showAlerts').checked)
 							// 	alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${sourceWeight}) ${source} --(${0})-- ${target} (${targetWeight})`);
 
@@ -628,7 +656,7 @@
 									// update source if it is not 1
 									avg = parseFloat(avg + sourceWeight);
 									avg = parseFloat(avg.toFixed(2));
-									graph['version' + version][source]['weight'] = avg;
+							graph['version' + version][source]['weight'] = avg;
 									let changesString = `${source} ${sourceWeight} - ${avg}, ${target} ${targetWeight} unchanged`;
 									c.push(changesString);
 									addNotes(changesString);
@@ -640,7 +668,7 @@
 									// update target if it is not 1
 									avg = parseFloat(avg + targetWeight);
 									avg = parseFloat(avg.toFixed(2));
-									graph['version' + version][target]['weight'] = avg;
+							graph['version' + version][target]['weight'] = avg;
 									let changesString = `${source} ${sourceWeight} unchanged, ${target} ${targetWeight} - ${avg}`;
 									c.push(changesString);
 									addNotes(changesString);
@@ -672,16 +700,16 @@
 
 								// add change info to json
 								let changesString = `${source} ${sourceWeight} - ${newS} & ${target} ${targetWeight} - ${newT}`;
-								c.push(changesString);
+							c.push(changesString);
 								addNotes(changesString);
-								graph['version' + version]['changes'] = c;
+							graph['version' + version]['changes'] = c;
 
 								// if (document.querySelector('#showAlerts').checked)
 								// 	alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${newS}) ${source} --(${edgeWeight})-- ${target} (${newT})`);
-							}
 						}
 					}
 				}
+			}
 			}
 			refresh();
 		}
@@ -833,7 +861,7 @@
         		{
         			alert("Changes:\n\n" + changeNotes.join("\n"));
         		}
-        	}
+		}
 
 	</script>
 
