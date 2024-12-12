@@ -604,16 +604,22 @@
 		}
 
         $('#offBody').on('blur', function(){
-            let tempStr = $('#offBody').html();
-            let tempArr = new Set(tempStr.split('<br>'));
-            tempArr.delete('Past Edges : ');
-            tempArr.delete('');
-            let label = $('#offcanvasScrollingLabel').text().split(' ');
-            let node = label[label.length-1];
-            tempArr.forEach(function(value){
-                let stuff = value.split(' : ');
-                graph['version'+version][node][stuff[0]]=parseFloat(stuff[1]);
-            });
+        	let stuff;
+            let tempStr = $('#offBody li').text();
+            $('#offBody li').each(function(index, element) {
+            	if (index == 1){
+            		return;
+            	}
+				let data = ($(element).text()).split(' : ');
+				let curr = ($('#offcanvasScrollingLabel').text()).split(' ');
+				let me = curr[1];
+				console.log(me);
+				graph['version'+version][me][data[0]]=parseFloat(data[1]);
+				if (index == 0){
+					return;
+				}
+				graph['version'+version][data[0]][me]=parseFloat(data[1]);
+			});
             refresh();
         });
 	</script>
