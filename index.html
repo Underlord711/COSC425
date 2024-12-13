@@ -113,7 +113,7 @@
 			<button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
 		</div>
 		<div class="offcanvas-body" contenteditable='true' id="offBody">
-			<p></p>
+			<ul></ul>
 		</div>
 	</div>
 
@@ -340,17 +340,17 @@
                 $('#offcanvasScrollingLabel').html('Node: ' + node.id());
                 for (const [destination, weight] of Object.entries(graph['version'+version][node.id()])){
                     text=destination + ' : ' + weight;
-                    $("#offBody").append(text+"<br>");
+                    $("#offBody").append('<li>'+text+"</li>");
                 }
             });
             cy.on('tap', 'edge', function(evt){
                 let text;
                 var edge = evt.target;
                 $('#offBody').text('');
-                $('#offcanvasScrollingLabel').html('Edge: ' + edge.data('id'));
-                $('#offBody').append("Source : " + edge.data('source') + '<br>');
-                $('#offBody').append("Destination : " + edge.data('target')+ '<br>');
-                $('#offBody').append("Weight : " + edge.data('label')+ '<br>');
+                $('#offcanvasScrollingLabel').html('<li>Edge: ' + edge.data('id')+'</li>');
+                $('#offBody ul').append("<li>Source : " + edge.data('source') + '</li>');
+                $('#offBody').append("<li>Destination : " + edge.data('target')+ '</li>');
+                $('#offBody').append("<li>Weight : " + edge.data('label')+ '</li>');
             });
 }
 
@@ -604,6 +604,7 @@
 		}
 
         $('#offBody').on('blur', function(){
+        	console.log('found');
         	let stuff;
             let tempStr = $('#offBody li').text();
             $('#offBody li').each(function(index, element) {
