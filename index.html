@@ -130,7 +130,7 @@
 
 		<h2 class="text-xl font-semibold mt-6">Generated Graph:</h2>
 		<div class="flex items-start">
-			<div class="flex-none mr-4">Version: <span id="versionDisplay">1</span></div>
+			<div class="flex-none mr-4">Version: <span id="versionDisplay"></span></div>
 
 			<div id="matrixContainer" class="flex-grow overflow-x-auto overflow-y-auto max-h-96 mx-4 self-center"
 				style="display: none;">
@@ -144,7 +144,7 @@
 					class="bg-purple-500 text-white px-2 py-2 rounded hover:bg-purple-600 focus:outline-none">Prev</button>
 				<button onclick="next()" id="next"
 					class="bg-purple-500 text-white px-2 py-2 rounded hover:bg-purple-600 focus:outline-none">Next</button>
-				<button onclick="playGraphs()" id="play"
+				<button onclick="" id="play"
 					class="bg-purple-500 text-white px-2 py-2 rounded hover:bg-purple-600 focus:outline-none">▶</button>
 			</div>
 		</div>
@@ -818,21 +818,20 @@
 			}
 		}
 
-		function playGraphs() {
+		$("#play").on("click", function() {
+			let start = version;
 			let size = Object.entries(graph).length;
-			if (size < 2) {
-				alert("Need more than one graph version!");
-				return;
+
+			// while there are still more versions call next function
+			// 1000 * start for 1 second intervals between display change
+			while (start <= size) {
+				console.log(start);
+				setTimeout(() => {
+					$("#next").click();
+				}, 1000 * start);
+				start++;
 			}
-
-			let startVersion = version;
-			version = 1;
-
-			$('#versionDisplay').text(version);
-			refresh();
-
-			version = startVersion;
-		}
+		});
 
 		function refresh() {
 			displayGraph();
