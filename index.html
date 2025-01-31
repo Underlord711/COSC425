@@ -2,23 +2,28 @@
 <html lang="en">
 
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="css/nav.css"> <!-- Link to your CSS file -->
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="css/nav.css"> <!-- Link to your CSS file -->
 </head>
+
 <body>
-    <!-- Navigation Bar -->
-    <nav>
-        <ul>
-		<li><img src="photos/bury.jpeg" alt="Logo" class="navbar-logo mt-3"></li>
-		<li><button onclick="generateGraph()" class="underline mt-3" >Generate graph</button></li>
-		<li><button onclick="uploadJSON()" class="underline mt-3">Upload JSON</button></li>
-            <li><button onclick="toggleMatrix()" class="updateClass underline mt-3"style ="display:none;">Show matrix</button></li>
-			<li><button onclick="downloadJSON()" class="updateClass underline mt-3"style ="display:none;">Download JSON</button></li>
-        </ul>
-    </nav>
+	<!-- Navigation Bar -->
+	<nav>
+		<ul>
+			<li><img src="photos/bury.jpeg" alt="Logo" class="navbar-logo mt-3"></li>
+			<li><button onclick="generateGraph()" class="underline mt-3">Generate graph</button></li>
+			<li><button onclick="uploadJSON()" class="underline mt-3">Upload JSON</button></li>
+			<li><button onclick="toggleMatrix()" class="updateClass underline mt-3" style="display:none;">Show
+					matrix</button></li>
+			<li><button onclick="downloadJSON()" class="updateClass underline mt-3" style="display:none;">Download
+					JSON</button></li>
+		</ul>
+	</nav>
 </body>
+
 </html>
 
 
@@ -75,7 +80,8 @@
 					class="updateClass bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600 focus:outline-none">Switch
 				</button> -->
 				<button onclick="patchNotes()" id="patchBtn"
-				class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 focus:outline-none updateClass" style="display:none;">Patch Notes</button>
+					class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 focus:outline-none updateClass"
+					style="display:none;">Patch Notes</button>
 				<button onclick="runAlgorithm(parseInt(document.getElementById('inputValue').value))"
 					style="display:none;" id="runAlgorithm"
 					class="updateClass bg-pink-500 text-white px-4 py-2 rounded hover:bg-pink-600 focus:outline-none">Run
@@ -108,7 +114,7 @@
 				<input type="color" id="unsafeEdgeInput" class="updateClass border px-1 py-1 rounded"
 					style="display:none;" value="#9C9C9C">
 				<label for="unsafeEdgeInput" class="updateClass" style="display:none;">Unsafe Edge Color</label>
-				
+
 			</div>
 
 			<div class="mt-4">
@@ -117,8 +123,8 @@
 				<button id="uploadBtn" style="display:none;" onclick="uploadJSON()"
 					class="mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none">Upload
 					JSON</button>
-				
-                    
+
+
 			</div>
 		</div>
 
@@ -138,6 +144,8 @@
 					class="bg-purple-500 text-white px-2 py-2 rounded hover:bg-purple-600 focus:outline-none">Prev</button>
 				<button onclick="next()" id="next"
 					class="bg-purple-500 text-white px-2 py-2 rounded hover:bg-purple-600 focus:outline-none">Next</button>
+				<button onclick="playGraphs()" id="play"
+					class="bg-purple-500 text-white px-2 py-2 rounded hover:bg-purple-600 focus:outline-none">▶</button>
 			</div>
 		</div>
 
@@ -162,7 +170,7 @@
 		let dummy = 'circle';
 		let noClass = ['weight', 'Past Edges', 'changes'];
 		const MAX_WEIGHT = 0.8;
-		
+
 		changeNotes = [];	//Need this for Patch Notes
 
 		nodeColorInput.addEventListener("change", drawCytoscapeGraph, false);
@@ -183,10 +191,11 @@
 			const numVertices = parseInt(document.getElementById('numVertices').value);
 			const weight1 = parseFloat(document.getElementById('weight1').value);
 			const weight2 = parseFloat(document.getElementById('weight2').value);
-			if(Object.keys(graph).length !=0){
-                if (confirm('Do you want to save this json file before overwriting graph?')){
-                    downloadJSON();}
-            }
+			if (Object.keys(graph).length != 0) {
+				if (confirm('Do you want to save this json file before overwriting graph?')) {
+					downloadJSON();
+				}
+			}
 			let one = false;
 			graph = { version1: {} };
 			for (let i = 0; i < numVertices; i++) {
@@ -453,17 +462,16 @@
 			};
 			reader.readAsText(file);
 		}
-		
-		function addNotes(message)
-        	{
-        		changeNotes.push(`${message}`);
-        		changeNotes.push(``);
-        	}
+
+		function addNotes(message) {
+			changeNotes.push(`${message}`);
+			changeNotes.push(``);
+		}
 
 
 		function runAlgorithm(number) {
 			if (!document.querySelector('#runAllNodes').checked) {		// run single node
-			for (let i = 0; i < number; i++) {
+				for (let i = 0; i < number; i++) {
 					// update displayed version every iteration
 					graph['version' + (version + 1)] = JSON.parse(JSON.stringify(graph['version' + version]));
 					version++;
@@ -535,7 +543,7 @@
 								// update source if it is not 1
 								avg = parseFloat(avg + sourceWeight);
 								avg = parseFloat(avg.toFixed(2));
-						graph['version' + version][source]['weight'] = avg;
+								graph['version' + version][source]['weight'] = avg;
 								let changesString = `${source} ${sourceWeight} - ${avg}, ${target} ${targetWeight} unchanged`;
 								c.push(changesString);
 								addNotes(changesString);
@@ -547,7 +555,7 @@
 								// update target if it is not 1
 								avg = parseFloat(avg + targetWeight);
 								avg = parseFloat(avg.toFixed(2));
-						graph['version' + version][target]['weight'] = avg;
+								graph['version' + version][target]['weight'] = avg;
 								let changesString = `${source} ${sourceWeight} unchanged, ${target} ${targetWeight} - ${avg}`;
 								c.push(changesString);
 								addNotes(changesString);
@@ -579,9 +587,9 @@
 
 							// add change info to json
 							let changesString = `${source} ${sourceWeight} - ${newS} & ${target} ${targetWeight} - ${newT}`;
-						c.push(changesString);
+							c.push(changesString);
 							addNotes(changesString);
-						graph['version' + version]['changes'] = c;
+							graph['version' + version]['changes'] = c;
 
 							// if (document.querySelector('#showAlerts').checked)
 							// 	alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${newS}) ${source} --(${edgeWeight})-- ${target} (${newT})`);
@@ -656,7 +664,7 @@
 									// update source if it is not 1
 									avg = parseFloat(avg + sourceWeight);
 									avg = parseFloat(avg.toFixed(2));
-							graph['version' + version][source]['weight'] = avg;
+									graph['version' + version][source]['weight'] = avg;
 									let changesString = `${source} ${sourceWeight} - ${avg}, ${target} ${targetWeight} unchanged`;
 									c.push(changesString);
 									addNotes(changesString);
@@ -668,7 +676,7 @@
 									// update target if it is not 1
 									avg = parseFloat(avg + targetWeight);
 									avg = parseFloat(avg.toFixed(2));
-							graph['version' + version][target]['weight'] = avg;
+									graph['version' + version][target]['weight'] = avg;
 									let changesString = `${source} ${sourceWeight} unchanged, ${target} ${targetWeight} - ${avg}`;
 									c.push(changesString);
 									addNotes(changesString);
@@ -700,16 +708,16 @@
 
 								// add change info to json
 								let changesString = `${source} ${sourceWeight} - ${newS} & ${target} ${targetWeight} - ${newT}`;
-							c.push(changesString);
+								c.push(changesString);
 								addNotes(changesString);
-							graph['version' + version]['changes'] = c;
+								graph['version' + version]['changes'] = c;
 
 								// if (document.querySelector('#showAlerts').checked)
 								// 	alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${newS}) ${source} --(${edgeWeight})-- ${target} (${newT})`);
+							}
 						}
 					}
 				}
-			}
 			}
 			refresh();
 		}
@@ -810,57 +818,69 @@
 			}
 		}
 
+		function playGraphs() {
+			let size = Object.entries(graph).length;
+			if (size < 2) {
+				alert("Need more than one graph version!");
+				return;
+			}
+
+			let startVersion = version;
+			version = 1;
+
+			$('#versionDisplay').text(version);
+			refresh();
+
+			version = startVersion;
+		}
+
 		function refresh() {
 			displayGraph();
 			drawCytoscapeGraph();
 		}
 
-		$('#offBody').on('blur', function(){
-            let tempStr = $('#offBody').html();
-            let tempArr = new Set(tempStr.split('<br>'));
-            tempArr.delete('Past Edges : ');
-            tempArr.delete('');
-            let label = $('#offcanvasScrollingLabel').text().split(' ');
-            let node = label[label.length-1];
-            tempArr.forEach(function(value){
-                let stuff = value.split(' : ');
-                graph['version'+version][node][stuff[0]]=parseFloat(stuff[1]);
-            });
-            refresh();
-        });
+		$('#offBody').on('blur', function () {
+			let tempStr = $('#offBody').html();
+			let tempArr = new Set(tempStr.split('<br>'));
+			tempArr.delete('Past Edges : ');
+			tempArr.delete('');
+			let label = $('#offcanvasScrollingLabel').text().split(' ');
+			let node = label[label.length - 1];
+			tempArr.forEach(function (value) {
+				let stuff = value.split(' : ');
+				graph['version' + version][node][stuff[0]] = parseFloat(stuff[1]);
+			});
+			refresh();
+		});
 		function patchNotes() {
-        		if(changeNotes.length == 0)
-        		{
-        			alert("No changes yet.");
-        		}
-        		else
-        		{
-        			alert("Changes:\n\n" + changeNotes.join("\n"));
-        		}
-        	}
+			if (changeNotes.length == 0) {
+				alert("No changes yet.");
+			}
+			else {
+				alert("Changes:\n\n" + changeNotes.join("\n"));
+			}
+		}
 
-		$('#offBody').on('blur', function(){
-            let tempStr = $('#offBody').html();
-            let tempArr = new Set(tempStr.split('<br>'));
-            tempArr.delete('Past Edges : ');
-            tempArr.delete('');
-            let label = $('#offcanvasScrollingLabel').text().split(' ');
-            let node = label[label.length-1];
-            tempArr.forEach(function(value){
-                let stuff = value.split(' : ');
-                graph['version'+version][node][stuff[0]]=parseFloat(stuff[1]);
-            });
-            refresh();
-        });
+		$('#offBody').on('blur', function () {
+			let tempStr = $('#offBody').html();
+			let tempArr = new Set(tempStr.split('<br>'));
+			tempArr.delete('Past Edges : ');
+			tempArr.delete('');
+			let label = $('#offcanvasScrollingLabel').text().split(' ');
+			let node = label[label.length - 1];
+			tempArr.forEach(function (value) {
+				let stuff = value.split(' : ');
+				graph['version' + version][node][stuff[0]] = parseFloat(stuff[1]);
+			});
+			refresh();
+		});
 		function patchNotes() {
-        		if(changeNotes.length == 0)
-        		{
-        			alert("No changes yet.");
-        		}
-        		else
-        		{
-        			alert("Changes:\n\n" + changeNotes.join("\n"));
-        		}
+			if (changeNotes.length == 0) {
+				alert("No changes yet.");
+			}
+			else {
+				alert("Changes:\n\n" + changeNotes.join("\n"));
+			}
 		}
 
 	</script>
