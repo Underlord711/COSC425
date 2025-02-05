@@ -402,7 +402,7 @@
 				$('#offcanvasScrollingLabel').html('Node: ' + node.id());
 				for (const [destination, weight] of Object.entries(graph['version' + version][node.id()])) {
 					text = destination + ' : ' + weight;
-					$("#offBody").append(text + "<br>");
+					$("#offBody").append("<li>" + text + "</li>");
 				}
 			});
 			cy.on('tap', 'edge', function (evt) {
@@ -410,9 +410,9 @@
 				var edge = evt.target;
 				$('#offBody').text('');
 				$('#offcanvasScrollingLabel').html('Edge: ' + edge.data('id'));
-				$('#offBody').append("Source : " + edge.data('source') + '<br>');
-				$('#offBody').append("Destination : " + edge.data('target') + '<br>');
-				$('#offBody').append("Weight : " + edge.data('label') + '<br>');
+				$('#offBody').append("<li>Source : " + edge.data('source') + '</li>');
+				$('#offBody').append("<li>Destination : " + edge.data('target') + '</li>');
+				$('#offBody').append("<li>Weight : " + edge.data('label') + '</li>');
 			});
 		}
 
@@ -816,16 +816,40 @@
 		}
 
 		$('#offBody').on('blur', function(){
-            let tempStr = $('#offBody').html();
-            let tempArr = new Set(tempStr.split('<br>'));
-            tempArr.delete('Past Edges : ');
-            tempArr.delete('');
-            let label = $('#offcanvasScrollingLabel').text().split(' ');
-            let node = label[label.length-1];
-            tempArr.forEach(function(value){
-                let stuff = value.split(' : ');
-                graph['version'+version][node][stuff[0]]=parseFloat(stuff[1]);
-            });
+        	console.log('found');
+        	let stuff;
+            let tempStr = $('#offBody li').text();
+            console.log(tempStr);
+            $('#offBody li').each(function(index, element) {
+            	let data = ($(element).text()).split(' : ');
+				let curr = ($('#offcanvasScrollingLabel').text()).split(' ');
+				if (curr[0] == 'Node:'){
+					if (index == 1) {
+            			return;
+            		}
+					let me = curr[1];
+					console.log(me);
+					graph['version'+version][me][data[0]]=parseFloat(data[1]);
+					if (index == 0){
+						return;
+					}
+					graph['version'+version][data[0]][me]=parseFloat(data[1]);
+				}
+				else{
+					console.log('in the else');
+					if (index == 0) {
+            			return;
+            		}
+					let me = curr[1];
+					let targets = me.split('-');
+					console.log(data);
+					graph['version'+version][targets[0]][targets[1]]=parseFloat(data[1]);
+					if (index == 0){
+						return;
+					}
+					graph['version'+version][targets[1]][targets[0]]=parseFloat(data[1]);
+				}
+			});
             refresh();
         });
 		function patchNotes() {
