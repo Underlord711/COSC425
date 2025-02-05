@@ -839,29 +839,6 @@
         		}
         	}
 
-		$('#offBody').on('blur', function(){
-            let tempStr = $('#offBody').html();
-            let tempArr = new Set(tempStr.split('<br>'));
-            tempArr.delete('Past Edges : ');
-            tempArr.delete('');
-            let label = $('#offcanvasScrollingLabel').text().split(' ');
-            let node = label[label.length-1];
-            tempArr.forEach(function(value){
-                let stuff = value.split(' : ');
-                graph['version'+version][node][stuff[0]]=parseFloat(stuff[1]);
-            });
-            refresh();
-        });
-		function patchNotes() {
-        		if(changeNotes.length == 0)
-        		{
-        			alert("No changes yet.");
-        		}
-        		else
-        		{
-        			alert("Changes:\n\n" + changeNotes.join("\n"));
-        		}
-		}
 
 	</script>
 
