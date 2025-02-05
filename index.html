@@ -171,6 +171,9 @@
 		let noClass = ['weight', 'Past Edges', 'changes'];
 		const MAX_WEIGHT = 0.8;
 
+		let playInterval;		// used for play button
+		let isPlaying = false;
+
 		changeNotes = [];	//Need this for Patch Notes
 
 		nodeColorInput.addEventListener("change", drawCytoscapeGraph, false);
@@ -214,7 +217,7 @@
 			}
 
 			if (!one) {
-				let vertex = Math.floor(Math.random() * numVertices);
+				let vertex = String.fromCharCode(65 + Math.floor(Math.random() * numVertices));
 				graph['version' + version][vertex]['weight'] = 1;
 			}
 
@@ -302,8 +305,11 @@
 			}
 		}
 
-
 		function updateWeight(source, target, newWeight) {
+			// prevent updating version when no change was made
+			if (graph['version' + version][source][target] = weight === newWeight)
+				return;
+
 			const weight = parseFloat(newWeight);
 			const str = String(newWeight);
 
@@ -467,7 +473,6 @@
 			changeNotes.push(`${message}`);
 			changeNotes.push(``);
 		}
-
 
 		function runAlgorithm(number) {
 			if (!document.querySelector('#runAllNodes').checked) {		// run single node
@@ -818,18 +823,32 @@
 			}
 		}
 
-		$("#play").on("click", function() {
-			let start = version;
-			let size = Object.entries(graph).length;
+		$("#play").on("click", function () {
+			if (!isPlaying) {
+				
+				// change button text
+				$("#play").text("■");
+				isPlaying = true;
 
-			// while there are still more versions call next function
-			// 1000 * start for 1 second intervals between display change
-			while (start <= size) {
-				console.log(start);
-				setTimeout(() => {
-					$("#next").click();
-				}, 1000 * start);
-				start++;
+				let start = version;
+				let size = Object.entries(graph).length;
+
+				// call next() every second
+				playInterval = setInterval(() => {
+					if (start < size) {
+						$("#next").click();
+						start++;
+					} else {
+						clearInterval(playInterval); // stop playback at last version
+						$("#play").text("▶");
+						isPlaying = false;
+					}
+				}, 1000);
+			} else {
+				// stop playback if button clicked again
+				clearInterval(playInterval);
+				$("#play").text("▶");
+				isPlaying = false;
 			}
 		});
 
@@ -873,6 +892,7 @@
 			});
 			refresh();
 		});
+
 		function patchNotes() {
 			if (changeNotes.length == 0) {
 				alert("No changes yet.");
