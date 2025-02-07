@@ -728,8 +728,7 @@
 		}
 
 		function replaceEdge(source, target) {
-			// add source and target to past edges
-			// need to add an if statement or something based on checkbox to check past edges for randomly chosen new edge
+			// add source and target to respective past edges
 			let c = graph['version' + version]['changes'];
 
 			let sourceEdges = graph['version' + version][source]['Past Edges'];
@@ -740,65 +739,62 @@
 			if (!targetEdges.includes(source)) targetEdges.push(source);
 			graph['version' + version][target]['Past Edges'] = targetEdges;
 
+			// get list of all nodes in graph
 			const nodes = Object.keys(graph['version' + version]).filter(node => node !== 'changes');
 			let sourceNode, changesString, alertString = "";
-			let valid = true;
 
-			// get weights from page
-			let weightS, attempts = 100;
+			// relationship weight
+			let weightS = parseFloat(document.getElementById('weight1').value);;
 
-			// find source node
-			// allow 100 attempts to find valid node based on whether remaking past edges is allowed
-			do {
-				sourceNode = nodes[Math.floor(Math.random() * nodes.length)];
+			// array to store valid nodes for a new edge
+			const availableNodes = [];
 
-				// check if source node is in past edges when past edges are not allowed
-				if (!document.querySelector('#allowPastEdges').checked && sourceEdges.includes(sourceNode)) {
-					attempts++;
-					continue; // skip to the next iteration
+			// build array of possible connections (preventing past edges from reforming)
+			if (!document.querySelector('#allowPastEdges').checked) {
+				for (let i = 0; i < nodes.length; i++) {
+					let node = String.fromCharCode(65 + i);	// convert number to char
+					// if node is NOT in past edges and there is not already an edge, add it to available nodes
+					if (!sourceEdges.includes(node) && node !== source && !graph['version' + version][source][node])
+						availableNodes.push(node);
 				}
-
-				// check if the source node is invalid
-				if (sourceNode === source || sourceNode === target || graph['version' + version][source][sourceNode]) {
-					attempts++;
-					if (attempts > 100) {
-						console.log("Too many attempts to find valid target vertex (replace edge)");
-						changesString = `Failed to make new edge from ${source}`;
-						alertString += changesString + '\n';
-						c.push(changesString);
-						addNotes(changesString);
-						graph['version' + version]['changes'] = c;
-						valid = false;
-						break;
-					}
-					continue; // skip to the next iteration if source node not allowed
+			} else {
+				// build array of possible connections (allows past edges)
+				for (let i = 0; i < nodes.length; i++) {
+					let node = String.fromCharCode(65 + i);
+					if (node !== source && !graph['version' + version][source][node])
+						availableNodes.push(node);
 				}
+			}
 
-				// valid source node found
-				break;
-			} while (true);
-
-			// if source node is valid, create new edge
-			if (valid) {
-				if (!graph['version' + version][sourceNode]) {
-					graph['version' + version][sourceNode] = {};
-				}
-
-				// create the new edge here
-				weightS = parseFloat(document.getElementById('weight1').value);
-				graph['version' + version][source][sourceNode] = weightS;
-				graph['version' + version][sourceNode][source] = weightS;
-
-				changesString = `${source} -${weightS}- ${sourceNode} - made`;
+			// if there are no available nodes update changes and exit
+			if (availableNodes.length === 0) {
+				changesString = `No available edges from ${source} possible (past edges not allowed)`;
+				console.log(changesString)
 				alertString += changesString + '\n';
 				c.push(changesString);
 				addNotes(changesString);
 				graph['version' + version]['changes'] = c;
+				return;
 			}
 
-			// if (document.querySelector('#showAlerts').checked) {
-			// 	alert(alertString);
-			// }
+			console.log(`source: ${source}\nbroken edge with: ${target}`);
+			console.log(`available nodes: ${availableNodes}`);
+
+			// select random source node from what is available
+			sourceNode = availableNodes[Math.floor(Math.random() * availableNodes.length)];
+
+			console.log(`new target: ${sourceNode}`);
+
+			// update graph and changes
+			graph['version' + version][source][sourceNode] = weightS;
+			graph['version' + version][sourceNode][source] = weightS;
+
+			changesString = `${source} -${weightS}- ${sourceNode} - made`;
+			alertString += changesString + '\n';
+			c.push(changesString);
+			addNotes(changesString);
+			graph['version' + version]['changes'] = c;
+			console.log(changesString);
 		}
 
 		function previous() {
@@ -825,7 +821,7 @@
 
 		$("#play").on("click", function () {
 			if (!isPlaying) {
-				
+
 				// change button text
 				$("#play").text("■");
 				isPlaying = true;
@@ -857,43 +853,43 @@
 			drawCytoscapeGraph();
 		}
 
-		$('#offBody').on('blur', function(){
-        	console.log('found');
-        	let stuff;
-            let tempStr = $('#offBody li').text();
-            console.log(tempStr);
-            $('#offBody li').each(function(index, element) {
-            	let data = ($(element).text()).split(' : ');
+		$('#offBody').on('blur', function () {
+			console.log('found');
+			let stuff;
+			let tempStr = $('#offBody li').text();
+			console.log(tempStr);
+			$('#offBody li').each(function (index, element) {
+				let data = ($(element).text()).split(' : ');
 				let curr = ($('#offcanvasScrollingLabel').text()).split(' ');
-				if (curr[0] == 'Node:'){
+				if (curr[0] == 'Node:') {
 					if (index == 1) {
-            			return;
-            		}
-					let me = curr[1];
-					console.log(me);
-					graph['version'+version][me][data[0]]=parseFloat(data[1]);
-					if (index == 0){
 						return;
 					}
-					graph['version'+version][data[0]][me]=parseFloat(data[1]);
+					let me = curr[1];
+					console.log(me);
+					graph['version' + version][me][data[0]] = parseFloat(data[1]);
+					if (index == 0) {
+						return;
+					}
+					graph['version' + version][data[0]][me] = parseFloat(data[1]);
 				}
-				else{
+				else {
 					console.log('in the else');
 					if (index == 0) {
-            			return;
-            		}
+						return;
+					}
 					let me = curr[1];
 					let targets = me.split('-');
 					console.log(data);
-					graph['version'+version][targets[0]][targets[1]]=parseFloat(data[1]);
-					if (index == 0){
+					graph['version' + version][targets[0]][targets[1]] = parseFloat(data[1]);
+					if (index == 0) {
 						return;
 					}
-					graph['version'+version][targets[1]][targets[0]]=parseFloat(data[1]);
+					graph['version' + version][targets[1]][targets[0]] = parseFloat(data[1]);
 				}
 			});
-            refresh();
-        });
+			refresh();
+		});
 		function patchNotes() {
 			if (changeNotes.length == 0) {
 				alert("No changes yet.");
