@@ -16,7 +16,7 @@
 
 **Run All Nodes** - Option to have the algorithm run on all nodes in the graph. If unchecked, a random node will be selected for testing. If checked, each node will be tested. 
 
-**Allow Past Edges** - Option to allow/prevent reforming broken relationships. If checked nodes can select any other node they don't have an edge with to form a new relationship. If checked, nodes attempt to find a relationship with a new node.
+**Allow Past Edges** - Option to allow/prevent reforming broken relationships. If checked, nodes can select any other node they don't have an edge with to form a new relationship. If checked, nodes attempt to find a relationship with a new node. 
 
 **Graph Coloring** - Node color allows the user to change the color of nodes in the graph. Safe edge color represents edges that will not break if they are tested by the algorithm. Unsafe edge color represents edges that will break if they are tested. 
 
