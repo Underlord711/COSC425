@@ -17,11 +17,11 @@
     <!-- Navigation Bar -->
 	<nav class="bg-maroon p-2 border-4 border-gold rounded-lg">
 		<ul class="flex space-x-6">
-			<li><img src="photos/bury.jpeg" alt="Logo" class="navbar-logo mt-3"></li>
+			<li><img src="photos/bury.jpeg" alt="Logo" class="navbar-logo mt-1"></li>
 			<li><button onclick="generateGraph()" class="underline mt-3 bg-maroon text-white px-5 py-3 text-lg rounded-md hover:bg-orange-500">Generate graph</button></li>
 			<li><button onclick="uploadJSON()" class="underline mt-3 bg-maroon text-white px-5 py-3 text-lg rounded-md hover:bg-orange-500">Upload JSON</button></li>
-			<li><button onclick="toggleMatrix()" class="updateClass underline mt-3 bg-maroon text-white px-5 py-3 text-lg rounded-md hover:border-2 hover:border-white hidden">Show matrix</button></li>
-			<li><button onclick="downloadJSON()" class="updateClass underline mt-3 bg-maroon text-white px-5 py-3 text-lg rounded-md hover:border-2 hover:border-white hidden">Download JSON</button></li>
+			<li><button onclick="toggleMatrix()" class="updateClass underline mt-3 bg-maroon text-white px-5 py-3 text-lg rounded-md hover:bg-orange-500 hidden">Show matrix</button></li>
+			<li><button onclick="downloadJSON()" class="updateClass underline mt-3 bg-maroon text-white px-5 py-3 text-lg rounded-md hover:bg-orange-500 hidden">Download JSON</button></li>
 		</ul>
 	</nav>
 	
@@ -697,9 +697,9 @@
 					}
 				}
 			}
-			}
-			refresh();
 		}
+	refresh();
+}
 
 		function replaceEdge(source, target) {
 			// add source and target to past edges
