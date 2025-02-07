@@ -9,55 +9,52 @@ body, ul, li, a, button {
 
 /* Navbar styles */
 nav {
-    background-color: maroon; /* Gold background for navbar */
-    padding: 15x;
-    border: 3px solid maroon;
+    background-color: maroon;
+    padding: 15px;
+    border: 3px solid gold;
+
 }
 
 nav ul {
     display: flex;
-    justify-content: flex-start; /* Align items to the left */
-    padding: 0;
+    justify-content: flex-start;
 }
 
 nav ul li {
-    margin: 0 15px; /* Adds spacing between list items */
+    margin: 0 15px;
 }
 
-/* Style for anchor links */
-nav ul li a {
-    color: white; /* White text */
-    text-decoration: none; /* Removes underline */
+/* Style for anchor links and buttons */
+nav ul li a, 
+nav ul li button {
+    color: white;
+    text-decoration: none;
     font-size: 18px;
-    padding: 15px 20px; /* Increase padding to make the link taller */
+    padding: 15px 20px;
     display: block;
+    border-radius: 5px;
+    background-color: maroon;
+    cursor: pointer;
 }
 
 /* Hover effect for anchor links */
 nav ul li a:hover {
-    background-color: #f4a261; /* Slight change for hover effect */
-    border-radius: 5px; /* Rounded corners on hover */
+    background-color: #f4a261;
 }
 
-/* Style for buttons */
+/* Button specific styles */
 nav ul li button {
-    background-color: maroon; /* Maroon background for buttons */
-    color: white; /* White text */
-    padding: 15px 20px; /* Increase padding to make the button taller */
     font-size: 16px;
-    cursor: pointer;
-    border-radius: 5px;
+    border: none;
 }
 
-/* Remove hover effect for buttons */
 nav ul li button:hover {
-    background-color: maroon; /* Keep the same maroon color on hover */
-    border: 2px solid white; /* No border color change */
+    border: 2px solid white;
 }
+
 /* Style the logo */
 .navbar-logo {
     height: 100px;
     width: auto;
     display: block;
 }
-
