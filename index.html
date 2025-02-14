@@ -1,54 +1,33 @@
 <!DOCTYPE html>
+
 <html lang="en">
-
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Weighted Undirected Graph Generator</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.21.0/cytoscape.min.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <link rel="stylesheet" href="css/matrix.css">
-	<link rel="stylesheet" href="css/nav.css"> <!-- Link to your CSS file -->
-
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Weighted Undirected Graph Generator</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.21.0/cytoscape.min.js"></script>
+	<script src="https://cdn.tailwindcss.com"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<link rel="stylesheet" href="css/matrix.css">
+    <link rel="stylesheet" href="css/nav.css"> <!-- Link to your CSS file -->
 </head>
-
-<body>
-    <!-- Navigation Bar -->
-    <nav>
-        <ul>
-            <li><img src="photos/bury.jpeg" alt="Logo" class="navbar-logo mt-3"></li>
-            <li><button onclick="generateGraph()" class="underline mt-3">Generate graph</button></li>
-            <li><button onclick="uploadJSON()" class="underline mt-3">Upload JSON</button></li>
-            <li><button onclick="toggleMatrix()" class="updateClass underline mt-3" style="display:none;">Show
-                    matrix</button></li>
-            <li><button onclick="downloadJSON()" class="updateClass underline mt-3" style="display:none;">Download
-                    JSON</button></li>
-            <li><select id="changeLayout" class="updateClass mt-8" style="display:none; background-color:transparent; color:white;">
-                    <option select="selected">Circle</option>
-                    <option>Cose</option>
-                </select></li>
-        </ul>
-    </nav>
-</body>
-
-</html>
-
-
-<head>
-
-
-</head>
-
 <body class="bg-gray-100 p-6">
+    <!-- Navigation Bar -->
+	<nav class="bg-maroon p-2 border-4 border-gold rounded-lg">
+		<ul class="flex space-x-6">
+			<li><img src="photos/bury.jpeg" alt="Logo" class="navbar-logo mt-1"></li>
+			<li><button onclick="generateGraph()" class="underline mt-3 bg-maroon text-white px-5 py-3 text-lg rounded-md hover:bg-orange-500">Generate graph</button></li>
+			<li><button onclick="uploadJSON()" class="underline mt-3 bg-maroon text-white px-5 py-3 text-lg rounded-md hover:bg-orange-500">Upload JSON</button></li>
+			<li><button onclick="toggleMatrix()" class="updateClass underline mt-3 bg-maroon text-white px-5 py-3 text-lg rounded-md hover:bg-orange-500 hidden">Show matrix</button></li>
+			<li><button onclick="downloadJSON()" class="updateClass underline mt-3 bg-maroon text-white px-5 py-3 text-lg rounded-md hover:bg-orange-500 hidden">Download JSON</button></li>
+		</ul>
+	</nav>
+	
 
-
-
-    <div class="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-md">
-        <h1 class="text-2xl font-bold mb-4">Weighted Undirected Graph Generator</h1>
+	<div class="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-md mt-3">
+		<h1 class="text-2xl font-bold mb-4">Weighted Undirected Graph Generator</h1>
 
         <div class="space-y-4">
             <div>
