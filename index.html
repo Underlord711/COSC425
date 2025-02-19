@@ -74,8 +74,6 @@
 				<button onclick="updateDisplay()" style="display:none;" id="updateBtn"
 					class="updateClass bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600 focus:outline-none">Switch
 				</button> -->
-				<button onclick="patchNotes()" id="patchBtn"
-				class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 focus:outline-none updateClass" style="display:none;">Patch Notes</button>
 				<button onclick="runAlgorithm(parseInt(document.getElementById('inputValue').value))"
 					style="display:none;" id="runAlgorithm"
 					class="updateClass bg-pink-500 text-white px-4 py-2 rounded hover:bg-pink-600 focus:outline-none">Run
@@ -108,7 +106,10 @@
 				<input type="color" id="unsafeEdgeInput" class="updateClass border px-1 py-1 rounded"
 					style="display:none;" value="#9C9C9C">
 				<label for="unsafeEdgeInput" class="updateClass" style="display:none;">Unsafe Edge Color</label>
-				
+				<button onclick="patchNotes()" id="patchBtn"
+				class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 focus:outline-none updateClass" style="display:none;">Patch Notes</button>
+				<button onclick="showGraphTwo()" id="GraphTwo"
+				class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none updateClass" style="display:none;">Graph Two</button>
 			</div>
 
 			<div class="mt-4">
@@ -125,6 +126,7 @@
 		<h2 class="text-xl font-semibold mt-6">Generated Graph:</h2>
 		<div class="flex items-start">
 			<div class="flex-none mr-4">Version: <span id="versionDisplay">1</span></div>
+			<div class="flex-none mr-4">SecondVersion: <span id="versionDisplay2">1</span></div>
 
 			<div id="matrixContainer" class="flex-grow overflow-x-auto overflow-y-auto max-h-96 mx-4 self-center"
 				style="display: none;">
@@ -138,10 +140,17 @@
 					class="bg-purple-500 text-white px-2 py-2 rounded hover:bg-purple-600 focus:outline-none">Prev</button>
 				<button onclick="next()" id="next"
 					class="bg-purple-500 text-white px-2 py-2 rounded hover:bg-purple-600 focus:outline-none">Next</button>
+				<button onclick="previousTwo()" id="prev2"
+					class="bg-purple-500 text-white px-2 py-2 rounded hover:bg-purple-600 focus:outline-none;" style="display:none;">Second Graph Prev</button>
+				<button onclick="nextTwo()" id="next2"
+					class="bg-purple-500 text-white px-2 py-2 rounded hover:bg-purple-600 focus:outline-none;" style="display:none;">Second Graph Next</button>
 			</div>
 		</div>
 
-		<div id="cy" class="border border-gray-300 mt-6" style="width: auto; height: 600px;"></div>
+		<div class="flex">
+			<div id="cy" class="w-32 flex-1 border border-gray-300 mt-6" style="width: auto; height: 600px;"></div>
+			<div id="cy2" class="w-32 flex-1 border border-gray-300 mt-6" style="width: 50%; height: 600px; display: none;"></div>
+		</div>
 	</div>
 
 	<div class="offcanvas offcanvas-start !w-[200px]" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1"
@@ -157,7 +166,9 @@
 
 	<script>
 		let graph = {};
+		//let graph2 = {}; Don't.
 		let version = 1;
+		let versionTwo = 1;
 		let isMatrixVisible = false; // Track whether the matrix is visible or not
 		let dummy = 'circle';
 		let noClass = ['weight', 'Past Edges', 'changes'];
@@ -415,6 +426,103 @@
 				$('#offBody').append("Weight : " + edge.data('label') + '<br>');
 			});
 		}
+			
+		function drawCy2Graph() {	//Draws the second graph, cannot be 
+			const elements = [];
+			let nodeColor = $("#nodeColorInput").val();
+			let safeEdgeColor = $("#safeEdgeInput").val();
+			let unsafeEdgeColor = $("#unsafeEdgeInput").val();
+
+			for (const [source, edges] of Object.entries(graph['version' + versionTwo])) {
+				if (noClass.includes(source))
+					continue;
+				elements.push({ data: { id: source, rel: edges.weight } });
+				//console.log(edges.weight);
+				for (const [destination, weight] of Object.entries(edges)) {
+					if (noClass.includes(destination)) {
+						continue;
+					}
+					if (source !== destination) {
+						elements.push({ data: { id: destination, rel: graph['version' + versionTwo][destination]['weight'] } });
+						elements.push({ data: { id: `${source}-${destination}`, source: source, target: destination, label: weight.toFixed(2) } });
+					}
+				}
+			}
+			
+			const cy2 = cytoscape({
+				container: document.getElementById('cy2'),
+				elements: elements,
+				style: [
+					{
+						selector: 'node',
+						style: {
+							'background-color': nodeColor,
+							'label': function (elem) {
+								return elem.data('id') + '\n' + elem.data('rel')
+							},
+							'color': 'green',
+							'font-size': '50px',
+							'text-wrap': 'wrap'
+						}
+					},
+					{
+						selector: 'edge',
+						style: {
+							'width': 2,
+							'line-color': function (elem) {
+								let s = graph['version' + versionTwo][elem.data('source')]['weight'];
+								let t = graph['version' + versionTwo][elem.data('target')]['weight'];
+								let w = elem.data('label');
+								let weightDiff = s > t ? (s - t) : (t - s);
+								weightDiff = parseFloat(weightDiff.toFixed(2));
+
+								return weightDiff > w ? unsafeEdgeColor : safeEdgeColor;
+
+							},
+							'label': 'data(label)',
+							'font-size': '35px',
+							'text-justification': 'left',
+							'text-margin-x': 5,
+							'color': 'red' // Change label color here
+						}
+					}
+				],
+				layout: {
+					name: dummy,
+					avoidOverlap: true,
+					nodeOverlap: 0,
+					spacingFactor: 3,
+					animate: false,
+
+				}
+			});
+			
+			cy2.on('tap', '*', function (evt) {
+				var offcanvasElement = document.getElementById('offcanvasScrolling');
+				var bsOffcanvas = new bootstrap.Offcanvas(offcanvasElement);
+				bsOffcanvas.show();
+			})
+
+			cy2.on('tap', 'node', function (evt) {
+				let text;
+				var node = evt.target;
+				$('#offBody').text('');
+				$('#offcanvasScrollingLabel').html('Node: ' + node.id());
+				for (const [destination, weight] of Object.entries(graph['version' + versionTwo][node.id()])) {
+					text = destination + ' : ' + weight;
+					$("#offBody").append(text + "<br>");
+				}
+			});
+			cy2.on('tap', 'edge', function (evt) {
+				let text;
+				var edge = evt.target;
+				$('#offBody').text('');
+				$('#offcanvasScrollingLabel').html('Edge: ' + edge.data('id'));
+				$('#offBody').append("Source : " + edge.data('source') + '<br>');
+				$('#offBody').append("Destination : " + edge.data('target') + '<br>');
+				$('#offBody').append("Weight : " + edge.data('label') + '<br>');
+			});
+		}
 
 		function downloadJSON() {
 			const jsonStr = JSON.stringify(graph, null, 2);
@@ -446,6 +554,7 @@
 					document.getElementById('versionDisplay').innerText = version; // Update displayed version
 					displayGraph();
 					drawCytoscapeGraph();
+					drawCy2Graph();
 					$('.updateClass').css('display', 'inline');
 				} catch (e) {
 					alert("Error parsing JSON: " + e.message);
@@ -467,7 +576,9 @@
 					// update displayed version every iteration
 					graph['version' + (version + 1)] = JSON.parse(JSON.stringify(graph['version' + version]));
 					version++;
+					versionTwo++;
 					document.getElementById('versionDisplay').innerText = version;
+					document.getElementById('versionDisplay2').innerText = versionTwo;
 
 					// select a random source node
 					const nodes = Object.keys(graph['version' + version]).filter(node => node !== 'changes');
@@ -593,7 +704,9 @@
 					// update graph version once for all nodes
 					graph['version' + (version + 1)] = JSON.parse(JSON.stringify(graph['version' + version]));
 					version++;
+					versionTwo++;
 					document.getElementById('versionDisplay').innerText = version;
+					document.getElementById('versionDisplay2').innerText = versionTwo;
 
 					// get list of nodes
 					const nodes = Object.keys(graph['version' + version]).filter(node => node !== 'changes');
@@ -712,6 +825,7 @@
 			}
 			}
 			refresh();
+			refreshTwo();
 		}
 
 		function replaceEdge(source, target) {
@@ -798,6 +912,18 @@
 				version++;
 			}
 		}
+		
+		function previousTwo() {
+			console.log("Prev two");
+			versionTwo--;
+			if (versionTwo > 0) {
+				$('#versionDisplay2').text(versionTwo);
+				refreshTwo();
+			}
+			else {
+				versionTwo++;
+			}
+		}
 
 		function next() {
 			version++;
@@ -809,10 +935,27 @@
 				version--;
 			}
 		}
+		
+		function nextTwo() {
+			console.log("Next two");
+			versionTwo++;
+			if (versionTwo <= Object.keys(graph).length) {
+				$('#versionDisplay2').text(versionTwo);
+				refreshTwo();
+			}
+			else {
+				versionTwo--;
+			}
+		}
 
 		function refresh() {
 			displayGraph();
 			drawCytoscapeGraph();
+		}
+		
+		function refreshTwo() {
+			displayGraph();
+			drawCy2Graph();
 		}
 
 		$('#offBody').on('blur', function(){
@@ -861,6 +1004,24 @@
         		{
         			alert("Changes:\n\n" + changeNotes.join("\n"));
         		}
+		}
+		
+		function showGraphTwo() { // Currently shows and hides the second graph
+			var graphStat = document.getElementById("cy");
+			var graphTwoStat = document.getElementById("cy2");
+			if (graphTwoStat.style.display === "none") {
+				graphTwoStat.style.display = "flex";
+				next2.style.display="flex";
+				prev2.style.display="flex";
+				graphStat.style.width = "50%";
+			} else {
+				graphTwoStat.style.display = "none";
+				next2.style.display="none";
+				prev2.style.display="none";
+				graphStat.style.width = "100%";
+			}
+			
+			
 		}
 
 	</script>
