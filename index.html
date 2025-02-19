@@ -766,9 +766,7 @@
                         let weightDiff = sourceWeight > targetWeight ? (sourceWeight - targetWeight) : (targetWeight - sourceWeight);
                         weightDiff = parseFloat(weightDiff.toFixed(2));
 
-                        // update graph
-                        if (weightDiff > edgeWeight) {
-                            newWeight = 0;
+                        
 						// update graph
 						if (weightDiff > edgeWeight) {	// Relationship (bond) is to break
 							newWeight = 0;
@@ -874,7 +872,6 @@
 			}
 			refresh();
 		}
-    }
 
         function replaceEdge(source, target) {
             // add source and target to respective past edges
