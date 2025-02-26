@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 
 <html lang="en">
+
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,1007 +12,909 @@
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 	<link rel="stylesheet" href="css/matrix.css">
-    <link rel="stylesheet" href="css/nav.css"> <!-- Link to your CSS file -->
+	<link rel="stylesheet" href="css/nav.css"> <!-- Link to your CSS file -->
 </head>
+
 <body class="bg-gray-100 p-6">
-    <!-- Navigation Bar -->
+	<!-- Navigation Bar -->
 	<nav class="bg-maroon p-2 border-4 border-gold rounded-lg">
 		<ul class="flex space-x-6">
 			<li><img src="photos/bury.jpeg" alt="Logo" class="navbar-logo mt-1"></li>
-			<li><button onclick="generateGraph()" class="underline mt-3 bg-maroon text-white px-5 py-3 text-lg rounded-md hover:bg-orange-500">Generate graph</button></li>
-			<li><button onclick="uploadJSON()" class="underline mt-3 bg-maroon text-white px-5 py-3 text-lg rounded-md hover:bg-orange-500">Upload JSON</button></li>
-			<li><button onclick="toggleMatrix()" class="updateClass underline mt-3 bg-maroon text-white px-5 py-3 text-lg rounded-md hover:bg-orange-500 hidden">Show matrix</button></li>
-			<li><button onclick="downloadJSON()" class="updateClass underline mt-3 bg-maroon text-white px-5 py-3 text-lg rounded-md hover:bg-orange-500 hidden">Download JSON</button></li>
-			<li><select id="changeLayout" class="updateClass mt-8" style="display:none; background-color:transparent; color:white;">
-				<option select="selected">Circle</option>
-				<option>Cose</option>
-			</select></li>
+			<li><button onclick="generateGraph()"
+					class="underline mt-3 bg-maroon text-white px-5 py-3 text-lg rounded-md hover:bg-orange-500">Generate
+					graph</button></li>
+			<li><button onclick="uploadJSON()"
+					class="underline mt-3 bg-maroon text-white px-5 py-3 text-lg rounded-md hover:bg-orange-500">Upload
+					JSON</button></li>
+			<li><button onclick="toggleMatrix()"
+					class="updateClass underline mt-3 bg-maroon text-white px-5 py-3 text-lg rounded-md hover:bg-orange-500 hidden">Show
+					matrix</button></li>
+			<li><button onclick="downloadJSON()"
+					class="updateClass underline mt-3 bg-maroon text-white px-5 py-3 text-lg rounded-md hover:bg-orange-500 hidden">Download
+					JSON</button></li>
+			<li><select id="changeLayout" class="updateClass mt-8"
+					style="display:none; background-color:maroon; color:white;">
+					<option select="selected">Circle</option>
+					<option>Cose</option>
+				</select></li>
 		</ul>
 	</nav>
-	
+
 
 	<div class="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-md mt-3">
 		<h1 class="text-2xl font-bold mb-4">Weighted Undirected Graph Generator</h1>
 
-        <div class="space-y-4">
-            <div>
-                <label for="numVertices" class="block text-sm font-medium">Number of Vertices:</label>
-                <input type="number" id="numVertices" value="10" min="4" required
-                    class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2">
-            </div>
-
-            <div>
-                <label for="weight1" class="block text-sm font-medium">Weight for Edge Type 1:</label>
-                <input type="number" id="weight1" value="0.2" required
-                    class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2">
-            </div>
-
-            <div>
-                <label for="weight2" class="block text-sm font-medium">Weight for Edge Type 2:</label>
-                <input type="number" id="weight2" value="0.9" required
-                    class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2">
-            </div>
-
-            <div class="space-x-4">
-                <!-- <button onclick="generateGraph()"
-                    class="bg-indigo-500 text-white px-4 py-2 rounded hover:bg-indigo-600 focus:outline-none">Generate
-                    Graph</button>
-                <button onclick="toggleMatrix()" style="display:none;" id="matrixBtn"
-                    class="updateClass bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 focus:outline-none">Show
-                    Matrix</button>
-                <button onclick="downloadJSON()" style="display:none;" id="downloadBtn"
-                    class="updateClass bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 focus:outline-none">Download
-                    JSON</button>
-                <button onclick="updateDisplay()" style="display:none;" id="updateBtn"
-                    class="updateClass bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600 focus:outline-none">Switch
-                </button> -->
-                <button onclick="patchNotes()" id="patchBtn"
-                    class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 focus:outline-none updateClass"
-                    style="display:none;">Patch Notes</button>
-                <button onclick="runAlgorithm(parseInt(document.getElementById('inputValue').value))"
-                    style="display:none;" id="runAlgorithm"
-                    class="updateClass bg-pink-500 text-white px-4 py-2 rounded hover:bg-pink-600 focus:outline-none">Run
-                    Algorithm</button>
-                <input type="number" value="1" id="inputValue" class="updateClass border px-2 py-1 rounded max-w-10"
-                    style="display:none;">
-
-                <input type="checkbox" id="runAllNodes" class="updateClass" style="display:none;" checked>
-                <label id="alertsLabel" for="runAllNodes" class="updateClass" style="display:none;">Run All
-                    Nodes</label>
-
-                <!-- <input type="checkbox" id="showAlerts" class="updateClass" style="display:none;" checked>
-                <label id="alertsLabel" for="showAlerts" class="updateClass" style="display:none;">Show Alerts</label> -->
-                <!-- <input type="checkbox" id="showAlerts" class="updateClass" style="display:none;" checked>
-                <label id="alertsLabel" for="showAlerts" class="updateClass" style="display:none;">Show Alerts</label> -->
-
-                <input type="checkbox" id="allowPastEdges" class="updateClass" style="display:none;" checked>
-                <label id="pastEdgesLabel" for="allowPastEdges" class="updateClass" style="display:none;">Allow Past
-                    Edges</label>
-
-
-                <input type="color" id="nodeColorInput" class="updateClass border px-1 py-1 rounded"
-                    style="display:none;" value="#000000">
-                <label for="nodeColorInput" class="updateClass" style="display:none;">Node Color</label>
-
-                <input type="color" id="safeEdgeInput" class="updateClass border px-1 py-1 rounded"
-                    style="display:none;" value="#00FF00">
-                <label for="safeEdgeInput" class="updateClass" style="display:none;">Safe Edge Color</label>
-
-                <input type="color" id="unsafeEdgeInput" class="updateClass border px-1 py-1 rounded"
-                    style="display:none;" value="#FF0000">
-                <label for="unsafeEdgeInput" class="updateClass" style="display:none;">Unsafe Edge Color</label>
-
-            </div>
-
-            <div class="mt-4">
-                <input type="file" id="fileInput" accept=".json" onchange="uploadJSON()"
-                    class="block w-full text-sm text-gray-500 border border-gray-300 rounded-lg cursor-pointer">
-                <button id="uploadBtn" style="display:none;" onclick="uploadJSON()"
-                    class="mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none">Upload
-                    JSON</button>
-
-
-            </div>
-        </div>
-
-        <h2 class="text-xl font-semibold mt-6">Generated Graph:</h2>
-        <div class="flex items-start">
-            <div class="flex-none mr-4">Version: <span id="versionDisplay">1</span></div>
-
-            <div id="matrixContainer" class="flex-grow overflow-x-auto overflow-y-auto max-h-96 mx-4 self-center"
-                style="display: none;">
-                <table id="graphTable"
-                    class="min-w-full table-auto border-collapse bg-white shadow-md rounded-lg text-sm">
-                </table>
-            </div>
-
-            <div class="flex-none ml-auto">
-                <button onclick="previous()" id="prev"
-                    class="bg-purple-500 text-white px-2 py-2 rounded hover:bg-purple-600 focus:outline-none">Prev</button>
-                <button onclick="next()" id="next"
-                    class="bg-purple-500 text-white px-2 py-2 rounded hover:bg-purple-600 focus:outline-none">Next</button>
-                <button onclick="" id="play"
-                    class="bg-purple-500 text-white px-2 py-2 rounded hover:bg-purple-600 focus:outline-none">▶</button>
-            </div>
-        </div>
-
-        <div id="cy" class="border border-gray-300 mt-6" style="width: auto; height: 600px;"></div>
-    </div>
-
-    <div class="offcanvas offcanvas-start !w-[200px]" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1"
-        id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel">
-        <div class="offcanvas-header">
-            <h5 class="offcanvas-title" id="offcanvasScrollingLabel" contenteditable='true'>Node: </h5>
-            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-        </div>
-        <div class="offcanvas-body" contenteditable='true' id="offBody">
-            <p></p>
-        </div>
-    </div>
-
-    <script>
-        let graph = {};
-        let version = 1;
-        let isMatrixVisible = false; // Track whether the matrix is visible or not
-        let dummy = 'circle';
-        let noClass = ['weight', 'Past Edges', 'changes'];
-        const MAX_WEIGHT = 0.8;
-
-        let playInterval;       // used for play button
-        let isPlaying = false;
-
-        changeNotes = [];   //Need this for Patch Notes
-
-        nodeColorInput.addEventListener("change", drawCytoscapeGraph, false);
-        safeEdgeInput.addEventListener("change", drawCytoscapeGraph, false);
-        unsafeEdgeInput.addEventListener("change", drawCytoscapeGraph, false);
-
-        // function updateDisplay() {
-        //  if (dummy == 'grid') {
-        //      dummy = 'circle';
-        //  }
-        //  else {
-        //      dummy = 'grid';
-        //  }
-        //  drawCytoscapeGraph();
-        // }
-
-        function generateGraph() {
-            const numVertices = parseInt(document.getElementById('numVertices').value);
-            const weight1 = parseFloat(document.getElementById('weight1').value);
-            const weight2 = parseFloat(document.getElementById('weight2').value);
-            if (Object.keys(graph).length != 0) {
-                if (confirm('Do you want to save this json file before overwriting graph?')) {
-                    downloadJSON();
-                }
-            }
-            let one = false;
-            graph = { version1: {} };
-            for (let i = 0; i < numVertices; i++) {
-                const vertex = String.fromCharCode(65 + i);
-                let w = Math.random().toFixed(2);
-
-                if (w > MAX_WEIGHT && !one) {
-                    w = 1;
-                    one = true;
-                } else if (w > MAX_WEIGHT) {
-                    w = MAX_WEIGHT;
-                }
-
-                graph['version' + version][vertex] = { weight: w }; //Initialing the object for each vertex.
-                graph['version' + version][vertex]['Past Edges'] = [];
-            }
-
-            if (!one) {
-                let vertex = String.fromCharCode(65 + Math.floor(Math.random() * numVertices));
-                graph['version' + version][vertex]['weight'] = 1;
-            }
-
-            const edgesCount = Array(numVertices).fill(0);
-            const maxEdgesPerVertex = 3;
-            const totalEdgesNeeded = (numVertices * maxEdgesPerVertex) / 2;
-
-            let edgesCreated = 0;
-
-            while (edgesCreated < totalEdgesNeeded) {
-                let sourceIndex = Math.floor(Math.random() * numVertices);
-                let destinationIndex;
-
-                let attempts = 0;
-                do {
-                    destinationIndex = Math.floor(Math.random() * numVertices);
-                    attempts++;
-                    if (attempts > 100) {
-                        console.log('Too many attempts to find a valid edge.');
-                        break;
-                    }
-                } while (
-                    destinationIndex === sourceIndex || // Prevent self-loops
-                    edgesCount[sourceIndex] >= maxEdgesPerVertex ||
-                    edgesCount[destinationIndex] >= maxEdgesPerVertex ||
-                    graph.version1[String.fromCharCode(65 + sourceIndex)][String.fromCharCode(65 + destinationIndex)]
-                );
-
-                if (edgesCount[sourceIndex] < maxEdgesPerVertex && edgesCount[destinationIndex] < maxEdgesPerVertex) {
-                    const source = String.fromCharCode(65 + sourceIndex);
-                    const destination = String.fromCharCode(65 + destinationIndex);
-                    const weight = Math.random() < 0.5 ? weight1 : weight2;
-
-                    graph['version' + version][source][destination] = weight;
-                    graph['version' + version][destination][source] = weight;
-
-                    edgesCount[sourceIndex]++;
-                    edgesCount[destinationIndex]++;
-                    edgesCreated++;
-                }
-            }
-
-            // graph['version1']['changes'] = {};
-            graph['version1']['changes'] = [];
-
-            refresh();
-            $('.updateClass').css('display', 'inline');
-        }
-
-        function toggleMatrix() {
-            const matrixContainer = document.getElementById('matrixContainer');
-            isMatrixVisible = !isMatrixVisible;
-            matrixContainer.style.display = isMatrixVisible ? 'block' : 'none';
-        }
-
-        function displayGraph() {
-            const table = document.getElementById('graphTable');
-            table.innerHTML = ''; // Clear previous content
-
-            // Create header row (with an extra cell at the top-left)
-            const headerRow = document.createElement('tr');
-            headerRow.innerHTML = '<th class="border px-4 py-2 sticky"></th>'; // Top-left empty cell
-            for (let i = 0; i < Object.keys(graph['version' + version]).length - 1; i++) {
-                headerRow.innerHTML += `<th class="border px-4 py-2 text-center sticky">${String.fromCharCode(65 + i)}</th>`;
-            }
-            table.appendChild(headerRow);
-
-            // Create rows for each vertex
-            for (const [vertex, edges] of Object.entries(graph['version' + version])) {
-                if (noClass.includes(vertex))
-                    continue;
-                const row = document.createElement('tr');
-                row.innerHTML = `<th class="border px-4 py-2 text-center row-sticky">${vertex}</th>`; // Row header with sticky class
-                for (const targetVertex of Object.keys(graph['version' + version])) {
-                    if (noClass.includes(targetVertex))
-                        continue;
-                    else if (vertex === targetVertex) {
-                        row.innerHTML += '<td class="border px-4 py-2 text-center">x</td>'; // Self-loop indicator
-                    } else {
-                        const weight = edges[targetVertex] !== undefined ? edges[targetVertex] : 'x';
-                        row.innerHTML += `<td class="editable border px-4 py-2 text-center" contenteditable="true" onblur="updateWeight('${vertex}', '${targetVertex}', this.innerText)">${weight}</td>`;
-                    }
-                }
-                table.appendChild(row);
-            }
-        }
-
-        function updateWeight(source, target, newWeight) {
-            // prevent updating version when no change was made
-            if (parseFloat(graph['version' + version][source][target]) === parseFloat(newWeight.trim()))
-                return;
-
-            const weight = parseFloat(newWeight);
-            const str = String(newWeight);
-
-            // copy graph
-            graph['version' + (version + 1)] = JSON.parse(JSON.stringify(graph['version' + version]));
-            version++;
-
-            // update edge
-            if (weight === 0 || str.toLowerCase() === 'x') {
-                delete graph['version' + version][source][target];
-                delete graph['version' + version][target][source];
-            } else if (!isNaN(weight) && weight > 0) {
-                graph['version' + version][source][target] = weight;
-                graph['version' + version][target][source] = weight;
-            } else {
-                alert("Invalid weight. Please enter a positive number or zero.");
-            }
-
-            // update display
-            refresh();
-            $('#versionDisplay').text(version);
-        }
-
-        // function layoutCircle() {
-        //  dummy = 'circle';
-        //  drawCytoscapeGraph();
-        // }
-
-        // function layoutCose() {
-        //  dummy = 'cose';
-        //  drawCytoscapeGraph();
-        // }
-
-        document.getElementById("changeLayout").onchange = function () {
-            if (this.value === 'Circle')
-                dummy = 'circle';
-            if (this.value === 'Cose')
-                dummy = 'cose';
-            drawCytoscapeGraph();
-        }
-
-        function drawCytoscapeGraph() {
-            const elements = [];
-            let nodeColor = $("#nodeColorInput").val();
-            let safeEdgeColor = $("#safeEdgeInput").val();
-            let unsafeEdgeColor = $("#unsafeEdgeInput").val();
-
-            for (const [source, edges] of Object.entries(graph['version' + version])) {
-                if (noClass.includes(source))
-                    continue;
-                elements.push({ data: { id: source, rel: edges.weight } });
-                //console.log(edges.weight);
-                for (const [destination, weight] of Object.entries(edges)) {
-                    if (noClass.includes(destination)) {
-                        continue;
-                    }
-                    if (source !== destination) {
-                        elements.push({ data: { id: destination, rel: graph['version' + version][destination]['weight'] } });
-                        elements.push({ data: { id: `${source}-${destination}`, source: source, target: destination, label: weight.toFixed(2) } });
-                    }
-                }
-            }
-
-            //
-            // original cytoscape
-            //
-            if (dummy === 'circle') {
-                const cy = cytoscape({
-                    container: document.getElementById('cy'),
-                    elements: elements,
-                    style: [
-                        {
-                            selector: 'node',
-                            style: {
-                                'background-color': nodeColor,
-                                'label': function (elem) {
-                                    return elem.data('id') + '\n' + elem.data('rel')
-                                },
-                                'color': 'black',
-                                'font-size': '50%',
-                                'text-wrap': 'wrap',
-                                'height': '50%',
-                                'width': '50%'
-                            }
-                        },
-                        {
-                            selector: 'edge',
-                            style: {
-                                'width': 1,
-                                'line-color': function (elem) {
-                                    let s = graph['version' + version][elem.data('source')]['weight'];
-                                    let t = graph['version' + version][elem.data('target')]['weight'];
-                                    let w = elem.data('label');
-                                    let weightDiff = s > t ? (s - t) : (t - s);
-                                    weightDiff = parseFloat(weightDiff.toFixed(2));
-
-                                    return weightDiff > w ? unsafeEdgeColor : safeEdgeColor;
-
-                                },
-                                'label': 'data(label)',
-                                'font-size': '50%',
-                                'text-justification': 'left',
-                                'text-margin-x': 5,
-                                'color': 'black' // Change label color here
-                            }
-                        }
-                    ],
-                    layout: {
-                        name: dummy,
-                        avoidOverlap: true,
-                        nodeOverlap: 0,
-                        spacingFactor: 3,
-                        animate: false,
-
-                    }
-                });
-                cy.on('tap', '*', function (evt) {
-                    var offcanvasElement = document.getElementById('offcanvasScrolling');
-                    var bsOffcanvas = new bootstrap.Offcanvas(offcanvasElement);
-                    bsOffcanvas.show();
-                })
-
-                cy.on('tap', 'node', function (evt) {
-                    let text;
-                    var node = evt.target;
-                    $('#offBody').text('');
-                    $('#offcanvasScrollingLabel').html('Node: ' + node.id());
-                    for (const [destination, weight] of Object.entries(graph['version' + version][node.id()])) {
-                        text = destination + ' : ' + weight;
-                        $("#offBody").append("<li>" + text + "</li>");
-                    }
-                });
-                cy.on('tap', 'edge', function (evt) {
-                    let text;
-                    var edge = evt.target;
-                    $('#offBody').text('');
-                    $('#offcanvasScrollingLabel').html('Edge: ' + edge.data('id'));
-                    $('#offBody').append("<li>Source : " + edge.data('source') + '</li>');
-                    $('#offBody').append("<li>Destination : " + edge.data('target') + '</li>');
-                    $('#offBody').append("<li>Weight : " + edge.data('label') + '</li>');
-                });
-            }
-
-            //
-            // cose layout
-            //
-            else {
-                const cy = cytoscape({
-                    container: document.getElementById('cy'),
-                    elements: elements,
-                    style: [
-                        {
-                            selector: 'node',
-                            style: {
-                                'background-color': nodeColor,
-                                'label': function (elem) {
-                                    return elem.data('id') + '\n' + elem.data('rel');
-                                },
-                                'color': 'black',
-                                'font-size': '5%',
-                                'text-wrap': 'wrap',
-                                'height': '5%',
-                                'width': '5%'
-                            }
-                        },
-                        {
-                            selector: 'edge',
-                            style: {
-                                'width': 1,
-                                'line-color': function (elem) {
-                                    let s = graph['version' + version][elem.data('source')]['weight'];
-                                    let t = graph['version' + version][elem.data('target')]['weight'];
-                                    let w = elem.data('label');
-                                    let weightDiff = s > t ? (s - t) : (t - s);
-                                    weightDiff = parseFloat(weightDiff.toFixed(2));
-
-                                    return weightDiff > w ? unsafeEdgeColor : safeEdgeColor;
-                                },
-                                'label': 'data(label)',
-                                'font-size': '5%',
-                                'text-justification': 'left',
-                                'text-margin-x': 5,
-                                'color': 'black'
-                            }
-                        }
-                    ],
-                    layout: {
-                        name: 'cose',
-                        avoidOverlap: true,
-                        randomize: true
-                    }
-                });
-                cy.on('tap', '*', function (evt) {
-                    var offcanvasElement = document.getElementById('offcanvasScrolling');
-                    var bsOffcanvas = new bootstrap.Offcanvas(offcanvasElement);
-                    bsOffcanvas.show();
-                })
-
-                cy.on('tap', 'node', function (evt) {
-                    let text;
-                    var node = evt.target;
-                    $('#offBody').text('');
-                    $('#offcanvasScrollingLabel').html('Node: ' + node.id());
-                    for (const [destination, weight] of Object.entries(graph['version' + version][node.id()])) {
-                        text = destination + ' : ' + weight;
-                        $("#offBody").append("<li>" + text + "</li>");
-                    }
-                });
-                cy.on('tap', 'edge', function (evt) {
-                    let text;
-                    var edge = evt.target;
-                    $('#offBody').text('');
-                    $('#offcanvasScrollingLabel').html('Edge: ' + edge.data('id'));
-                    $('#offBody').append("<li>Source : " + edge.data('source') + '</li>');
-                    $('#offBody').append("<li>Destination : " + edge.data('target') + '</li>');
-                    $('#offBody').append("<li>Weight : " + edge.data('label') + '</li>');
-                });
-            }
-
-            // cy.on('tap', '*', function (evt) {
-            //  var offcanvasElement = document.getElementById('offcanvasScrolling');
-            //  var bsOffcanvas = new bootstrap.Offcanvas(offcanvasElement);
-            //  bsOffcanvas.show();
-            // })
-
-            // cy.on('tap', 'node', function (evt) {
-            //  let text;
-            //  var node = evt.target;
-            //  $('#offBody').text('');
-            //  $('#offcanvasScrollingLabel').html('Node: ' + node.id());
-            //  for (const [destination, weight] of Object.entries(graph['version' + version][node.id()])) {
-            //      text = destination + ' : ' + weight;
-            //      $("#offBody").append("<li>" + text + "</li>");
-            //  }
-            // });
-            // cy.on('tap', 'edge', function (evt) {
-            //  let text;
-            //  var edge = evt.target;
-            //  $('#offBody').text('');
-            //  $('#offcanvasScrollingLabel').html('Edge: ' + edge.data('id'));
-            //  $('#offBody').append("<li>Source : " + edge.data('source') + '</li>');
-            //  $('#offBody').append("<li>Destination : " + edge.data('target') + '</li>');
-            //  $('#offBody').append("<li>Weight : " + edge.data('label') + '</li>');
-            // });
-        }
-
-        function downloadJSON() {
-            const jsonStr = JSON.stringify(graph, null, 2);
-            const blob = new Blob([jsonStr], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'graph.json';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        }
-
-        function uploadJSON() {
-            const fileInput = document.getElementById('fileInput');
-            const file = fileInput.files[0];
-            if (!file) {
-                alert("Please select a file to upload.");
-                return;
-            }
-
-            const reader = new FileReader();
-            reader.onload = function (event) {
-                try {
-                    const json = JSON.parse(event.target.result);
-                    graph = json;
-                    version = Object.keys(graph).length;
-                    document.getElementById('versionDisplay').innerText = version; // Update displayed version
-                    displayGraph();
-                    drawCytoscapeGraph();
-                    $('.updateClass').css('display', 'inline');
-                } catch (e) {
-                    alert("Error parsing JSON: " + e.message);
-                }
-            };
-            reader.readAsText(file);
-        }
-
-        function addNotes(message) {
-            changeNotes.push(`${message}`);
-            changeNotes.push(``);
-        }
-
-        function runAlgorithm(number) {
-            if (!document.querySelector('#runAllNodes').checked) {      // run single node
-                for (let i = 0; i < number; i++) {
-                    // update displayed version every iteration
-                    graph['version' + (version + 1)] = JSON.parse(JSON.stringify(graph['version' + version]));
-                    version++;
-                    document.getElementById('versionDisplay').innerText = version;
-
-                    // select a random source node
-                    const nodes = Object.keys(graph['version' + version]).filter(node => node !== 'changes');
-                    let source;
-
-                    do {
-                        source = nodes[Math.floor(Math.random() * nodes.length)];
-                    } while (noClass.includes(source));
-
-                    // get the edges of the selected source node
-                    const edges = graph['version' + version][source];
-
-                    // select a random target node that does not lead back to the source node
-                    let target;
-                    const targetNodes = Object.keys(edges);
-                    do {
-                        target = targetNodes[Math.floor(Math.random() * targetNodes.length)];
-                    } while (
-                        target === source ||
-                        noClass.includes(target));
-
-                    // find weights of the source and target nodes, and the edge weight
-                    const sourceWeight = parseFloat(graph['version' + version][source]['weight']);
-                    const targetWeight = parseFloat(graph['version' + version][target]['weight']);
-                    const edgeWeight = parseFloat(edges[target]);
-
-                    // find difference in node opinion and compare with edge weight
-                    let weightDiff = sourceWeight > targetWeight ? (sourceWeight - targetWeight) : (targetWeight - sourceWeight);
-                    weightDiff = parseFloat(weightDiff.toFixed(2));
-                    let c = [];
-
-                    // update graph
-                    if (weightDiff > edgeWeight) {
-                        newWeight = 0;
-
-                        // if (document.querySelector('#showAlerts').checked)
-                        // {
-                        //  alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${sourceWeight}) ${source} --(${newWeight})-- ${target} (${targetWeight})`);
-                        // }
-
-                        // delete broken edge from json
-                        delete graph['version' + version][source][target];
-                        delete graph['version' + version][target][source];
-
-                        // add change info to json
-                        let changesString = `${source} -${edgeWeight}- ${target} - broken`;
-                        c.push(changesString);
-                        addNotes(changesString);
-                        graph['version' + version]['changes'] = c;
-
-                        // if (document.querySelector('#showAlerts').checked)
-                        //  alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${sourceWeight}) ${source} --(${0})-- ${target} (${targetWeight})`);
-
-                        // make new edges from source and target
-                        replaceEdge(source, target);
-                    } else {
-                        // calculate new edge weight if not broken
-
-                        // check if either node has weight of 1
-                        if (sourceWeight === 1 || targetWeight === 1) {
-                            let avg = weightDiff / 4;
-                            avg = parseFloat(avg.toFixed(2));
-
-                            if (sourceWeight !== 1) {
-                                // update source if it is not 1
-                                avg = parseFloat(avg + sourceWeight);
-                                avg = parseFloat(avg.toFixed(2));
-                                graph['version' + version][source]['weight'] = avg;
-                                let changesString = `${source} ${sourceWeight} - ${avg}, ${target} ${targetWeight} unchanged`;
-                                c.push(changesString);
-                                addNotes(changesString);
-                                graph['version' + version]['changes'] = c;
-
-                                // if (document.querySelector('#showAlerts').checked)
-                                //  alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${avg}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})`);
-                            } else {
-                                // update target if it is not 1
-                                avg = parseFloat(avg + targetWeight);
-                                avg = parseFloat(avg.toFixed(2));
-                                graph['version' + version][target]['weight'] = avg;
-                                let changesString = `${source} ${sourceWeight} unchanged, ${target} ${targetWeight} - ${avg}`;
-                                c.push(changesString);
-                                addNotes(changesString);
-                                graph['version' + version]['changes'] = c;
-
-                                // if (document.querySelector('#showAlerts').checked)
-                                //  alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${avg})`);
-                            }
-
-                        } else {
-                            // if neither node weight is 1, update both
-                            let avg = weightDiff / 4;
-                            avg = parseFloat(avg.toFixed(2));
-                            let newS, newT;
-
-                            if (sourceWeight > targetWeight) {
-                                newS = parseFloat(sourceWeight - avg) > 0 ? parseFloat(sourceWeight - avg) : 0;
-                                newT = parseFloat(targetWeight + avg) > MAX_WEIGHT ? MAX_WEIGHT : parseFloat(targetWeight + avg);
-                            } else {
-                                newS = parseFloat(sourceWeight + avg) > MAX_WEIGHT ? MAX_WEIGHT : parseFloat(sourceWeight + avg);
-                                newT = parseFloat(targetWeight - avg) > 0 ? parseFloat(targetWeight - avg) : 0;
-                            }
-
-                            newS = parseFloat(newS.toFixed(2));
-                            newT = parseFloat(newT.toFixed(2));
-
-                            graph['version' + version][source]['weight'] = newS;
-                            graph['version' + version][target]['weight'] = newT;
-
-                            // add change info to json
-                            let changesString = `${source} ${sourceWeight} - ${newS} & ${target} ${targetWeight} - ${newT}`;
-                            c.push(changesString);
-                            addNotes(changesString);
-                            graph['version' + version]['changes'] = c;
-
-                            // if (document.querySelector('#showAlerts').checked)
-                            //  alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${newS}) ${source} --(${edgeWeight})-- ${target} (${newT})`);
-                        }
-                    }
-                }
-            } else {                                                    // run all nodes
-                for (let i = 0; i < number; i++) {
-                    // update graph version once for all nodes
-                    graph['version' + (version + 1)] = JSON.parse(JSON.stringify(graph['version' + version]));
-                    version++;
-                    document.getElementById('versionDisplay').innerText = version;
-
-                    // get list of nodes
-                    const nodes = Object.keys(graph['version' + version]).filter(node => node !== 'changes');
-                    let source;
-                    let c = [];
-
-                    // run algorithm on each node
-                    for (const node of nodes) {
-                        source = node;
-
-                        // get the edges of the selected source node
-                        const edges = graph['version' + version][source];
-
-                        // select a random target node that does not lead back to the source node
-                        let target;
-                        const targetNodes = Object.keys(edges);
-                        do {
-                            target = targetNodes[Math.floor(Math.random() * targetNodes.length)];
-                        } while (
-                            target === source ||
-                            noClass.includes(target));
-
-                        // find weights of the source and target nodes, and the edge weight
-                        const sourceWeight = parseFloat(graph['version' + version][source]['weight']);
-                        const targetWeight = parseFloat(graph['version' + version][target]['weight']);
-                        const edgeWeight = parseFloat(edges[target]);
-
-                        // find difference in node opinion and compare with edge weight
-                        let weightDiff = sourceWeight > targetWeight ? (sourceWeight - targetWeight) : (targetWeight - sourceWeight);
-                        weightDiff = parseFloat(weightDiff.toFixed(2));
-
-                        // update graph
-                        if (weightDiff > edgeWeight) {
-                            newWeight = 0;
-
-                            // if (document.querySelector('#showAlerts').checked)
-                            //  alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${sourceWeight}) ${source} --(${0})-- ${target} (${targetWeight})`);
-
-                            // delete broken edge from json
-                            delete graph['version' + version][source][target];
-                            delete graph['version' + version][target][source];
-
-                            // add change info to json
-                            let changesString = `${source} -${edgeWeight}- ${target} - broken`;
-                            c.push(changesString);
-                            addNotes(changesString);
-                            graph['version' + version]['changes'] = c;
-
-                            // make new edges from source and target
-                            replaceEdge(source, target);
-                        } else {
-                            // calculate new edge weight if not broken
-
-                            // check if either node has weight of 1
-                            if (sourceWeight === 1 || targetWeight === 1) {
-                                let avg = weightDiff / 4;
-                                avg = parseFloat(avg.toFixed(2));
-
-                                if (sourceWeight !== 1) {
-                                    // update source if it is not 1
-                                    avg = parseFloat(avg + sourceWeight);
-                                    avg = parseFloat(avg.toFixed(2));
-                                    graph['version' + version][source]['weight'] = avg;
-                                    let changesString = `${source} ${sourceWeight} - ${avg}, ${target} ${targetWeight} unchanged`;
-                                    c.push(changesString);
-                                    addNotes(changesString);
-                                    graph['version' + version]['changes'] = c;
-
-                                    // if (document.querySelector('#showAlerts').checked)
-                                    //  alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${avg}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})`);
-                                } else {
-                                    // update target if it is not 1
-                                    avg = parseFloat(avg + targetWeight);
-                                    avg = parseFloat(avg.toFixed(2));
-                                    graph['version' + version][target]['weight'] = avg;
-                                    let changesString = `${source} ${sourceWeight} unchanged, ${target} ${targetWeight} - ${avg}`;
-                                    c.push(changesString);
-                                    addNotes(changesString);
-                                    graph['version' + version]['changes'] = c;
-
-                                    // if (document.querySelector('#showAlerts').checked)
-                                    //  alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${avg})`);
-                                }
-
-                            } else {
-                                // if neither node weight is 1, update both 
-                                let avg = weightDiff / 4;
-                                avg = parseFloat(avg.toFixed(2));
-                                let newS, newT;
-
-                                if (sourceWeight > targetWeight) {
-                                    newS = parseFloat(sourceWeight - avg) > 0 ? parseFloat(sourceWeight - avg) : 0;
-                                    newT = parseFloat(targetWeight + avg) > MAX_WEIGHT ? MAX_WEIGHT : parseFloat(targetWeight + avg)
-                                } else {
-                                    newS = parseFloat(sourceWeight + avg) > MAX_WEIGHT ? MAX_WEIGHT : parseFloat(sourceWeight + avg);
-                                    newT = parseFloat(targetWeight - avg) > 0 ? parseFloat(targetWeight - avg) : 0;
-                                }
-
-                                newS = parseFloat(newS.toFixed(2));
-                                newT = parseFloat(newT.toFixed(2));
-
-                                graph['version' + version][source]['weight'] = newS;
-                                graph['version' + version][target]['weight'] = newT;
-
-                                // add change info to json
-                                let changesString = `${source} ${sourceWeight} - ${newS} & ${target} ${targetWeight} - ${newT}`;
-                                c.push(changesString);
-                                addNotes(changesString);
-                                graph['version' + version]['changes'] = c;
-
-                                // if (document.querySelector('#showAlerts').checked)
-                                //  alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${newS}) ${source} --(${edgeWeight})-- ${target} (${newT})`);
-                            }
-                        }
-                    }
-                }
-            }
-            refresh();
-        }
-
-        function replaceEdge(source, target) {
-            // add source and target to respective past edges
-            let c = graph['version' + version]['changes'];
-
-            let sourceEdges = graph['version' + version][source]['Past Edges'];
-            if (!sourceEdges.includes(target)) sourceEdges.push(target);
-            graph['version' + version][source]['Past Edges'] = sourceEdges;
-
-            let targetEdges = graph['version' + version][target]['Past Edges'];
-            if (!targetEdges.includes(source)) targetEdges.push(source);
-            graph['version' + version][target]['Past Edges'] = targetEdges;
-
-            // get list of all nodes in graph
-            const nodes = Object.keys(graph['version' + version]).filter(node => node !== 'changes');
-            let sourceNode, changesString, alertString = "";
-
-            // relationship weight
-            let weightS = parseFloat(document.getElementById('weight1').value);;
-
-            // array to store valid nodes for a new edge
-            const availableNodes = [];
-
-            // build array of possible connections (preventing past edges from reforming)
-            if (!document.querySelector('#allowPastEdges').checked) {
-                for (let i = 0; i < nodes.length; i++) {
-                    let node = String.fromCharCode(65 + i); // convert number to char
-                    // if node is NOT in past edges and there is not already an edge, add it to available nodes
-                    if (!sourceEdges.includes(node) && node !== source && !graph['version' + version][source][node])
-                        availableNodes.push(node);
-                }
-            } else {
-                // build array of possible connections (allows past edges)
-                for (let i = 0; i < nodes.length; i++) {
-                    let node = String.fromCharCode(65 + i);
-                    if (node !== source && !graph['version' + version][source][node])
-                        availableNodes.push(node);
-                }
-            }
-
-            // if there are no available nodes update changes and exit
-            if (availableNodes.length === 0) {
-                changesString = `No available edges from ${source} possible (past edges not allowed)`;
-                console.log(changesString)
-                alertString += changesString + '\n';
-                c.push(changesString);
-                addNotes(changesString);
-                graph['version' + version]['changes'] = c;
-                return;
-            }
-
-            console.log(`source: ${source}\nbroken edge with: ${target}`);
-            console.log(`available nodes: ${availableNodes}`);
-
-            // select random source node from what is available
-            sourceNode = availableNodes[Math.floor(Math.random() * availableNodes.length)];
-
-            console.log(`new target: ${sourceNode}`);
-
-            // update graph and changes
-            graph['version' + version][source][sourceNode] = weightS;
-            graph['version' + version][sourceNode][source] = weightS;
-
-            changesString = `${source} -${weightS}- ${sourceNode} - made`;
-            alertString += changesString + '\n';
-            c.push(changesString);
-            addNotes(changesString);
-            graph['version' + version]['changes'] = c;
-            console.log(changesString);
-        }
-
-        function previous() {
-            version--;
-            if (version > 0) {
-                $('#versionDisplay').text(version);
-                refresh();
-            }
-            else {
-                version++;
-            }
-        }
-
-        function next() {
-            version++;
-            if (version <= Object.keys(graph).length) {
-                $('#versionDisplay').text(version);
-                refresh();
-            }
-            else {
-                version--;
-            }
-        }
-
-        $("#play").on("click", function () {
-            if (!isPlaying) {
-
-                // change button text
-                $("#play").text("■");
-                isPlaying = true;
-
-                let start = version;
-                let size = Object.entries(graph).length;
-
-                // call next() every second
-                playInterval = setInterval(() => {
-                    if (start < size) {
-                        $("#next").click();
-                        start++;
-                    } else {
-                        clearInterval(playInterval); // stop playback at last version
-                        $("#play").text("▶");
-                        isPlaying = false;
-                    }
-                }, 1000);
-            } else {
-                // stop playback if button clicked again
-                clearInterval(playInterval);
-                $("#play").text("▶");
-                isPlaying = false;
-            }
-        });
-
-        function refresh() {
-            displayGraph();
-            drawCytoscapeGraph();
-        }
-
-        $('#offBody').on('blur', function () {
-            console.log('found');
-            let stuff;
-            let tempStr = $('#offBody li').text();
-            console.log(tempStr);
-            $('#offBody li').each(function (index, element) {
-                let data = ($(element).text()).split(' : ');
-                let curr = ($('#offcanvasScrollingLabel').text()).split(' ');
-                if (curr[0] == 'Node:') {
-                    if (index == 1) {
-                        return;
-                    }
-                    let me = curr[1];
-                    console.log(me);
-                    graph['version' + version][me][data[0]] = parseFloat(data[1]);
-                    if (index == 0) {
-                        return;
-                    }
-                    graph['version' + version][data[0]][me] = parseFloat(data[1]);
-                }
-                else {
-                    console.log('in the else');
-                    if (index == 0) {
-                        return;
-                    }
-                    let me = curr[1];
-                    let targets = me.split('-');
-                    console.log(data);
-                    graph['version' + version][targets[0]][targets[1]] = parseFloat(data[1]);
-                    if (index == 0) {
-                        return;
-                    }
-                    graph['version' + version][targets[1]][targets[0]] = parseFloat(data[1]);
-                }
-            });
-            refresh();
-        });
-        function patchNotes() {
-            if (changeNotes.length == 0) {
-                alert("No changes yet.");
-            }
-            else {
-                alert("Changes:\n\n" + changeNotes.join("\n"));
-            }
-        }
-
-
-    </script>
+		<div class="space-y-4">
+			<div>
+				<label for="numVertices" class="block text-sm font-medium">Number of Vertices:</label>
+				<input type="number" id="numVertices" value="10" min="4" required
+					class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2">
+			</div>
+
+			<div>
+				<label for="weight1" class="block text-sm font-medium">Weight for Edge Type 1:</label>
+				<input type="number" id="weight1" value="0.2" required
+					class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2">
+			</div>
+
+			<div>
+				<label for="weight2" class="block text-sm font-medium">Weight for Edge Type 2:</label>
+				<input type="number" id="weight2" value="0.9" required
+					class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2">
+			</div>
+
+			<div class="space-x-4">
+				<button onclick="patchNotes()" id="patchBtn"
+					class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 focus:outline-none updateClass"
+					style="display:none;">Patch Notes</button>
+
+				<button onclick="runAlgorithm(parseInt(document.getElementById('inputValue').value))"
+					style="display:none;" id="runAlgorithm"
+					class="updateClass bg-pink-500 text-white px-4 py-2 rounded hover:bg-pink-600 focus:outline-none">Run
+					Algorithm</button>
+				<input type="number" value="1" id="inputValue" class="updateClass border px-2 py-1 rounded max-w-10"
+					style="display:none;">
+
+				<input type="checkbox" id="runAllNodes" class="updateClass" style="display:none;" checked>
+				<label id="alertsLabel" for="runAllNodes" class="updateClass" style="display:none;">Run All
+					Nodes</label>
+
+				<input type="checkbox" id="allowPastEdges" class="updateClass" style="display:none;" checked>
+				<label id="pastEdgesLabel" for="allowPastEdges" class="updateClass" style="display:none;">Allow Past
+					Edges</label>
+
+				<input type="color" id="nodeColorInput" class="updateClass border px-1 py-1 rounded"
+					style="display:none;" value="#000000">
+				<label for="nodeColorInput" class="updateClass" style="display:none;">Node Color</label>
+
+				<input type="color" id="safeEdgeInput" class="updateClass border px-1 py-1 rounded"
+					style="display:none;" value="#00FF00">
+				<label for="safeEdgeInput" class="updateClass" style="display:none;">Safe Edge Color</label>
+
+				<input type="color" id="unsafeEdgeInput" class="updateClass border px-1 py-1 rounded"
+					style="display:none;" value="#FF0000">
+				<label for="unsafeEdgeInput" class="updateClass" style="display:none;">Unsafe Edge Color</label>
+			</div>
+
+			<div class="mt-4">
+				<input type="file" id="fileInput" accept=".json" onchange="uploadJSON()"
+					class="block w-full text-sm text-gray-500 border border-gray-300 rounded-lg cursor-pointer">
+				<button id="uploadBtn" style="display:none;" onclick="uploadJSON()"
+					class="mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none">Upload
+					JSON</button>
+			</div>
+		</div>
+
+		<h2 class="text-xl font-semibold mt-6">Generated Graph:</h2>
+		<div class="flex items-start">
+			<div class="flex-none mr-4">Version: <span id="versionDisplay">1</span></div>
+
+			<div id="matrixContainer" class="flex-grow overflow-x-auto overflow-y-auto max-h-96 mx-4 self-center"
+				style="display: none;">
+				<table id="graphTable"
+					class="min-w-full table-auto border-collapse bg-white shadow-md rounded-lg text-sm">
+				</table>
+			</div>
+
+			<div class="flex-none ml-auto">
+				<button onclick="previous()" id="prev"
+					class="bg-purple-500 text-white px-2 py-2 rounded hover:bg-purple-600 focus:outline-none">Prev</button>
+				<button onclick="next()" id="next"
+					class="bg-purple-500 text-white px-2 py-2 rounded hover:bg-purple-600 focus:outline-none">Next</button>
+				<button onclick="" id="play"
+					class="bg-purple-500 text-white px-2 py-2 rounded hover:bg-purple-600 focus:outline-none">▶</button>
+			</div>
+		</div>
+
+		<div id="cy" class="border border-gray-300 mt-6" style="width: auto; height: 600px;"></div>
+	</div>
+
+	<div class="offcanvas offcanvas-start !w-[200px]" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1"
+		id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel">
+		<div class="offcanvas-header">
+			<h5 class="offcanvas-title" id="offcanvasScrollingLabel" contenteditable='true'>Node: </h5>
+			<button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+		</div>
+		<div class="offcanvas-body" contenteditable='true' id="offBody">
+			<p></p>
+		</div>
+	</div>
+
+	<script>
+		let graph = {};
+		let version = 1;
+		let isMatrixVisible = false; // track whether the matrix is visible or not
+		let layout = 'circle';		 // layout used for cytoscape
+		let noClass = ['weight', 'Past Edges', 'changes'];
+		const MAX_WEIGHT = 0.8;
+
+		let playInterval;       // used for play button
+		let isPlaying = false;
+
+		changeNotes = [];   //Need this for Patch Notes
+
+		// event listeners to redraw graph if color is changed
+		nodeColorInput.addEventListener("change", drawCytoscapeGraph, false);
+		safeEdgeInput.addEventListener("change", drawCytoscapeGraph, false);
+		unsafeEdgeInput.addEventListener("change", drawCytoscapeGraph, false);
+
+		function generateGraph() {
+			const numVertices = parseInt(document.getElementById('numVertices').value);
+			const weight1 = parseFloat(document.getElementById('weight1').value);
+			const weight2 = parseFloat(document.getElementById('weight2').value);
+			if (Object.keys(graph).length != 0) {
+				if (confirm('Do you want to save this json file before overwriting graph?')) {
+					downloadJSON();
+				}
+			}
+			let one = false;
+			graph = { version1: {} };
+			for (let i = 0; i < numVertices; i++) {
+				const vertex = String.fromCharCode(65 + i);
+				let w = Math.random().toFixed(2);
+
+				if (w > MAX_WEIGHT && !one) {
+					w = 1;
+					one = true;
+				} else if (w > MAX_WEIGHT) {
+					w = MAX_WEIGHT;
+				}
+
+				graph['version' + version][vertex] = { weight: w }; //Initialing the object for each vertex.
+				graph['version' + version][vertex]['Past Edges'] = [];
+			}
+
+			if (!one) {
+				let vertex = String.fromCharCode(65 + Math.floor(Math.random() * numVertices));
+				graph['version' + version][vertex]['weight'] = 1;
+			}
+
+			const edgesCount = Array(numVertices).fill(0);
+			const maxEdgesPerVertex = 3;
+			const totalEdgesNeeded = (numVertices * maxEdgesPerVertex) / 2;
+
+			let edgesCreated = 0;
+
+			while (edgesCreated < totalEdgesNeeded) {
+				let sourceIndex = Math.floor(Math.random() * numVertices);
+				let destinationIndex;
+
+				let attempts = 0;
+				do {
+					destinationIndex = Math.floor(Math.random() * numVertices);
+					attempts++;
+					if (attempts > 100) {
+						console.log('Too many attempts to find a valid edge.');
+						break;
+					}
+				} while (
+					destinationIndex === sourceIndex || // Prevent self-loops
+					edgesCount[sourceIndex] >= maxEdgesPerVertex ||
+					edgesCount[destinationIndex] >= maxEdgesPerVertex ||
+					graph.version1[String.fromCharCode(65 + sourceIndex)][String.fromCharCode(65 + destinationIndex)]
+				);
+
+				if (edgesCount[sourceIndex] < maxEdgesPerVertex && edgesCount[destinationIndex] < maxEdgesPerVertex) {
+					const source = String.fromCharCode(65 + sourceIndex);
+					const destination = String.fromCharCode(65 + destinationIndex);
+					const weight = Math.random() < 0.5 ? weight1 : weight2;
+
+					graph['version' + version][source][destination] = weight;
+					graph['version' + version][destination][source] = weight;
+
+					edgesCount[sourceIndex]++;
+					edgesCount[destinationIndex]++;
+					edgesCreated++;
+				}
+			}
+
+			graph['version1']['changes'] = [];
+
+			refresh();
+			$('.updateClass').css('display', 'inline');
+		}
+
+		// show/hide matrix
+		function toggleMatrix() {
+			const matrixContainer = document.getElementById('matrixContainer');
+			isMatrixVisible = !isMatrixVisible;
+			matrixContainer.style.display = isMatrixVisible ? 'block' : 'none';
+		}
+
+		function displayGraph() {
+			const table = document.getElementById('graphTable');
+			table.innerHTML = ''; // Clear previous content
+
+			// Create header row (with an extra cell at the top-left)
+			const headerRow = document.createElement('tr');
+			headerRow.innerHTML = '<th class="border px-4 py-2 sticky"></th>'; // Top-left empty cell
+			for (let i = 0; i < Object.keys(graph['version' + version]).length - 1; i++) {
+				headerRow.innerHTML += `<th class="border px-4 py-2 text-center sticky">${String.fromCharCode(65 + i)}</th>`;
+			}
+			table.appendChild(headerRow);
+
+			// Create rows for each vertex
+			for (const [vertex, edges] of Object.entries(graph['version' + version])) {
+				if (noClass.includes(vertex))
+					continue;
+				const row = document.createElement('tr');
+				row.innerHTML = `<th class="border px-4 py-2 text-center row-sticky">${vertex}</th>`; // Row header with sticky class
+				for (const targetVertex of Object.keys(graph['version' + version])) {
+					if (noClass.includes(targetVertex))
+						continue;
+					else if (vertex === targetVertex) {
+						row.innerHTML += '<td class="border px-4 py-2 text-center">x</td>'; // Self-loop indicator
+					} else {
+						const weight = edges[targetVertex] !== undefined ? edges[targetVertex] : 'x';
+						row.innerHTML += `<td class="editable border px-4 py-2 text-center" contenteditable="true" onblur="updateWeight('${vertex}', '${targetVertex}', this.innerText)">${weight}</td>`;
+					}
+				}
+				table.appendChild(row);
+			}
+		}
+
+		function updateWeight(source, target, newWeight) {
+			// prevent updating version when no change was made
+			if (parseFloat(graph['version' + version][source][target]) === parseFloat(newWeight.trim()))
+				return;
+
+			const weight = parseFloat(newWeight);
+			const str = String(newWeight);
+
+			// copy graph
+			graph['version' + (version + 1)] = JSON.parse(JSON.stringify(graph['version' + version]));
+			version++;
+
+			// update edge
+			if (weight === 0 || str.toLowerCase() === 'x') {
+				delete graph['version' + version][source][target];
+				delete graph['version' + version][target][source];
+			} else if (!isNaN(weight) && weight > 0) {
+				graph['version' + version][source][target] = weight;
+				graph['version' + version][target][source] = weight;
+			} else {
+				alert("Invalid weight. Please enter a positive number or zero.");
+				version--;
+			}
+
+			// update display
+			refresh();
+			$('#versionDisplay').text(version);
+		}
+
+		// change layout based on selection from list
+		document.getElementById("changeLayout").onchange = function () {
+			if (this.value === 'Circle')
+				layout = 'circle';
+			if (this.value === 'Cose')
+				layout = 'cose';
+			drawCytoscapeGraph();
+		}
+
+		function drawCytoscapeGraph() {
+			const elements = [];
+			let nodeColor = $("#nodeColorInput").val();
+			let safeEdgeColor = $("#safeEdgeInput").val();
+			let unsafeEdgeColor = $("#unsafeEdgeInput").val();
+			let cy;
+
+			// get elements of graph
+			for (const [source, edges] of Object.entries(graph['version' + version])) {
+				if (noClass.includes(source))
+					continue;
+				elements.push({ data: { id: source, rel: edges.weight } });
+				for (const [destination, weight] of Object.entries(edges)) {
+					if (noClass.includes(destination)) {
+						continue;
+					}
+					if (source !== destination) {
+						elements.push({ data: { id: destination, rel: graph['version' + version][destination]['weight'] } });
+						elements.push({ data: { id: `${source}-${destination}`, source: source, target: destination, label: weight.toFixed(2) } });
+					}
+				}
+			}
+
+			//
+			// original cytoscape
+			//
+			if (layout === 'circle') {
+				cy = cytoscape({
+					container: document.getElementById('cy'),
+					elements: elements,
+					style: [
+						{
+							selector: 'node',
+							style: {
+								'background-color': nodeColor,
+								'label': function (elem) {
+									return elem.data('id') + '\n' + elem.data('rel')
+								},
+								'color': 'black',
+								'font-size': '50%',
+								'text-wrap': 'wrap',
+								'height': '50%',
+								'width': '50%'
+							}
+						},
+						{
+							selector: 'edge',
+							style: {
+								'width': 1,
+								// get graph edge color based on algorithm
+								'line-color': function (elem) {
+									let s = graph['version' + version][elem.data('source')]['weight'];
+									let t = graph['version' + version][elem.data('target')]['weight'];
+									let w = elem.data('label');
+									let weightDiff = s > t ? (s - t) : (t - s);
+									weightDiff = parseFloat(weightDiff.toFixed(2));
+
+									return weightDiff > w ? unsafeEdgeColor : safeEdgeColor;
+
+								},
+								'label': 'data(label)',
+								'font-size': '50%',
+								'text-justification': 'left',
+								'text-margin-x': 5,
+								'color': 'black'
+							}
+						}
+					],
+					layout: {
+						name: layout,
+						avoidOverlap: true,
+						nodeOverlap: 0,
+						spacingFactor: 3,
+						animate: false,
+
+					}
+				});
+			}
+
+			//
+			// cose layout
+			//
+			else {
+				cy = cytoscape({
+					container: document.getElementById('cy'),
+					elements: elements,
+					style: [
+						{
+							selector: 'node',
+							style: {
+								'background-color': nodeColor,
+								'label': function (elem) {
+									return elem.data('id') + '\n' + elem.data('rel');
+								},
+								'color': 'black',
+								'font-size': '5%',
+								'text-wrap': 'wrap',
+								'height': '5%',
+								'width': '5%'
+							}
+						},
+						{
+							selector: 'edge',
+							style: {
+								'width': 1,
+								// get graph edge color based on algorithm
+								'line-color': function (elem) {
+									let s = graph['version' + version][elem.data('source')]['weight'];
+									let t = graph['version' + version][elem.data('target')]['weight'];
+									let w = elem.data('label');
+									let weightDiff = s > t ? (s - t) : (t - s);
+									weightDiff = parseFloat(weightDiff.toFixed(2));
+
+									return weightDiff > w ? unsafeEdgeColor : safeEdgeColor;
+								},
+								'label': 'data(label)',
+								'font-size': '5%',
+								'text-justification': 'left',
+								'text-margin-x': 5,
+								'color': 'black'
+							}
+						}
+					],
+					layout: {
+						name: layout,
+						avoidOverlap: true,
+						randomize: true
+					}
+				});
+			}
+
+			// node/edge sidebar functionality
+			cy.on('tap', '*', function (evt) {
+				var offcanvasElement = document.getElementById('offcanvasScrolling');
+				var bsOffcanvas = new bootstrap.Offcanvas(offcanvasElement);
+				bsOffcanvas.show();
+			});
+
+			cy.on('tap', 'node', function (evt) {
+				let text;
+				var node = evt.target;
+				$('#offBody').text('');
+				$('#offcanvasScrollingLabel').html('Node: ' + node.id());
+				for (const [destination, weight] of Object.entries(graph['version' + version][node.id()])) {
+					text = destination + ' : ' + weight;
+					$("#offBody").append("<li>" + text + "</li>");
+				}
+			});
+
+			cy.on('tap', 'edge', function (evt) {
+				let text;
+				var edge = evt.target;
+				$('#offBody').text('');
+				$('#offcanvasScrollingLabel').html('Edge: ' + edge.data('id'));
+				$('#offBody').append("<li>Source : " + edge.data('source') + '</li>');
+				$('#offBody').append("<li>Destination : " + edge.data('target') + '</li>');
+				$('#offBody').append("<li>Weight : " + edge.data('label') + '</li>');
+			});
+		}
+
+		function downloadJSON() {
+			const jsonStr = JSON.stringify(graph, null, 2);
+			const blob = new Blob([jsonStr], { type: 'application/json' });
+			const url = URL.createObjectURL(blob);
+			const a = document.createElement('a');
+			a.href = url;
+			a.download = 'graph.json';
+			document.body.appendChild(a);
+			a.click();
+			document.body.removeChild(a);
+			URL.revokeObjectURL(url);
+		}
+
+		function uploadJSON() {
+			const fileInput = document.getElementById('fileInput');
+			const file = fileInput.files[0];
+			if (!file) {
+				alert("Please select a file to upload.");
+				return;
+			}
+
+			const reader = new FileReader();
+			reader.onload = function (event) {
+				try {
+					const json = JSON.parse(event.target.result);
+					graph = json;
+					version = Object.keys(graph).length;
+					document.getElementById('versionDisplay').innerText = version; // Update displayed version
+					displayGraph();
+					drawCytoscapeGraph();
+					$('.updateClass').css('display', 'inline');
+				} catch (e) {
+					alert("Error parsing JSON: " + e.message);
+				}
+			};
+			reader.readAsText(file);
+		}
+
+		function addNotes(message) {
+			changeNotes.push(`${message}`);
+			changeNotes.push(``);
+		}
+
+		function runSingle(number) {
+			for (let i = 0; i < number; i++) {
+				// update displayed version every iteration
+				graph['version' + (version + 1)] = JSON.parse(JSON.stringify(graph['version' + version]));
+				version++;
+				document.getElementById('versionDisplay').innerText = version;
+
+				// select a random source node
+				const nodes = Object.keys(graph['version' + version]).filter(node => node !== 'changes');
+				let source;
+
+				do {
+					source = nodes[Math.floor(Math.random() * nodes.length)];
+				} while (noClass.includes(source));
+
+				// get the edges of the selected source node
+				const edges = graph['version' + version][source];
+
+				// select a random target node that does not lead back to the source node
+				let target;
+				const targetNodes = Object.keys(edges);
+				do {
+					target = targetNodes[Math.floor(Math.random() * targetNodes.length)];
+				} while (
+					target === source ||
+					noClass.includes(target));
+
+				// find weights of the source and target nodes, and the edge weight
+				const sourceWeight = parseFloat(graph['version' + version][source]['weight']);
+				const targetWeight = parseFloat(graph['version' + version][target]['weight']);
+				const edgeWeight = parseFloat(edges[target]);
+
+				// find difference in node opinion
+				let weightDiff = Math.abs(sourceWeight - targetWeight);
+				weightDiff = parseFloat(weightDiff.toFixed(2));
+				let c = [];
+
+				// update graph
+				if (weightDiff > edgeWeight) {
+					newWeight = 0;
+
+					// delete broken edge from json
+					delete graph['version' + version][source][target];
+					delete graph['version' + version][target][source];
+
+					// add change info to json
+					let changesString = `${source} -${edgeWeight}- ${target} - broken`;
+					c.push(changesString);
+					addNotes(changesString);
+					graph['version' + version]['changes'] = c;
+
+					// make new edges from source and target
+					replaceEdge(source, target);
+				} else {
+					// calculate new edge weight if not broken
+
+					// check if either node has weight of 1
+					if (sourceWeight === 1 || targetWeight === 1) {
+						let avg = weightDiff / 4;
+						avg = parseFloat(avg.toFixed(2));
+
+						if (sourceWeight !== 1) {
+							// update source only if it is not 1
+							avg = parseFloat(avg + sourceWeight);
+							avg = parseFloat(avg.toFixed(2));
+							graph['version' + version][source]['weight'] = avg;
+							let changesString = `${source} ${sourceWeight} - ${avg}, ${target} ${targetWeight} unchanged`;
+							c.push(changesString);
+							addNotes(changesString);
+							graph['version' + version]['changes'] = c;
+						} else {
+							// update target only if it is not 1
+							avg = parseFloat(avg + targetWeight);
+							avg = parseFloat(avg.toFixed(2));
+							graph['version' + version][target]['weight'] = avg;
+							let changesString = `${source} ${sourceWeight} unchanged, ${target} ${targetWeight} - ${avg}`;
+							c.push(changesString);
+							addNotes(changesString);
+							graph['version' + version]['changes'] = c;
+						}
+					} else {
+						// if neither node weight is 1, update both
+						let avg = weightDiff / 4;
+						avg = parseFloat(avg.toFixed(2));
+						let newS, newT;
+
+						if (sourceWeight > targetWeight) {
+							newS = parseFloat(sourceWeight - avg) > 0 ? parseFloat(sourceWeight - avg) : 0;
+							newT = parseFloat(targetWeight + avg) > MAX_WEIGHT ? MAX_WEIGHT : parseFloat(targetWeight + avg);
+						} else {
+							newS = parseFloat(sourceWeight + avg) > MAX_WEIGHT ? MAX_WEIGHT : parseFloat(sourceWeight + avg);
+							newT = parseFloat(targetWeight - avg) > 0 ? parseFloat(targetWeight - avg) : 0;
+						}
+
+						newS = parseFloat(newS.toFixed(2));
+						newT = parseFloat(newT.toFixed(2));
+
+						graph['version' + version][source]['weight'] = newS;
+						graph['version' + version][target]['weight'] = newT;
+
+						// add change info to json
+						let changesString = `${source} ${sourceWeight} - ${newS} & ${target} ${targetWeight} - ${newT}`;
+						c.push(changesString);
+						addNotes(changesString);
+						graph['version' + version]['changes'] = c;
+					}
+				}
+			}
+		}
+
+		function runMultiple(number) {
+			for (let i = 0; i < number; i++) {
+				// update graph version once for all nodes
+				graph['version' + (version + 1)] = JSON.parse(JSON.stringify(graph['version' + version]));
+				version++;
+				document.getElementById('versionDisplay').innerText = version;
+
+				// get list of nodes
+				const nodes = Object.keys(graph['version' + version]).filter(node => node !== 'changes');
+				let source;
+				let c = [];
+
+				// run algorithm on each node
+				for (const node of nodes) {
+					source = node;
+
+					// get the edges of the selected source node
+					const edges = graph['version' + version][source];
+
+					// select a random target node that does not lead back to the source node
+					let target;
+					const targetNodes = Object.keys(edges);
+					do {
+						target = targetNodes[Math.floor(Math.random() * targetNodes.length)];
+					} while (
+						target === source ||
+						noClass.includes(target));
+
+					// find weights of the source and target nodes, and the edge weight
+					const sourceWeight = parseFloat(graph['version' + version][source]['weight']);
+					const targetWeight = parseFloat(graph['version' + version][target]['weight']);
+					const edgeWeight = parseFloat(edges[target]);
+
+					// find difference in node opinion and compare with edge weight
+					let weightDiff = Math.abs(sourceWeight - targetWeight);
+					weightDiff = parseFloat(weightDiff.toFixed(2));
+
+					// update graph
+					if (weightDiff > edgeWeight) {
+						newWeight = 0;
+
+						// delete broken edge from json
+						delete graph['version' + version][source][target];
+						delete graph['version' + version][target][source];
+
+						// add change info to json
+						let changesString = `${source} -${edgeWeight}- ${target} - broken`;
+						c.push(changesString);
+						addNotes(changesString);
+						graph['version' + version]['changes'] = c;
+
+						// make new edges from source and target
+						replaceEdge(source, target);
+					} else {
+						// calculate new edge weight if not broken
+
+						// check if either node has weight of 1
+						if (sourceWeight === 1 || targetWeight === 1) {
+							let avg = weightDiff / 4;
+							avg = parseFloat(avg.toFixed(2));
+
+							if (sourceWeight !== 1) {
+								// update source only if it is not 1
+								avg = parseFloat(avg + sourceWeight);
+								avg = parseFloat(avg.toFixed(2));
+								graph['version' + version][source]['weight'] = avg;
+								let changesString = `${source} ${sourceWeight} - ${avg}, ${target} ${targetWeight} unchanged`;
+								c.push(changesString);
+								addNotes(changesString);
+								graph['version' + version]['changes'] = c;
+							} else {
+								// update target only if it is not 1
+								avg = parseFloat(avg + targetWeight);
+								avg = parseFloat(avg.toFixed(2));
+								graph['version' + version][target]['weight'] = avg;
+								let changesString = `${source} ${sourceWeight} unchanged, ${target} ${targetWeight} - ${avg}`;
+								c.push(changesString);
+								addNotes(changesString);
+								graph['version' + version]['changes'] = c;
+							}
+						} else {
+							// if neither node weight is 1, update both 
+							let avg = weightDiff / 4;
+							avg = parseFloat(avg.toFixed(2));
+							let newS, newT;
+
+							if (sourceWeight > targetWeight) {
+								newS = parseFloat(sourceWeight - avg) > 0 ? parseFloat(sourceWeight - avg) : 0;
+								newT = parseFloat(targetWeight + avg) > MAX_WEIGHT ? MAX_WEIGHT : parseFloat(targetWeight + avg);
+							} else {
+								newS = parseFloat(sourceWeight + avg) > MAX_WEIGHT ? MAX_WEIGHT : parseFloat(sourceWeight + avg);
+								newT = parseFloat(targetWeight - avg) > 0 ? parseFloat(targetWeight - avg) : 0;
+							}
+
+							newS = parseFloat(newS.toFixed(2));
+							newT = parseFloat(newT.toFixed(2));
+
+							graph['version' + version][source]['weight'] = newS;
+							graph['version' + version][target]['weight'] = newT;
+
+							// add change info to json
+							let changesString = `${source} ${sourceWeight} - ${newS} & ${target} ${targetWeight} - ${newT}`;
+							c.push(changesString);
+							addNotes(changesString);
+							graph['version' + version]['changes'] = c;
+						}
+					}
+				}
+			}
+		}
+
+		function runAlgorithm(number) {
+			if (!document.querySelector('#runAllNodes').checked) {      // run single node
+				runSingle(number);
+			} else {                                                    // run all nodes
+				runMultiple(number);
+			}
+			refresh();
+		}
+
+		function replaceEdge(source, target) {
+			// get current graph version changes
+			let c = graph['version' + version]['changes'];
+
+			// add target to source past edges
+			let sourceEdges = graph['version' + version][source]['Past Edges'];
+			if (!sourceEdges.includes(target)) sourceEdges.push(target);
+			graph['version' + version][source]['Past Edges'] = sourceEdges;
+
+			// add source to target past edges
+			let targetEdges = graph['version' + version][target]['Past Edges'];
+			if (!targetEdges.includes(source)) targetEdges.push(source);
+			graph['version' + version][target]['Past Edges'] = targetEdges;
+
+			// get list of all nodes in graph
+			const nodes = Object.keys(graph['version' + version]).filter(node => node !== 'changes');
+			let sourceNode, changesString, alertString = "";
+
+			// relationship weight
+			let weightS = parseFloat(document.getElementById('weight1').value);;
+
+			// array to store valid nodes for a new edge
+			const availableNodes = [];
+
+			// build array of possible connections (preventing past edges from reforming)
+			if (!document.querySelector('#allowPastEdges').checked) {
+				for (let i = 0; i < nodes.length; i++) {
+					let node = String.fromCharCode(65 + i); // convert number to char
+					// if node is NOT in past edges and there is not already an edge, add it to available nodes
+					if (!sourceEdges.includes(node) && node !== source && !graph['version' + version][source][node])
+						availableNodes.push(node);
+				}
+			} else {
+				// build array of possible connections (allows past edges)
+				for (let i = 0; i < nodes.length; i++) {
+					let node = String.fromCharCode(65 + i);
+					if (node !== source && !graph['version' + version][source][node])
+						availableNodes.push(node);
+				}
+			}
+
+			// if there are no available nodes update changes and exit
+			if (availableNodes.length === 0) {
+				changesString = `No available edges from ${source} possible (past edges not allowed)`;
+				alertString += changesString + '\n';
+				c.push(changesString);
+				addNotes(changesString);
+				graph['version' + version]['changes'] = c;
+				return;
+			}
+
+			// select random source node from what is available
+			sourceNode = availableNodes[Math.floor(Math.random() * availableNodes.length)];
+
+			// add new edge to graph
+			graph['version' + version][source][sourceNode] = weightS;
+			graph['version' + version][sourceNode][source] = weightS;
+
+			// update changes
+			changesString = `${source} -${weightS}- ${sourceNode} - made`;
+			alertString += changesString + '\n';
+			c.push(changesString);
+			addNotes(changesString);
+			graph['version' + version]['changes'] = c;
+		}
+
+		// change displayed graph to previous if one exists
+		function previous() {
+			version--;
+			if (version > 0) {
+				$('#versionDisplay').text(version);
+				refresh();
+			}
+			else {
+				version++;
+			}
+		}
+
+		// change displayed graph to next if one exists
+		function next() {
+			version++;
+			if (version <= Object.keys(graph).length) {
+				$('#versionDisplay').text(version);
+				refresh();
+			}
+			else {
+				version--;
+			}
+		}
+
+		$("#play").on("click", function () {
+			if (!isPlaying) {
+
+				// change button text
+				$("#play").text("■");
+				isPlaying = true;
+
+				let start = version;
+				let size = Object.entries(graph).length;
+
+				// call next() every second while not at last version
+				playInterval = setInterval(() => {
+					if (start < size) {
+						$("#next").click();
+						start++;
+					} else {
+						clearInterval(playInterval); // stop playback at last version
+						$("#play").text("▶");
+						isPlaying = false;
+					}
+				}, 1000);
+			} else {
+				// stop playback if button clicked again
+				clearInterval(playInterval);
+				$("#play").text("▶");
+				isPlaying = false;
+			}
+		});
+
+		function refresh() {
+			displayGraph();
+			drawCytoscapeGraph();
+		}
+
+		$('#offBody').on('blur', function () {
+			console.log('found');
+			let stuff;
+			let tempStr = $('#offBody li').text();
+			console.log(tempStr);
+			$('#offBody li').each(function (index, element) {
+				let data = ($(element).text()).split(' : ');
+				let curr = ($('#offcanvasScrollingLabel').text()).split(' ');
+				if (curr[0] == 'Node:') {
+					if (index == 1) {
+						return;
+					}
+					let me = curr[1];
+					console.log(me);
+					graph['version' + version][me][data[0]] = parseFloat(data[1]);
+					if (index == 0) {
+						return;
+					}
+					graph['version' + version][data[0]][me] = parseFloat(data[1]);
+				}
+				else {
+					console.log('in the else');
+					if (index == 0) {
+						return;
+					}
+					let me = curr[1];
+					let targets = me.split('-');
+					console.log(data);
+					graph['version' + version][targets[0]][targets[1]] = parseFloat(data[1]);
+					if (index == 0) {
+						return;
+					}
+					graph['version' + version][targets[1]][targets[0]] = parseFloat(data[1]);
+				}
+			});
+			refresh();
+		});
+
+		function patchNotes() {
+			if (changeNotes.length == 0) {
+				alert("No changes yet.");
+			}
+			else {
+				alert("Changes:\n\n" + changeNotes.join("\n"));
+			}
+		}
+	</script>
 
 </body>
 
