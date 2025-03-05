@@ -29,8 +29,8 @@
   <kbd><img width="185" alt="Screenshot 2024-12-05 at 12 08 09 PM" src="https://github.com/user-attachments/assets/402f079d-7169-4f5c-a390-ea7af2b731a7"></kbd>
 </p>
 
-**JSON** - Example of JSON file. Each graph version stores the vertices, their opinion (weight), and their edges. Past edges stores nodes from broken relationships. Each graph version has its own change log that describes what happened to each node in the graph. 
+**JSON** - Example of JSON file. Each graph version stores the vertices, their opinion (weight), and their edges. Past edges stores nodes from broken relationships. Each graph version has its own change log that describes what happened to each node in the graph. Forming a new edge will always succeed if there is an available node.
 
-**1.** U. Dogrusoz, E. Giral, A. Cetintas, A. Civril and E. Demir, "A Layout Algorithm For Undirected Compound Graphs", Information Sciences, 179, pp. 980-994, 2009.
-**2.** H. Balci and U. Dogrusoz, "fCoSE: A Fast Compound Graph Layout Algorithm with Constraint Support," in IEEE Transactions on Visualization and Computer Graphics, 28(12), pp. 4582-4593, 2022.
+**1.** U. Dogrusoz, E. Giral, A. Cetintas, A. Civril and E. Demir, "A Layout Algorithm For Undirected Compound Graphs", Information Sciences, 179, pp. 980-994, 2009.</br>
+**2.** H. Balci and U. Dogrusoz, "fCoSE: A Fast Compound Graph Layout Algorithm with Constraint Support," in IEEE Transactions on Visualization and Computer Graphics, 28(12), pp. 4582-4593, 2022.</br>
 **3.** M. Belviranli, A. Dilek and U. Dogrusoz, "CiSE: A Circular Spring Embedder Layout Algorithm" in IEEE Transactions on Visualization & Computer Graphics, vol. 19, no. 06, pp. 953-966, 2013.
