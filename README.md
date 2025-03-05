@@ -22,7 +22,7 @@
 
 **Previous/Next** - Allow user to display each version of the graph, represented by the version counter on the top left of the graph. If there are no versions before or after the current graph the buttons do nothing. 
 
-**Graph Layouts** - Dropdown menu that allows user to select how they want their graph to be displayed. Default display is circle. CoSE (Compound Spring Embedder) is a force-directed algorithm used to position nodes. fCoSE<sup>2, 3</sup> (Fast CoSE) is an optimized version of the CoSE algorithm. CiSE<sup>1</sup> (Circular Spring Embedder) is another force-directed algorithm that clusters nodes using Markov Clustering from the Cytoscape.js core. 
+**Graph Layouts** - Dropdown menu that allows user to select how they want their graph to be displayed. Default display is circle. CoSE (Compound Spring Embedder) is a force-directed algorithm used to position nodes. fCoSE<sup>1, 2</sup> (Fast CoSE) is an optimized version of the CoSE algorithm. CiSE<sup>3</sup> (Circular Spring Embedder) is another force-directed algorithm that clusters nodes using Markov Clustering from the Cytoscape.js core. 
 
 <p align="center">
   <kbd><img width="170" alt="Screenshot 2024-12-05 at 12 03 36 PM" src="https://github.com/user-attachments/assets/68b49e52-17c1-4486-ba3d-7017e24f7e2c"></kbd> 
@@ -31,6 +31,6 @@
 
 **JSON** - Example of JSON file. Each graph version stores the vertices, their opinion (weight), and their edges. Past edges stores nodes from broken relationships. Each graph version has its own change log that describes what happened to each node in the graph. 
 
-**1.** M. Belviranli, A. Dilek and U. Dogrusoz, "CiSE: A Circular Spring Embedder Layout Algorithm" in IEEE Transactions on Visualization & Computer Graphics, vol. 19, no. 06, pp. 953-966, 2013.
+**1.** U. Dogrusoz, E. Giral, A. Cetintas, A. Civril and E. Demir, "A Layout Algorithm For Undirected Compound Graphs", Information Sciences, 179, pp. 980-994, 2009.
 **2.** H. Balci and U. Dogrusoz, "fCoSE: A Fast Compound Graph Layout Algorithm with Constraint Support," in IEEE Transactions on Visualization and Computer Graphics, 28(12), pp. 4582-4593, 2022.
-**3.** U. Dogrusoz, E. Giral, A. Cetintas, A. Civril and E. Demir, "A Layout Algorithm For Undirected Compound Graphs", Information Sciences, 179, pp. 980-994, 2009.
+**3.** M. Belviranli, A. Dilek and U. Dogrusoz, "CiSE: A Circular Spring Embedder Layout Algorithm" in IEEE Transactions on Visualization & Computer Graphics, vol. 19, no. 06, pp. 953-966, 2013.
