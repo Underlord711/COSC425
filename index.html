@@ -772,10 +772,19 @@
 					addNotes(changesString);
 					graph['version' + version]['changes'] = c;
 
-					// make new edges from source and target
-					replaceEdge(source, target);
-				} else {
-					// calculate new edge weight if not broken
+						// make new edges from source and target
+						replaceEdge(source, target);
+					} else {	// Bond is not to break
+						// If chance (semi-random) update weight change is set to true (UI button)
+						
+						// If relationship doesn't break, opinions of each person
+						// are more or less the same
+						let min = .1;
+						let max = .9;
+						let chance = Math.random() * (max - min) + min;
+						// Could change boolean expression to chance <= .6 at least
+						if (chance <= .7) { 	// Bigger chance for weights to change
+							// calculate new edge weight if not broken
 
 					// check if either node has weight of 1
 					if (sourceWeight === 1 || targetWeight === 1) {
@@ -830,6 +839,7 @@
 				}
 			}
 		}
+	}
 
 		function runMultiple(number) {
 			for (let i = 0; i < number; i++) {
@@ -882,10 +892,19 @@
 						addNotes(changesString);
 						graph['version' + version]['changes'] = c;
 
-						// make new edges from source and target
-						replaceEdge(source, target);
-					} else {
-						// calculate new edge weight if not broken
+							// make new edges from source and target
+							replaceEdge(source, target);
+						} else {	// Bond is to not break
+							// If chance (semi-random) update weight change is set to true (UI button)
+						
+							// If relationship doesn't break, opinions of each person
+							// are more or less the same
+							let min = .1;
+							let max = .9;
+							let chance = Math.random() * (max - min) + min;
+							// Could change boolean expression to chance <= .6 at least
+							if (chance <= .7) { 	// Bigger chance for weights to change
+								// calculate new edge weight if not broken
 
 						// check if either node has weight of 1
 						if (sourceWeight === 1 || targetWeight === 1) {
@@ -941,6 +960,7 @@
 				}
 			}
 		}
+	}
 
 		function runAlgorithm(number) {
 			if (!document.querySelector('#runAllNodes').checked) {      // run single node
