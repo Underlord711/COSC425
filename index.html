@@ -78,6 +78,17 @@
         </li>
       </ul>
     </nav>
+    <div class="slider-container">
+      <input
+        type="range"
+        min="3"
+        max="5"
+        value="1"
+        class="slider"
+        id="mySlider"
+      />
+      <div class="slider-value" id="sliderValue">Tolerance Level</div>
+    </div>
 
     <div class="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-md mt-3">
       <h1 class="text-2xl font-bold mb-4">
@@ -386,8 +397,10 @@
       const MAX_WEIGHT = 0.8;
       let playInterval; // used for play button
       let isPlaying = false;
+      let toleranceLevel = 4;
 
       let nodeWeightOne; // used to fix position of node with weight 1 in graph
+	  
 
       changeNotes = []; //Need this for Patch Notes
 
@@ -396,14 +409,35 @@
       unsafeEdgeInput.addEventListener("change", drawCytoscapeGraph, false);
 
       // function updateDisplay() {
-      //  if (dummy == 'grid') {
-      //      dummy = 'circle';
-      //  }
-      //  else {
-      //      dummy = 'grid';
-      //  }
-      //  drawCytoscapeGraph();
+      // 	if (dummy == 'grid') {
+      // 		dummy = 'circle';
+      // 	}
+      // 	else {
+      // 		dummy = 'grid';
+      // 	}
+      // 	drawCytoscapeGraph();
       // }
+      function Slider(callback) {
+        const slider = document.getElementById("mySlider");
+        const sliderValue = document.getElementById("sliderValue");
+
+        slider.addEventListener("input", function () {
+          let value = slider.value;
+
+          if (value == 3) {
+            sliderValue.textContent = "Willing to change";
+            toleranceLevel = 3;
+          } else if (value == 4) {
+            sliderValue.textContent = "Open to change";
+            toleranceLevel = 4;
+          } else if (value == 5) {
+            toleranceLevel = 5;
+            sliderValue.textContent = "Unwilling to change";
+          }
+
+          callback(value);
+        });
+      }
 
       function generateGraph() {
         const numVertices = parseInt(
@@ -1221,8 +1255,10 @@
 
             // check if either node has weight of 1
             if (sourceWeight === 1 || targetWeight === 1) {
-              let avg = weightDiff / 4;
+              Slider();
+              let avg = weightDiff / toleranceLevel;
               avg = parseFloat(avg.toFixed(2));
+              console.log("Current alg value:", sliderValue);
 
               if (sourceWeight !== 1) {
                 // update source only if it is not 1
@@ -1246,9 +1282,12 @@
                 graph["version" + version]["changes"] = c;
               }
             } else {
+              Slider();
               // if neither node weight is 1, update both
-              let avg = weightDiff / 4;
+              let avg = weightDiff / toleranceLevel;
               avg = parseFloat(avg.toFixed(2));
+              console.log("Current alg value:", sliderValue);
+
               let newS, newT;
 
               if (sourceWeight > targetWeight) {
