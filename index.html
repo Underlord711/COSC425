@@ -5,39 +5,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="css/nav.css"> <!-- Link to your CSS file -->
+		<title>Weighted Undirected Graph Generator</title>
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.21.0/cytoscape.min.js"></script>
+		<script src="https://cdn.tailwindcss.com"></script>
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+		<link rel="stylesheet" href="css/matrix.css">
+		<link rel="stylesheet" href="css/nav.css">
+		<link rel="stylesheet" href="slide.css">
 </head>
-<body>
+<body class="bg-gray-100 p-6">
     <!-- Navigation Bar -->
-    <nav>
-        <ul>
-		<li><img src="photos/bury.jpeg" alt="Logo" class="navbar-logo mt-3"></li>
-		<li><button onclick="generateGraph()" class="underline mt-3" >Generate graph</button></li>
-		<li><button onclick="uploadJSON()" class="underline mt-3">Upload JSON</button></li>
-            <li><button onclick="toggleMatrix()" class="updateClass underline mt-3"style ="display:none;">Show matrix</button></li>
-			<li><button onclick="downloadJSON()" class="updateClass underline mt-3"style ="display:none;">Download JSON</button></li>
+	<nav class="bg-maroon p-2 border-4 border-gold rounded-lg">
+        <ul class="flex space-x-6">
+            <li><img src="photos/bury.jpeg" alt="Logo" class="navbar-logo mt-3"></li>
+            <li><button onclick="generateGraph()" class="underline mt-3 bg-maroon text-white px-5 py-3 text-lg rounded-md hover:bg-orange-500">Generate graph</button></li>
+            <li><button onclick="uploadJSON()" class="underline mt-3 bg-maroon text-white px-5 py-3 text-lg rounded-md hover:bg-orange-500">Upload JSON</button></li>
+            <li><button onclick="toggleMatrix()" class="updateClass underline mt-3 bg-maroon text-white px-5 py-3 text-lg rounded-md hover:border-2 hover:border-white hidden">Show matrix</button></li>
+            <li><button onclick="downloadJSON()" class="updateClass underline mt-3 bg-maroon text-white px-5 py-3 text-lg rounded-md hover:border-2 hover:border-white hidden">Download JSON</button></li>
         </ul>
     </nav>
-</body>
-</html>
 
 
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Weighted Undirected Graph Generator</title>
-	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.21.0/cytoscape.min.js"></script>
-	<script src="https://cdn.tailwindcss.com"></script>
-	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-	<link rel="stylesheet" href="css/matrix.css">
+  <div class="slider-container">
+    <input type="range" min="3" max="5" value="1" class="slider" id="mySlider">
+    <div class="slider-value" id="sliderValue">Tolerance Level</div>
+  </div>
 
-</head>
-
-<body class="bg-gray-100 p-6">
-
-
+  
 
 	<div class="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-md">
 		<h1 class="text-2xl font-bold mb-4">Weighted Undirected Graph Generator</h1>
@@ -109,6 +105,7 @@
 					style="display:none;" value="#9C9C9C">
 				<label for="unsafeEdgeInput" class="updateClass" style="display:none;">Unsafe Edge Color</label>
 				
+				
 			</div>
 
 			<div class="mt-4">
@@ -162,6 +159,8 @@
 		let dummy = 'circle';
 		let noClass = ['weight', 'Past Edges', 'changes'];
 		const MAX_WEIGHT = 0.8;
+		let toleranceLevel = 4;
+		
 		
 		changeNotes = [];	//Need this for Patch Notes
 
@@ -178,7 +177,34 @@
 		// 	}
 		// 	drawCytoscapeGraph();
 		// }
+		function Slider(callback) {
+  const slider = document.getElementById("mySlider");
+  const sliderValue = document.getElementById("sliderValue");
 
+  slider.addEventListener("input", function() {
+    let value = slider.value;
+
+    if (value == 3) {
+      sliderValue.textContent = "Willing to change";
+	  toleranceLevel = 3;
+    } else if (value == 4) {
+      sliderValue.textContent = "Open to change";
+	  toleranceLevel = 4;
+    } else if (value == 5) {
+		toleranceLevel = 5;
+      sliderValue.textContent = "Unwilling to change";
+    }
+
+    callback(value);
+  });
+}
+
+Slider(function(value) {
+  console.log("Current slider value:", value);
+});
+
+
+		
 		function generateGraph() {
 			const numVertices = parseInt(document.getElementById('numVertices').value);
 			const weight1 = parseFloat(document.getElementById('weight1').value);
@@ -528,7 +554,10 @@
 
 						// check if either node has weight of 1
 						if (sourceWeight === 1 || targetWeight === 1) {
-							let avg = weightDiff / 4;
+							Slider();
+							let avg = weightDiff / toleranceLevel;
+							console.log("Current alg value:", sliderValue);
+
 							avg = parseFloat(avg.toFixed(2));
 
 							if (sourceWeight !== 1) {
@@ -559,7 +588,10 @@
 
 						} else {
 							// if neither node weight is 1, update both
-							let avg = weightDiff / 4;
+							Slider();
+							let avg = weightDiff / toleranceLevel;
+							console.log("Current alg value:", sliderValue);
+
 							avg = parseFloat(avg.toFixed(2));
 							let newS, newT;
 
@@ -649,8 +681,11 @@
 
 							// check if either node has weight of 1
 							if (sourceWeight === 1 || targetWeight === 1) {
-								let avg = weightDiff / 4;
+								Slider();
+								let avg = weightDiff / toleranceLevel;
 								avg = parseFloat(avg.toFixed(2));
+								console.log("Current alg value:", sliderValue);
+
 
 								if (sourceWeight !== 1) {
 									// update source if it is not 1
@@ -679,9 +714,12 @@
 								}
 
 							} else {
+								Slider();
 								// if neither node weight is 1, update both 
-								let avg = weightDiff / 4;
+								let avg = weightDiff / toleranceLevel;
 								avg = parseFloat(avg.toFixed(2));
+								console.log("Current alg value:", sliderValue);
+
 								let newS, newT;
 
 								if (sourceWeight > targetWeight) {
