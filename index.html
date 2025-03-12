@@ -70,7 +70,7 @@
                 </button> -->
 
                 				<!-- Modal -->
-				<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+				<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel">
 				  <div class="modal-dialog">
 				    <div class="modal-content">
 				      <div class="modal-header">
@@ -125,8 +125,8 @@
 				<label for="unsafeEdgeInput" class="updateClass" style="display:none;">Unsafe Edge Color</label>
 				<button onclick="patchNotes()" id="patchBtn"
 				class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 focus:outline-none updateClass" style="display:none;">Patch Notes</button>
-				<button onclick="showGraphTwo()" id="GraphTwo"
-				class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none updateClass" style="display:none;">Graph Two</button>
+				<button onclick="addGraph()" id="GraphTwo"
+				class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none updateClass" style="display:none;">Add Graph</button>
 			</div>
 
             <div class="mt-4">
@@ -168,9 +168,8 @@
             </div>
         </div>
 
-		<div class="flex">
-			<div id="cy" class="w-32 flex-1 border border-gray-300 mt-6" style="width: auto; height: 600px;"></div>
-			<div id="cy2" class="w-32 flex-1 border border-gray-300 mt-6" style="width: 50%; height: 600px; display: none;"></div>
+		<div class="grid gap-4 grid-cols-1" id="field">
+			<div id="cy" class="h-[600px] border border-gray-300" style="width: auto; height: 600px;"></div>
 		</div>
 	</div>
 
@@ -186,10 +185,9 @@
     </div>
 
 	<script>
+        let displays = {};
 		let graph = {};
-		//let graph2 = {}; Don't.
 		let version = 1;
-		let versionTwo = 1;
 		let isMatrixVisible = false; // Track whether the matrix is visible or not
 		let dummy = 'circle';
 		let noClass = ['weight', 'Past Edges', 'changes'];
@@ -215,6 +213,14 @@
         // }
 
         function generateGraph() {
+            let vertexes = [];
+            let weights = [];
+            $('.modal-body ul li :text').each(function(me){
+                vertexes.push($(this).val());
+                weights.push($(this).next().val());
+            });
+            console.log(vertexes);
+            console.log(weights);
             const numVertices = parseInt(document.getElementById('numVertices').value);
             const weight1 = parseFloat(document.getElementById('weight1').value);
             const weight2 = parseFloat(document.getElementById('weight2').value);
@@ -225,39 +231,51 @@
             }
             let one = false;
             graph = { version1: {} };
-            for (let i = 0; i < numVertices; i++) {
-                const vertex = String.fromCharCode(65 + i);
-                let w = Math.random().toFixed(2);
+            if (vertexes.length == 0){
+                for (let i = 0; i < numVertices; i++) {
+                    const vertex = String.fromCharCode(65 + i);
+                    let w = Math.random().toFixed(2);
 
-                if (w > MAX_WEIGHT && !one) {
-                    w = 1;
-                    one = true;
-                } else if (w > MAX_WEIGHT) {
-                    w = MAX_WEIGHT;
+                    if (w > MAX_WEIGHT && !one) {
+                        w = 1;
+                        one = true;
+                    } else if (w > MAX_WEIGHT) {
+                        w = MAX_WEIGHT;
+                    }
+
+                    vertexes.push(vertex);
+                    weights.push(w);
+
+                    graph['version' + version][vertex] = { weight: w }; //Initialing the object for each vertex.
+                    graph['version' + version][vertex]['Past Edges'] = [];
                 }
+            }
+            else {
+                for (let i = 0; i < vertexes.length; i++){
+                    graph['version' + version][vertexes[i]] = { weight : weights[i]};
+                    graph['version' + version][vertexes[i]]['Past Edges'] = [];
 
-                graph['version' + version][vertex] = { weight: w }; //Initialing the object for each vertex.
-                graph['version' + version][vertex]['Past Edges'] = [];
+                }
             }
 
             if (!one) {
-                let vertex = String.fromCharCode(65 + Math.floor(Math.random() * numVertices));
+                let vertex = vertexes[Math.floor(Math.random() * vertexes.length)];
                 graph['version' + version][vertex]['weight'] = 1;
             }
 
-            const edgesCount = Array(numVertices).fill(0);
+            const edgesCount = Array(vertexes.length).fill(0);
             const maxEdgesPerVertex = 3;
-            const totalEdgesNeeded = (numVertices * maxEdgesPerVertex) / 2;
+            const totalEdgesNeeded = (vertexes.length * maxEdgesPerVertex) / 2;
 
             let edgesCreated = 0;
 
             while (edgesCreated < totalEdgesNeeded) {
-                let sourceIndex = Math.floor(Math.random() * numVertices);
+                let sourceIndex = Math.floor(Math.random() * vertexes.length);
                 let destinationIndex;
 
                 let attempts = 0;
                 do {
-                    destinationIndex = Math.floor(Math.random() * numVertices);
+                    destinationIndex = Math.floor(Math.random() * vertexes.length);
                     attempts++;
                     if (attempts > 100) {
                         console.log('Too many attempts to find a valid edge.');
@@ -267,12 +285,12 @@
                     destinationIndex === sourceIndex || // Prevent self-loops
                     edgesCount[sourceIndex] >= maxEdgesPerVertex ||
                     edgesCount[destinationIndex] >= maxEdgesPerVertex ||
-                    graph.version1[String.fromCharCode(65 + sourceIndex)][String.fromCharCode(65 + destinationIndex)]
+                    graph.version1[vertexes[sourceIndex]][vertexes[destinationIndex]]
                 );
 
                 if (edgesCount[sourceIndex] < maxEdgesPerVertex && edgesCount[destinationIndex] < maxEdgesPerVertex) {
-                    const source = String.fromCharCode(65 + sourceIndex);
-                    const destination = String.fromCharCode(65 + destinationIndex);
+                    const source = vertexes[sourceIndex];
+                    const destination = vertexes[destinationIndex];
                     const weight = Math.random() < 0.5 ? weight1 : weight2;
 
                     graph['version' + version][source][destination] = weight;
@@ -365,7 +383,7 @@
             drawCytoscapeGraph();
         }
 
-        function drawCytoscapeGraph() {
+        function drawCytoscapeGraph(me = 'cy') {
             const elements = [];
             let nodeColor = $("#nodeColorInput").val();
             let safeEdgeColor = $("#safeEdgeInput").val();
@@ -392,7 +410,7 @@
             //
             if (dummy === 'circle') {
                 const cy = cytoscape({
-                    container: document.getElementById('cy'),
+                    container: document.getElementById(me),
                     elements: elements,
                     style: [
                         {
@@ -569,103 +587,6 @@
             //  $('#offBody').append("<li>Weight : " + edge.data('label') + '</li>');
             // });
         }
-			
-		function drawCy2Graph() {	//Draws the second graph, cannot be 
-			const elements = [];
-			let nodeColor = $("#nodeColorInput").val();
-			let safeEdgeColor = $("#safeEdgeInput").val();
-			let unsafeEdgeColor = $("#unsafeEdgeInput").val();
-
-			for (const [source, edges] of Object.entries(graph['version' + versionTwo])) {
-				if (noClass.includes(source))
-					continue;
-				elements.push({ data: { id: source, rel: edges.weight } });
-				//console.log(edges.weight);
-				for (const [destination, weight] of Object.entries(edges)) {
-					if (noClass.includes(destination)) {
-						continue;
-					}
-					if (source !== destination) {
-						elements.push({ data: { id: destination, rel: graph['version' + versionTwo][destination]['weight'] } });
-						elements.push({ data: { id: `${source}-${destination}`, source: source, target: destination, label: weight.toFixed(2) } });
-					}
-				}
-			}
-			
-			const cy2 = cytoscape({
-				container: document.getElementById('cy2'),
-				elements: elements,
-				style: [
-					{
-						selector: 'node',
-						style: {
-							'background-color': nodeColor,
-							'label': function (elem) {
-								return elem.data('id') + '\n' + elem.data('rel')
-							},
-							'color': 'green',
-							'font-size': '50px',
-							'text-wrap': 'wrap'
-						}
-					},
-					{
-						selector: 'edge',
-						style: {
-							'width': 2,
-							'line-color': function (elem) {
-								let s = graph['version' + versionTwo][elem.data('source')]['weight'];
-								let t = graph['version' + versionTwo][elem.data('target')]['weight'];
-								let w = elem.data('label');
-								let weightDiff = s > t ? (s - t) : (t - s);
-								weightDiff = parseFloat(weightDiff.toFixed(2));
-
-								return weightDiff > w ? unsafeEdgeColor : safeEdgeColor;
-
-							},
-							'label': 'data(label)',
-							'font-size': '35px',
-							'text-justification': 'left',
-							'text-margin-x': 5,
-							'color': 'red' // Change label color here
-						}
-					}
-				],
-				layout: {
-					name: dummy,
-					avoidOverlap: true,
-					nodeOverlap: 0,
-					spacingFactor: 3,
-					animate: false,
-
-				}
-			});
-			
-			cy2.on('tap', '*', function (evt) {
-				var offcanvasElement = document.getElementById('offcanvasScrolling');
-				var bsOffcanvas = new bootstrap.Offcanvas(offcanvasElement);
-				bsOffcanvas.show();
-			})
-
-			cy2.on('tap', 'node', function (evt) {
-				let text;
-				var node = evt.target;
-				$('#offBody').text('');
-				$('#offcanvasScrollingLabel').html('Node: ' + node.id());
-				for (const [destination, weight] of Object.entries(graph['version' + versionTwo][node.id()])) {
-					text = destination + ' : ' + weight;
-					$("#offBody").append(text + "<br>");
-				}
-			});
-			cy2.on('tap', 'edge', function (evt) {
-				let text;
-				var edge = evt.target;
-				$('#offBody').text('');
-				$('#offcanvasScrollingLabel').html('Edge: ' + edge.data('id'));
-				$('#offBody').append("Source : " + edge.data('source') + '<br>');
-				$('#offBody').append("Destination : " + edge.data('target') + '<br>');
-				$('#offBody').append("Weight : " + edge.data('label') + '<br>');
-			});
-		}
 
         function downloadJSON() {
             const jsonStr = JSON.stringify(graph, null, 2);
@@ -1118,7 +1039,11 @@
 
 		function refresh() {
 			displayGraph();
-			drawCytoscapeGraph();
+            drawCytoscapeGraph();
+            let dispname = Object.keys(displays);
+            dispname.forEach(function(me){
+                drawCytoscapeGraph(me);
+            });
 		}
 		
 		function refreshTwo() {
@@ -1189,20 +1114,16 @@
 		}
 
 		
-		function showGraphTwo() { // Currently shows and hides the second graph
-			var graphStat = document.getElementById("cy");
-			var graphTwoStat = document.getElementById("cy2");
-			if (graphTwoStat.style.display === "none") {
-				graphTwoStat.style.display = "flex";
-				next2.style.display="flex";
-				prev2.style.display="flex";
-				graphStat.style.width = "50%";
-			} else {
-				graphTwoStat.style.display = "none";
-				next2.style.display="none";
-				prev2.style.display="none";
-				graphStat.style.width = "100%";
-			}	
+		function addGraph() { // Currently shows and hides the second graph
+            let dispnum = Object.keys(displays).length+2;
+            let dispname = 'cy'+dispnum
+            $('#field').removeClass(`grid-cols-1 grid-cols-2 grid-cols-3 grid-cols-4`).addClass(`grid-cols-${dispnum}`);
+            displays[dispname] = 1
+            let ex = `<div id="${dispname}" class="h-[600px] border border-gray-300"></div>`;
+            $('#field').append(ex);
+            console.log($('#field').html());
+            drawCytoscapeGraph(dispname);
+            $('#reset').click();
 		}
 		
         function addPerson(){
