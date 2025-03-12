@@ -31,7 +31,9 @@
 			<li><button onclick="downloadJSON()" class="updateClass underline mt-3 bg-maroon text-white px-5 py-3 text-lg rounded-md hover:bg-orange-500 hidden">Download JSON</button></li>
 			<li><select id="changeLayout" class="updateClass mt-8" style="display:none; background-color:gold; color:black;">
 				<option select="selected">Circle</option>
-				<option>Cose</option>
+				<option>CoSE</option>
+				<option>fCoSE</option>
+				<option>CiSE</option>
 			</select></li>
 		</ul>
 	</nav>
@@ -179,8 +181,10 @@
 		const MAX_WEIGHT = 0.8;
 		let playInterval;       // used for play button
 		let isPlaying = false;
-		
-		changeNotes = [];	//Need this for Patch Notes
+
+		let nodeWeightOne;	// used to fix position of node with weight 1 in graph
+
+		changeNotes = [];   //Need this for Patch Notes
 
         nodeColorInput.addEventListener("change", drawCytoscapeGraph, false);
         safeEdgeInput.addEventListener("change", drawCytoscapeGraph, false);
@@ -211,21 +215,23 @@
                 const vertex = String.fromCharCode(65 + i);
                 let w = Math.random().toFixed(2);
 
-                if (w > MAX_WEIGHT && !one) {
-                    w = 1;
-                    one = true;
-                } else if (w > MAX_WEIGHT) {
-                    w = MAX_WEIGHT;
-                }
+				if (w > MAX_WEIGHT && !one) {
+					w = 1;
+					nodeWeightOne = vertex;
+					one = true;
+				} else if (w > MAX_WEIGHT) {
+					w = MAX_WEIGHT;
+				}
 
                 graph['version' + version][vertex] = { weight: w }; //Initialing the object for each vertex.
                 graph['version' + version][vertex]['Past Edges'] = [];
             }
 
-            if (!one) {
-                let vertex = String.fromCharCode(65 + Math.floor(Math.random() * numVertices));
-                graph['version' + version][vertex]['weight'] = 1;
-            }
+			if (!one) {
+				let vertex = String.fromCharCode(65 + Math.floor(Math.random() * numVertices));
+				nodeWeightOne = vertex;
+				graph['version' + version][vertex]['weight'] = 1;
+			}
 
             const edgesCount = Array(numVertices).fill(0);
             const maxEdgesPerVertex = 3;
@@ -316,23 +322,47 @@
             if (parseFloat(graph['version' + version][source][target]) === parseFloat(newWeight.trim()))
                 return;
 
-            const weight = parseFloat(newWeight);
-            const str = String(newWeight);
+			const weight = parseFloat(newWeight);
+			const str = String(newWeight);
+			let c = [];
 
             // copy graph
             graph['version' + (version + 1)] = JSON.parse(JSON.stringify(graph['version' + version]));
             version++;
 
-            // update edge
-            if (weight === 0 || str.toLowerCase() === 'x') {
-                delete graph['version' + version][source][target];
-                delete graph['version' + version][target][source];
-            } else if (!isNaN(weight) && weight > 0) {
-                graph['version' + version][source][target] = weight;
-                graph['version' + version][target][source] = weight;
-            } else {
-                alert("Invalid weight. Please enter a positive number or zero.");
-            }
+			// update edge
+			if (weight === 0 || str.toLowerCase() === 'x') {
+				const edgeWeight = parseFloat(graph['version' + version][source][target]);
+
+				// add target to source past edges
+				let sourceEdges = graph['version' + version][source]['Past Edges'];
+				if (!sourceEdges.includes(target)) sourceEdges.push(target);
+				graph['version' + version][source]['Past Edges'] = sourceEdges;
+
+				// add source to target past edges
+				let targetEdges = graph['version' + version][target]['Past Edges'];
+				if (!targetEdges.includes(source)) targetEdges.push(source);
+				graph['version' + version][target]['Past Edges'] = targetEdges;
+
+				delete graph['version' + version][source][target];
+				delete graph['version' + version][target][source];
+
+				let changesString = `${source} -${edgeWeight}- ${target} - broken`;
+				c.push(changesString);
+				addNotes(changesString);
+				graph['version' + version]['changes'] = c;
+			} else if (!isNaN(weight) && weight > 0) {
+				graph['version' + version][source][target] = weight;
+				graph['version' + version][target][source] = weight;
+
+				let changesString = `${source} -${newWeight}- ${target} - updated`;
+				c.push(changesString);
+				addNotes(changesString);
+				graph['version' + version]['changes'] = c;
+			} else {
+				alert("Invalid weight. Please enter a positive number or zero.");
+				version--;
+			}
 
             // update display
             refresh();
@@ -348,16 +378,19 @@
         //  dummy = 'cose';
         //  drawCytoscapeGraph();
         // }
+		document.getElementById("changeLayout").onchange = function () {
+			if (this.value === 'Circle')
+				layout = 'circle';
+			else if (this.value === 'CoSE')
+				layout = 'cose';
+			else if (this.value === 'CiSE')
+				layout = 'cise';
+			else if (this.value === 'fCoSE')
+				layout = 'fcose';
+			drawCytoscapeGraph();
+		}
 
-        document.getElementById("changeLayout").onchange = function () {
-            if (this.value === 'Circle')
-                dummy = 'circle';
-            if (this.value === 'Cose')
-                dummy = 'cose';
-            drawCytoscapeGraph();
-        }
-
-        function drawCytoscapeGraph() {
+		function drawCytoscapeGraph() {
 			const elements = [];
 			let nodeColor = $("#nodeColorInput").val();
 			let safeEdgeColor = $("#safeEdgeInput").val();
@@ -368,6 +401,11 @@
 			for (const [source, edges] of Object.entries(graph['version' + version])) {
 				if (noClass.includes(source)) continue;
 				elements.push({ data: { id: source, rel: edges.weight } });
+				// if (source === nodeWeightOne) {
+				// 	elements.push({ data: { id: source, rel: edges.weight }, position: { x: 200, y: 200, locked: true } });
+				// } else {
+				// 	elements.push({ data: { id: source, rel: edges.weight } });
+				// }
 
 				for (const [destination, weight] of Object.entries(edges)) {
 					if (noClass.includes(destination)) continue;
@@ -444,8 +482,9 @@
 					name: layout,
 					avoidOverlap: true,
 					nodeOverlap: 0,
-					spacingFactor: layout === 'cose' ? 1.5 : 3, // More spacing for cose
-					animate: 'end'
+					spacingFactor: layout === 'cose' ? 1.5 : 3,
+					animate: 'end'//,
+					//positions: { nodeWeightOne: {x: 1000, y: 1000, locked: true}}
 				}).run();
 			}
 			else if (layout === 'cise') {
@@ -485,6 +524,7 @@
 					nodeOverlap: 0,
 					nodeRepulsion: node => 5000
 				}).run();
+
 			}
 
 			// sidebar functionality
@@ -503,16 +543,20 @@
 					text = destination + ' : ' + weight;
 					$("#offBody").append("<li>" + text + "</li>");
 				}
+				$('#offBody').append(`</br><button class="underline bg-maroon px-5 py-3 text-lg rounded-md hover:bg-orange-500" onclick=\"testNode('${node.id()}')\">Test Node</button>`);
 			});
 
 			cy.on('tap', 'edge', function (evt) {
 				let text;
 				var edge = evt.target;
+				let source = edge.data('source');
+				let target = edge.data('target');
 				$('#offBody').text('');
 				$('#offcanvasScrollingLabel').html('Edge: ' + edge.data('id'));
-				$('#offBody').append("<li>Source : " + edge.data('source') + '</li>');
-				$('#offBody').append("<li>Destination : " + edge.data('target') + '</li>');
+				$('#offBody').append("<li>Source : " + source + '</li>');
+				$('#offBody').append("<li>Destination : " + target + '</li>');
 				$('#offBody').append("<li>Weight : " + edge.data('label') + '</li>');
+				$('#offBody').append(`</br><button class="underline bg-maroon px-5 py-3 text-lg rounded-md hover:bg-orange-500" onclick=\"testEdge('${source}', '${target}')\">Test Edges</button>`);
 			});
 		}
 			
@@ -527,6 +571,11 @@
 			for (const [source, edges] of Object.entries(graph['version' + versionTwo])) {
 				if (noClass.includes(source)) continue;
 				elements.push({ data: { id: source, rel: edges.weight } });
+				// if (source === nodeWeightOne) {
+				// 	elements.push({ data: { id: source, rel: edges.weight }, position: { x: 200, y: 200, locked: true } });
+				// } else {
+				// 	elements.push({ data: { id: source, rel: edges.weight } });
+				// }
 
 				for (const [destination, weight] of Object.entries(edges)) {
 					if (noClass.includes(destination)) continue;
@@ -581,8 +630,8 @@
 						style: {
 							'width': edgeWidth,
 							'line-color': function (elem) {
-								let s = graph['version' + version][elem.data('source')]['weight'];
-								let t = graph['version' + version][elem.data('target')]['weight'];
+								let s = graph['version' + versionTwo][elem.data('source')]['weight'];
+								let t = graph['version' + versionTwo][elem.data('target')]['weight'];
 								let w = elem.data('label');
 								let weightDiff = Math.abs(s - t);
 								return weightDiff > w ? unsafeEdgeColor : safeEdgeColor;
@@ -603,8 +652,9 @@
 					name: layout,
 					avoidOverlap: true,
 					nodeOverlap: 0,
-					spacingFactor: layout === 'cose' ? 1.5 : 3, // More spacing for cose
-					animate: 'end'
+					spacingFactor: layout === 'cose' ? 1.5 : 3,
+					animate: 'end'//,
+					//positions: { nodeWeightOne: {x: 1000, y: 1000, locked: true}}
 				}).run();
 			}
 			else if (layout === 'cise') {
@@ -644,6 +694,7 @@
 					nodeOverlap: 0,
 					nodeRepulsion: node => 5000
 				}).run();
+
 			}
 
 			// sidebar functionality
@@ -662,18 +713,23 @@
 					text = destination + ' : ' + weight;
 					$("#offBody").append("<li>" + text + "</li>");
 				}
+				// $('#offBody').append(`</br><button class="underline bg-maroon px-5 py-3 text-lg rounded-md hover:bg-orange-500" onclick=\"testNode('${node.id()}')\">Test Node</button>`);
 			});
 
 			cy.on('tap', 'edge', function (evt) {
 				let text;
 				var edge = evt.target;
+				let source = edge.data('source');
+				let target = edge.data('target');
 				$('#offBody').text('');
 				$('#offcanvasScrollingLabel').html('Edge: ' + edge.data('id'));
-				$('#offBody').append("<li>Source : " + edge.data('source') + '</li>');
-				$('#offBody').append("<li>Destination : " + edge.data('target') + '</li>');
+				$('#offBody').append("<li>Source : " + source + '</li>');
+				$('#offBody').append("<li>Destination : " + target + '</li>');
 				$('#offBody').append("<li>Weight : " + edge.data('label') + '</li>');
+				// $('#offBody').append(`</br><button class="underline bg-maroon px-5 py-3 text-lg rounded-md hover:bg-orange-500" onclick=\"testEdge('${source}', '${target}')\">Test Edges</button>`);
 			});
 		}
+			
 
         function downloadJSON() {
             const jsonStr = JSON.stringify(graph, null, 2);
@@ -713,12 +769,19 @@
 			};
 			reader.readAsText(file);
 		}
-		
-		function addNotes(message)
-        	{
-        		changeNotes.push(`${message}`);
-        		changeNotes.push(``);
-        	}
+
+		function addNotes(message) {
+			changeNotes.push(`${message}`);
+			changeNotes.push(``);
+		}
+		function runAlgorithm(number) {
+			if (!document.querySelector('#runAllNodes').checked) {      // run single node
+				runSingle(number);
+			} else {                                                    // run all nodes
+				runMultiple(number);
+			}
+			refresh();
+		}
 
 
 			function runSingle(number) {
@@ -726,6 +789,7 @@
 				// update displayed version every iteration
 				graph['version' + (version + 1)] = JSON.parse(JSON.stringify(graph['version' + version]));
 				version++;
+				graph['version' + version]['changes'] = [];
 				document.getElementById('versionDisplay').innerText = version;
 
 				// select a random source node
@@ -748,110 +812,21 @@
 					target === source ||
 					noClass.includes(target));
 
-				// find weights of the source and target nodes, and the edge weight
-				const sourceWeight = parseFloat(graph['version' + version][source]['weight']);
-				const targetWeight = parseFloat(graph['version' + version][target]['weight']);
-				const edgeWeight = parseFloat(edges[target]);
-
-				// find difference in node opinion
-				let weightDiff = Math.abs(sourceWeight - targetWeight);
-				weightDiff = parseFloat(weightDiff.toFixed(2));
-				let c = [];
-
-				// update graph
-				if (weightDiff > edgeWeight) {
-					newWeight = 0;
-
-					// delete broken edge from json
-					delete graph['version' + version][source][target];
-					delete graph['version' + version][target][source];
-
-					// add change info to json
-					let changesString = `${source} -${edgeWeight}- ${target} - broken`;
-					c.push(changesString);
-					addNotes(changesString);
-					graph['version' + version]['changes'] = c;
-
-						// make new edges from source and target
-						replaceEdge(source, target);
-					} else {	// Bond is not to break
-						// If chance (semi-random) update weight change is set to true (UI button)
-						
-						// If relationship doesn't break, opinions of each person
-						// are more or less the same
-						let min = .1;
-						let max = .9;
-						let chance = Math.random() * (max - min) + min;
-						// Could change boolean expression to chance <= .6 at least
-						if (chance <= .7) { 	// Bigger chance for weights to change
-							// calculate new edge weight if not broken
-
-					// check if either node has weight of 1
-					if (sourceWeight === 1 || targetWeight === 1) {
-						let avg = weightDiff / 4;
-						avg = parseFloat(avg.toFixed(2));
-
-						if (sourceWeight !== 1) {
-							// update source only if it is not 1
-							avg = parseFloat(avg + sourceWeight);
-							avg = parseFloat(avg.toFixed(2));
-							graph['version' + version][source]['weight'] = avg;
-							let changesString = `${source} ${sourceWeight} - ${avg}, ${target} ${targetWeight} unchanged`;
-							c.push(changesString);
-							addNotes(changesString);
-							graph['version' + version]['changes'] = c;
-						} else {
-							// update target only if it is not 1
-							avg = parseFloat(avg + targetWeight);
-							avg = parseFloat(avg.toFixed(2));
-							graph['version' + version][target]['weight'] = avg;
-							let changesString = `${source} ${sourceWeight} unchanged, ${target} ${targetWeight} - ${avg}`;
-							c.push(changesString);
-							addNotes(changesString);
-							graph['version' + version]['changes'] = c;
-						}
-					} else {
-						// if neither node weight is 1, update both
-						let avg = weightDiff / 4;
-						avg = parseFloat(avg.toFixed(2));
-						let newS, newT;
-
-						if (sourceWeight > targetWeight) {
-							newS = parseFloat(sourceWeight - avg) > 0 ? parseFloat(sourceWeight - avg) : 0;
-							newT = parseFloat(targetWeight + avg) > MAX_WEIGHT ? MAX_WEIGHT : parseFloat(targetWeight + avg);
-						} else {
-							newS = parseFloat(sourceWeight + avg) > MAX_WEIGHT ? MAX_WEIGHT : parseFloat(sourceWeight + avg);
-							newT = parseFloat(targetWeight - avg) > 0 ? parseFloat(targetWeight - avg) : 0;
-						}
-
-						newS = parseFloat(newS.toFixed(2));
-						newT = parseFloat(newT.toFixed(2));
-
-						graph['version' + version][source]['weight'] = newS;
-						graph['version' + version][target]['weight'] = newT;
-
-						// add change info to json
-						let changesString = `${source} ${sourceWeight} - ${newS} & ${target} ${targetWeight} - ${newT}`;
-						c.push(changesString);
-						addNotes(changesString);
-						graph['version' + version]['changes'] = c;
-					}
-				}
+				algorithm(source, target);
 			}
 		}
-	}
 
 		function runMultiple(number) {
 			for (let i = 0; i < number; i++) {
 				// update graph version once for all nodes
 				graph['version' + (version + 1)] = JSON.parse(JSON.stringify(graph['version' + version]));
 				version++;
+				graph['version' + version]['changes'] = [];
 				document.getElementById('versionDisplay').innerText = version;
 
 				// get list of nodes
 				const nodes = Object.keys(graph['version' + version]).filter(node => node !== 'changes');
 				let source;
-				let c = [];
 
 				// run algorithm on each node
 				for (const node of nodes) {
@@ -869,106 +844,128 @@
 						target === source ||
 						noClass.includes(target));
 
-					// find weights of the source and target nodes, and the edge weight
-					const sourceWeight = parseFloat(graph['version' + version][source]['weight']);
-					const targetWeight = parseFloat(graph['version' + version][target]['weight']);
-					const edgeWeight = parseFloat(edges[target]);
-
-					// find difference in node opinion and compare with edge weight
-					let weightDiff = Math.abs(sourceWeight - targetWeight);
-					weightDiff = parseFloat(weightDiff.toFixed(2));
-
-					// update graph
-					if (weightDiff > edgeWeight) {
-						newWeight = 0;
-
-						// delete broken edge from json
-						delete graph['version' + version][source][target];
-						delete graph['version' + version][target][source];
-
-						// add change info to json
-						let changesString = `${source} -${edgeWeight}- ${target} - broken`;
-						c.push(changesString);
-						addNotes(changesString);
-						graph['version' + version]['changes'] = c;
-
-							// make new edges from source and target
-							replaceEdge(source, target);
-						} else {	// Bond is to not break
-							// If chance (semi-random) update weight change is set to true (UI button)
-						
-							// If relationship doesn't break, opinions of each person
-							// are more or less the same
-							let min = .1;
-							let max = .9;
-							let chance = Math.random() * (max - min) + min;
-							// Could change boolean expression to chance <= .6 at least
-							if (chance <= .7) { 	// Bigger chance for weights to change
-								// calculate new edge weight if not broken
-
-						// check if either node has weight of 1
-						if (sourceWeight === 1 || targetWeight === 1) {
-							let avg = weightDiff / 4;
-							avg = parseFloat(avg.toFixed(2));
-
-							if (sourceWeight !== 1) {
-								// update source only if it is not 1
-								avg = parseFloat(avg + sourceWeight);
-								avg = parseFloat(avg.toFixed(2));
-								graph['version' + version][source]['weight'] = avg;
-								let changesString = `${source} ${sourceWeight} - ${avg}, ${target} ${targetWeight} unchanged`;
-								c.push(changesString);
-								addNotes(changesString);
-								graph['version' + version]['changes'] = c;
-							} else {
-								// update target only if it is not 1
-								avg = parseFloat(avg + targetWeight);
-								avg = parseFloat(avg.toFixed(2));
-								graph['version' + version][target]['weight'] = avg;
-								let changesString = `${source} ${sourceWeight} unchanged, ${target} ${targetWeight} - ${avg}`;
-								c.push(changesString);
-								addNotes(changesString);
-								graph['version' + version]['changes'] = c;
-							}
-						} else {
-							// if neither node weight is 1, update both 
-							let avg = weightDiff / 4;
-							avg = parseFloat(avg.toFixed(2));
-							let newS, newT;
-
-							if (sourceWeight > targetWeight) {
-								newS = parseFloat(sourceWeight - avg) > 0 ? parseFloat(sourceWeight - avg) : 0;
-								newT = parseFloat(targetWeight + avg) > MAX_WEIGHT ? MAX_WEIGHT : parseFloat(targetWeight + avg);
-							} else {
-								newS = parseFloat(sourceWeight + avg) > MAX_WEIGHT ? MAX_WEIGHT : parseFloat(sourceWeight + avg);
-								newT = parseFloat(targetWeight - avg) > 0 ? parseFloat(targetWeight - avg) : 0;
-							}
-
-							newS = parseFloat(newS.toFixed(2));
-							newT = parseFloat(newT.toFixed(2));
-
-							graph['version' + version][source]['weight'] = newS;
-							graph['version' + version][target]['weight'] = newT;
-
-							// add change info to json
-							let changesString = `${source} ${sourceWeight} - ${newS} & ${target} ${targetWeight} - ${newT}`;
-							c.push(changesString);
-							addNotes(changesString);
-							graph['version' + version]['changes'] = c;
-						}
-					}
+					algorithm(source, target);
 				}
 			}
 		}
-	}
 
-		function runAlgorithm(number) {
-			if (!document.querySelector('#runAllNodes').checked) {      // run single node
-				runSingle(number);
-			} else {                                                    // run all nodes
-				runMultiple(number);
-			}
+		// test edge from sidebar
+		function testEdge(source, target) {
+			graph['version' + (version + 1)] = JSON.parse(JSON.stringify(graph['version' + version]));
+			version++;
+			graph['version' + version]['changes'] = [];
+			document.getElementById('versionDisplay').innerText = version;
+
+			algorithm(source, target);
 			refresh();
+			$('#offcanvasScrolling').html($('#offcanvasScrolling').html());
+			updateEdgeSidebar(source, target);
+		}
+
+		// test certain node from sidebar
+		function testNode(source) {
+			graph['version' + (version + 1)] = JSON.parse(JSON.stringify(graph['version' + version]));
+			version++;
+			graph['version' + version]['changes'] = [];
+			document.getElementById('versionDisplay').innerText = version;
+
+			// select a random target node that does not lead back to the source node
+			let target;
+			const edges = graph['version' + version][source];
+			const targetNodes = Object.keys(edges);
+			do {
+				target = targetNodes[Math.floor(Math.random() * targetNodes.length)];
+			} while (
+				target === source ||
+				noClass.includes(target));
+
+			algorithm(source, target);
+			refresh();
+			$('#offcanvasScrolling').html($('#offcanvasScrolling').html());
+			updateNodeSidebar(source);
+		}
+
+		function algorithm(source, target) {
+			// find weights of the source and target nodes, and the edge weight
+			const sourceWeight = parseFloat(graph['version' + version][source]['weight']);
+			const targetWeight = parseFloat(graph['version' + version][target]['weight']);
+			const edgeWeight = parseFloat(graph['version' + version][target][source]);
+
+			// find difference in node opinion
+			let weightDiff = Math.abs(sourceWeight - targetWeight);
+			weightDiff = parseFloat(weightDiff.toFixed(2));
+			let c = graph['version' + version]['changes'];
+
+			// update graph
+			if (weightDiff > edgeWeight) {
+				newWeight = 0;
+
+				// delete broken edge from json
+				delete graph['version' + version][source][target];
+				delete graph['version' + version][target][source];
+
+				// add change info to json
+				let changesString = `${source} -${edgeWeight}- ${target} - broken`;
+				c.push(changesString);
+				addNotes(changesString);
+				graph['version' + version]['changes'] = c;
+
+				// make new edges from source and target
+				replaceEdge(source, target);
+			} else {
+				// calculate new edge weight if not broken
+
+				// check if either node has weight of 1
+				if (sourceWeight === 1 || targetWeight === 1) {
+					let avg = weightDiff / 4;
+					avg = parseFloat(avg.toFixed(2));
+
+					if (sourceWeight !== 1) {
+						// update source only if it is not 1
+						avg = parseFloat(avg + sourceWeight);
+						avg = parseFloat(avg.toFixed(2));
+						graph['version' + version][source]['weight'] = avg;
+						let changesString = `${source} ${sourceWeight} - ${avg}, ${target} ${targetWeight} unchanged`;
+						c.push(changesString);
+						addNotes(changesString);
+						graph['version' + version]['changes'] = c;
+					} else {
+						// update target only if it is not 1
+						avg = parseFloat(avg + targetWeight);
+						avg = parseFloat(avg.toFixed(2));
+						graph['version' + version][target]['weight'] = avg;
+						let changesString = `${source} ${sourceWeight} unchanged, ${target} ${targetWeight} - ${avg}`;
+						c.push(changesString);
+						addNotes(changesString);
+						graph['version' + version]['changes'] = c;
+					}
+				} else {
+					// if neither node weight is 1, update both
+					let avg = weightDiff / 4;
+					avg = parseFloat(avg.toFixed(2));
+					let newS, newT;
+
+					if (sourceWeight > targetWeight) {
+						newS = parseFloat(sourceWeight - avg) > 0 ? parseFloat(sourceWeight - avg) : 0;
+						newT = parseFloat(targetWeight + avg) > MAX_WEIGHT ? MAX_WEIGHT : parseFloat(targetWeight + avg);
+					} else {
+						newS = parseFloat(sourceWeight + avg) > MAX_WEIGHT ? MAX_WEIGHT : parseFloat(sourceWeight + avg);
+						newT = parseFloat(targetWeight - avg) > 0 ? parseFloat(targetWeight - avg) : 0;
+					}
+
+					newS = parseFloat(newS.toFixed(2));
+					newT = parseFloat(newT.toFixed(2));
+
+					graph['version' + version][source]['weight'] = newS;
+					graph['version' + version][target]['weight'] = newT;
+
+					// add change info to json
+					let changesString = `${source} ${sourceWeight} - ${newS} & ${target} ${targetWeight} - ${newT}`;
+					c.push(changesString);
+					addNotes(changesString);
+					graph['version' + version]['changes'] = c;
+				}
+			}
 		}
 
         function replaceEdge(source, target) {
@@ -993,22 +990,22 @@
             // array to store valid nodes for a new edge
             const availableNodes = [];
 
-            // build array of possible connections (preventing past edges from reforming)
-            if (!document.querySelector('#allowPastEdges').checked) {
-                for (let i = 0; i < nodes.length; i++) {
-                    let node = String.fromCharCode(65 + i); // convert number to char
-                    // if node is NOT in past edges and there is not already an edge, add it to available nodes
-                    if (!sourceEdges.includes(node) && node !== source && !graph['version' + version][source][node])
-                        availableNodes.push(node);
-                }
-            } else {
-                // build array of possible connections (allows past edges)
-                for (let i = 0; i < nodes.length; i++) {
-                    let node = String.fromCharCode(65 + i);
-                    if (node !== source && !graph['version' + version][source][node])
-                        availableNodes.push(node);
-                }
-            }
+			// build array of possible connections (preventing past edges from reforming)
+			if (!document.querySelector('#allowPastEdges').checked) {
+				for (let i = 0; i < nodes.length; i++) {
+					let node = String.fromCharCode(65 + i); // convert number to char
+					// if node is NOT in past edges and there is not already an edge, add it to available nodes
+					if (!sourceEdges.includes(node) && node !== source && node !== target && !graph['version' + version][source][node])
+						availableNodes.push(node);
+				}
+			} else {
+				// build array of possible connections (allows past edges)
+				for (let i = 0; i < nodes.length; i++) {
+					let node = String.fromCharCode(65 + i);
+					if (node !== source && !graph['version' + version][source][node])
+						availableNodes.push(node);
+				}
+			}
 
             // if there are no available nodes update changes and exit
             if (availableNodes.length === 0) {
@@ -1033,13 +1030,38 @@
             graph['version' + version][source][sourceNode] = weightS;
             graph['version' + version][sourceNode][source] = weightS;
 
-            changesString = `${source} -${weightS}- ${sourceNode} - made`;
-            alertString += changesString + '\n';
-            c.push(changesString);
-            addNotes(changesString);
-            graph['version' + version]['changes'] = c;
-            console.log(changesString);
-        }
+			// update changes
+			changesString = `${source} -${weightS}- ${sourceNode} - made`;
+			alertString += changesString + '\n';
+			c.push(changesString);
+			addNotes(changesString);
+			graph['version' + version]['changes'] = c;
+		}
+
+		// used to reload sidebar after clicking algorithm button
+		function updateNodeSidebar(nodeId) {
+			$('#offBody').text('');
+			$('#offcanvasScrollingLabel').html('Node: ' + nodeId);
+
+			for (const [destination, weight] of Object.entries(graph['version' + version][nodeId])) {
+				let text = destination + ' : ' + weight;
+				$("#offBody").append("<li>" + text + "</li>");
+			}
+
+			$('#offBody').append(`</br><button class="underline bg-maroon px-5 py-3 text-lg rounded-md hover:bg-orange-500" onclick=\"testNode('${nodeId}')\">Test Node</button>`);
+		}
+
+		function updateEdgeSidebar(source, target) {
+			$('#offBody').text('');
+			$('#offcanvasScrollingLabel').html('Edge: ' + source + '-' + target);
+
+			$('#offBody').append("<li>Source : " + source + '</li>');
+			$('#offBody').append("<li>Destination : " + target + '</li>');
+			$('#offBody').append("<li>Weight : " + graph['version'+version][source][target] + '</li>');
+
+			$('#offBody').append(`</br><button class="underline bg-maroon px-5 py-3 text-lg rounded-md hover:bg-orange-500" onclick=\"testEdge('${source}', '${target}')\">Test Edges</button>`);
+		}
+
 
 		function previous() {
 			version--;
@@ -1126,13 +1148,13 @@
 			drawCy2Graph();
 		}
 
-        $('#offBody').on('blur', function () {
-            console.log('found');
-            let stuff;
-            let tempStr = $('#offBody li').text();
-            console.log(tempStr);
-            $('#offBody li').each(function(index, element) {
-            	let data = ($(element).text()).split(' : ');
+		$('.btn-close').on('click', function () {
+			console.log('found');
+			let stuff;
+			let tempStr = $('#offBody li').text();
+			console.log(tempStr);
+			$('#offBody li').each(function (index, element) {
+				let data = ($(element).text()).split(' : ');
 				let curr = ($('#offcanvasScrollingLabel').text()).split(' ');
 				if (curr[0] == 'Node:'){
 					if (index == 1) {
