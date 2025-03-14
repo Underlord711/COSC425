@@ -2,7 +2,6 @@
 
 <html lang="en">
 <head>
-<<<<<<< HEAD
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Weighted Undirected Graph Generator</title>
@@ -12,22 +11,10 @@
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 	<link rel="stylesheet" href="css/matrix.css">
-=======
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Weighted Undirected Graph Generator</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.21.0/cytoscape.min.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <link rel="stylesheet" href="css/matrix.css">
->>>>>>> JaseSafeCopy
     <link rel="stylesheet" href="css/nav.css"> <!-- Link to your CSS file -->
 </head>
 <body class="bg-gray-100 p-6">
     <!-- Navigation Bar -->
-<<<<<<< HEAD
 	<nav class="bg-maroon p-2 border-4 border-gold rounded-lg">
 		<ul class="flex space-x-6">
 			<li><img src="photos/bury.jpeg" alt="Logo" class="navbar-logo mt-1"></li>
@@ -45,22 +32,6 @@
 		</ul>
 	</nav>
 	
-=======
-    <nav class="bg-maroon p-2 border-4 border-gold rounded-lg">
-        <ul class="flex space-x-6">
-            <li><img src="photos/bury.jpeg" alt="Logo" class="navbar-logo mt-1"></li>
-            <li><button onclick="generateGraph()" class="underline mt-3 bg-maroon text-white px-5 py-3 text-lg rounded-md hover:bg-orange-500">Generate graph</button></li>
-            <li><button onclick="uploadJSON()" class="underline mt-3 bg-maroon text-white px-5 py-3 text-lg rounded-md hover:bg-orange-500">Upload JSON</button></li>
-            <li><button onclick="toggleMatrix()" class="updateClass underline mt-3 bg-maroon text-white px-5 py-3 text-lg rounded-md hover:bg-orange-500 hidden">Show matrix</button></li>
-            <li><button onclick="downloadJSON()" class="updateClass underline mt-3 bg-maroon text-white px-5 py-3 text-lg rounded-md hover:bg-orange-500 hidden">Download JSON</button></li>
-            <li><select id="changeLayout" class="updateClass mt-8" style="display:none; background-color:gold; color:black;">
-                <option select="selected">Circle</option>
-                <option>Cose</option>
-            </select></li>
-        </ul>
-    </nav>
-    
->>>>>>> JaseSafeCopy
 
     <div class="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-md mt-3">
         <h1 class="text-2xl font-bold mb-4">Weighted Undirected Graph Generator</h1>
@@ -97,7 +68,6 @@
                 <button onclick="updateDisplay()" style="display:none;" id="updateBtn"
                     class="updateClass bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600 focus:outline-none">Switch
                 </button> -->
-<<<<<<< HEAD
 
                                 <!-- Modal -->
                 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel">
@@ -121,9 +91,6 @@
                 <button onclick="patchNotes()" id="patchBtn"
                     class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 focus:outline-none updateClass"
                     style="display:none;">Patch Notes</button>
-=======
-                
->>>>>>> JaseSafeCopy
                 <button onclick="runAlgorithm(parseInt(document.getElementById('inputValue').value))"
                     style="display:none;" id="runAlgorithm"
                     class="updateClass bg-pink-500 text-white px-4 py-2 rounded hover:bg-pink-600 focus:outline-none">Run
@@ -143,7 +110,6 @@
                 <input type="checkbox" id="allowPastEdges" class="updateClass" style="display:none;" checked>
                 <label id="pastEdgesLabel" for="allowPastEdges" class="updateClass" style="display:none;">Allow Past
                     Edges</label>
-<<<<<<< HEAD
 
 
                 <input type="color" id="nodeColorInput" class="updateClass border px-1 py-1 rounded"
@@ -186,55 +152,6 @@
                 </table>
             </div>
 
-=======
-
-
-                <input type="color" id="nodeColorInput" class="updateClass border px-1 py-1 rounded"
-                    style="display:none;" value="#000000">
-                <label for="nodeColorInput" class="updateClass" style="display:none;">Node Color</label>
-
-                <input type="color" id="safeEdgeInput" class="updateClass border px-1 py-1 rounded"
-                    style="display:none;" value="#00FF00">
-                <label for="safeEdgeInput" class="updateClass" style="display:none;">Safe Edge Color</label>
-
-                <input type="color" id="unsafeEdgeInput" class="updateClass border px-1 py-1 rounded"
-                    style="display:none;" value="#9C9C9C">
-                <label for="unsafeEdgeInput" class="updateClass" style="display:none;">Unsafe Edge Color</label>
-                <button onclick="patchNotes()" id="patchBtn"
-                class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 focus:outline-none updateClass" style="display:none;">Patch Notes</button>
-                <button onclick="showGraphTwo()" id="GraphTwo"
-                class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none updateClass" style="display:none;">Graph Two</button>
-                <button onclick="newGraph()" id="newGraph"
-                class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none updateClass" style="display:none;">New Graph</button>
-                <button onclick="removeGraph()" id="removeGraph"
-                class="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600 focus:outline-none updateClass" style="display:none;">Remove Graph</button>
-            </div>
-
-            <div class="mt-4">
-                <input type="file" id="fileInput" accept=".json" onchange="uploadJSON()"
-                    class="block w-full text-sm text-gray-500 border border-gray-300 rounded-lg cursor-pointer">
-                <button id="uploadBtn" style="display:none;" onclick="uploadJSON()"
-                    class="mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none">Upload
-                    JSON</button>
-
-
-            </div>
-        </div>
-
-        <h2 class="text-xl font-semibold mt-6">Generated Graph:</h2>
-        <div class="flex items-start">
-            <div class="flex-none mr-4">Version: <span id="versionDisplay">1</span></div>
-            <div class="flex-none mr-4">Second Graph's Version: <span id="versionDisplay2">1</span></div>
-            <div class="flex-none mr-4">Total Secondary Graphs: <span id="TotalDisplay">0</span></div>
-
-            <div id="matrixContainer" class="flex-grow overflow-x-auto overflow-y-auto max-h-96 mx-4 self-center"
-                style="display: none;">
-                <table id="graphTable"
-                    class="min-w-full table-auto border-collapse bg-white shadow-md rounded-lg text-sm">
-                </table>
-            </div>
-
->>>>>>> JaseSafeCopy
             <div class="flex-none ml-auto">
                 <button onclick="refresh()" id="reset"
                     class="bg-purple-500 text-white px-2 py-2 rounded hover:bg-purple-600 focus:outline-none">Reset</button>
@@ -244,7 +161,6 @@
                     class="bg-purple-500 text-white px-2 py-2 rounded hover:bg-purple-600 focus:outline-none">Next</button>
                 <button onclick="" id="play"
                     class="bg-purple-500 text-white px-2 py-2 rounded hover:bg-purple-600 focus:outline-none">▶</button>
-<<<<<<< HEAD
                 <button onclick="previousTwo()" id="prev2"
                     class="bg-purple-500 text-white px-2 py-2 rounded hover:bg-purple-600 focus:outline-none;" style="display:none;">Second Graph Prev</button>
                 <button onclick="nextTwo()" id="next2"
@@ -307,70 +223,6 @@
             });
             console.log(vertexes);
             console.log(weights);
-=======
-                    
-                <button onclick="previousTwo()" id="prev2"
-                    class="bg-purple-500 text-white px-2 py-2 rounded hover:bg-purple-600 focus:outline-none;" style="display:none;">New Graph Prev</button>
-                <button onclick="cycleLeft()" id="cycleLeft"
-                    class="bg-purple-500 text-white px-2 py-2 rounded hover:bg-purple-600 focus:outline-none;" style="display:flex;">Cycle Graph Left</button>
-                <div class="flex-none mr-4">Current Secondary Graph: <span id="secondGraphCurrent">0</span></div>
-                <button onclick="cycleRight()" id="cycleRight"
-                    class="bg-purple-500 text-white px-2 py-2 rounded hover:bg-purple-600 focus:outline-none;" style="display:flex;">Cycle Graph Right</button>
-                <button onclick="nextTwo()" id="next2"
-                    class="bg-purple-500 text-white px-2 py-2 rounded hover:bg-purple-600 focus:outline-none;" style="display:none;">New Graph Next</button>
-            </div>
-        </div>
-
-        <div class="flex">
-            <div id="cy" class="w-32 flex-1 border border-gray-300 mt-6" style="width: auto; height: 600px;"></div>
-            <div id="cy2" class="w-32 flex-1 border border-gray-300 mt-6" style="width: 50%; height: 600px; display: none;"></div>
-        </div>
-    </div>
-
-    <div class="offcanvas offcanvas-start !w-[200px]" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1"
-        id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel">
-        <div class="offcanvas-header">
-            <h5 class="offcanvas-title" id="offcanvasScrollingLabel" contenteditable='true'>Node: </h5>
-            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-        </div>
-        <div class="offcanvas-body" contenteditable='true' id="offBody">
-            <p></p>
-        </div>
-    </div>
-
-    <script>
-        let graph = {};
-        let version = 1;
-        let versionTwo = 1;
-        let totalGraphs = 0;
-        let currentGraph = 0;
-        let isMatrixVisible = false; // Track whether the matrix is visible or not
-        let dummy = 'circle';
-        let noClass = ['weight', 'Past Edges', 'changes'];
-        const MAX_WEIGHT = 0.8;
-        let graphNum = 0; //Tracks how many graphs the user has made
-
-        let playInterval;       // used for play button
-        let isPlaying = false;
-        
-        changeNotes = [];   //Need this for Patch Notes
-
-        nodeColorInput.addEventListener("change", drawCytoscapeGraph, false);
-        safeEdgeInput.addEventListener("change", drawCytoscapeGraph, false);
-        unsafeEdgeInput.addEventListener("change", drawCytoscapeGraph, false);
-
-        // function updateDisplay() {
-        //  if (dummy == 'grid') {
-        //      dummy = 'circle';
-        //  }
-        //  else {
-        //      dummy = 'grid';
-        //  }
-        //  drawCytoscapeGraph();
-        // }
-
-        function generateGraph() {
->>>>>>> JaseSafeCopy
             const numVertices = parseInt(document.getElementById('numVertices').value);
             const weight1 = parseFloat(document.getElementById('weight1').value);
             const weight2 = parseFloat(document.getElementById('weight2').value);
@@ -381,7 +233,6 @@
             }
             let one = false;
             graph = { version1: {} };
-<<<<<<< HEAD
             if (vertexes.length == 0){
                 for (let i = 0; i < numVertices; i++) {
                     const vertex = String.fromCharCode(65 + i);
@@ -417,49 +268,16 @@
             const edgesCount = Array(vertexes.length).fill(0);
             const maxEdgesPerVertex = 3;
             const totalEdgesNeeded = (vertexes.length * maxEdgesPerVertex) / 2;
-=======
-            for (let i = 0; i < numVertices; i++) {
-                const vertex = String.fromCharCode(65 + i);
-                let w = Math.random().toFixed(2);
-
-                if (w > MAX_WEIGHT && !one) {
-                    w = 1;
-                    one = true;
-                } else if (w > MAX_WEIGHT) {
-                    w = MAX_WEIGHT;
-                }
-
-                graph['version' + version][vertex] = { weight: w }; //Initialing the object for each vertex.
-                graph['version' + version][vertex]['Past Edges'] = [];
-            }
-
-            if (!one) {
-                let vertex = String.fromCharCode(65 + Math.floor(Math.random() * numVertices));
-                graph['version' + version][vertex]['weight'] = 1;
-            }
-
-            const edgesCount = Array(numVertices).fill(0);
-            const maxEdgesPerVertex = 3;
-            const totalEdgesNeeded = (numVertices * maxEdgesPerVertex) / 2;
->>>>>>> JaseSafeCopy
 
             let edgesCreated = 0;
 
             while (edgesCreated < totalEdgesNeeded) {
-<<<<<<< HEAD
                 let sourceIndex = Math.floor(Math.random() * vertexes.length);
-=======
-                let sourceIndex = Math.floor(Math.random() * numVertices);
->>>>>>> JaseSafeCopy
                 let destinationIndex;
 
                 let attempts = 0;
                 do {
-<<<<<<< HEAD
                     destinationIndex = Math.floor(Math.random() * vertexes.length);
-=======
-                    destinationIndex = Math.floor(Math.random() * numVertices);
->>>>>>> JaseSafeCopy
                     attempts++;
                     if (attempts > 100) {
                         console.log('Too many attempts to find a valid edge.');
@@ -469,21 +287,12 @@
                     destinationIndex === sourceIndex || // Prevent self-loops
                     edgesCount[sourceIndex] >= maxEdgesPerVertex ||
                     edgesCount[destinationIndex] >= maxEdgesPerVertex ||
-<<<<<<< HEAD
                     graph.version1[vertexes[sourceIndex]][vertexes[destinationIndex]]
                 );
 
                 if (edgesCount[sourceIndex] < maxEdgesPerVertex && edgesCount[destinationIndex] < maxEdgesPerVertex) {
                     const source = vertexes[sourceIndex];
                     const destination = vertexes[destinationIndex];
-=======
-                    graph.version1[String.fromCharCode(65 + sourceIndex)][String.fromCharCode(65 + destinationIndex)]
-                );
-
-                if (edgesCount[sourceIndex] < maxEdgesPerVertex && edgesCount[destinationIndex] < maxEdgesPerVertex) {
-                    const source = String.fromCharCode(65 + sourceIndex);
-                    const destination = String.fromCharCode(65 + destinationIndex);
->>>>>>> JaseSafeCopy
                     const weight = Math.random() < 0.5 ? weight1 : weight2;
 
                     graph['version' + version][source][destination] = weight;
@@ -568,19 +377,6 @@
             $('#versionDisplay').text(version);
         }
 
-<<<<<<< HEAD
-=======
-        // function layoutCircle() {
-        //  dummy = 'circle';
-        //  drawCytoscapeGraph();
-        // }
-
-        // function layoutCose() {
-        //  dummy = 'cose';
-        //  drawCytoscapeGraph();
-        // }
-
->>>>>>> JaseSafeCopy
         document.getElementById("changeLayout").onchange = function () {
             if (this.value === 'Circle')
                 dummy = 'circle';
@@ -589,11 +385,7 @@
             drawCytoscapeGraph();
         }
 
-<<<<<<< HEAD
         function drawCytoscapeGraph(me = 'cy') {
-=======
-        function drawCytoscapeGraph() {
->>>>>>> JaseSafeCopy
             const elements = [];
             let nodeColor = $("#nodeColorInput").val();
             let safeEdgeColor = $("#safeEdgeInput").val();
@@ -620,11 +412,7 @@
             //
             if (dummy === 'circle') {
                 const cy = cytoscape({
-<<<<<<< HEAD
                     container: document.getElementById(me),
-=======
-                    container: document.getElementById('cy'),
->>>>>>> JaseSafeCopy
                     elements: elements,
                     style: [
                         {
@@ -801,107 +589,7 @@
             //  $('#offBody').append("<li>Weight : " + edge.data('label') + '</li>');
             // });
         }
-<<<<<<< HEAD
 
-=======
-            
-        function drawCy2Graph() {   //Draws the second graph, cannot be 
-            const elements = [];
-            let nodeColor = $("#nodeColorInput").val();
-            let safeEdgeColor = $("#safeEdgeInput").val();
-            let unsafeEdgeColor = $("#unsafeEdgeInput").val();
-
-            for (const [source, edges] of Object.entries(graph['version' + versionTwo])) {
-                if (noClass.includes(source))
-                    continue;
-                elements.push({ data: { id: source, rel: edges.weight } });
-                //console.log(edges.weight);
-                for (const [destination, weight] of Object.entries(edges)) {
-                    if (noClass.includes(destination)) {
-                        continue;
-                    }
-                    if (source !== destination) {
-                        elements.push({ data: { id: destination, rel: graph['version' + versionTwo][destination]['weight'] } });
-                        elements.push({ data: { id: `${source}-${destination}`, source: source, target: destination, label: weight.toFixed(2) } });
-                    }
-                }
-            }
-            
-            const cy2 = cytoscape({
-                container: document.getElementById('cy' + currentGraph),
-                elements: elements,
-                style: [
-                    {
-                        selector: 'node',
-                        style: {
-                            'background-color': nodeColor,
-                            'label': function (elem) {
-                                return elem.data('id') + '\n' + elem.data('rel')
-                            },
-                            'color': 'green',
-                            'font-size': '50px',
-                            'text-wrap': 'wrap'
-                        }
-                    },
-                    {
-                        selector: 'edge',
-                        style: {
-                            'width': 2,
-                            'line-color': function (elem) {
-                                let s = graph['version' + versionTwo][elem.data('source')]['weight'];
-                                let t = graph['version' + versionTwo][elem.data('target')]['weight'];
-                                let w = elem.data('label');
-                                let weightDiff = s > t ? (s - t) : (t - s);
-                                weightDiff = parseFloat(weightDiff.toFixed(2));
-
-                                return weightDiff > w ? unsafeEdgeColor : safeEdgeColor;
-
-                            },
-                            'label': 'data(label)',
-                            'font-size': '35px',
-                            'text-justification': 'left',
-                            'text-margin-x': 5,
-                            'color': 'red' // Change label color here
-                        }
-                    }
-                ],
-                layout: {
-                    name: dummy,
-                    avoidOverlap: true,
-                    nodeOverlap: 0,
-                    spacingFactor: 3,
-                    animate: false,
-
-                }
-            });
-            
-            cy2.on('tap', '*', function (evt) {
-                var offcanvasElement = document.getElementById('offcanvasScrolling');
-                var bsOffcanvas = new bootstrap.Offcanvas(offcanvasElement);
-                bsOffcanvas.show();
-            })
-
-            cy2.on('tap', 'node', function (evt) {
-                let text;
-                var node = evt.target;
-                $('#offBody').text('');
-                $('#offcanvasScrollingLabel').html('Node: ' + node.id());
-                for (const [destination, weight] of Object.entries(graph['version' + versionTwo][node.id()])) {
-                    text = destination + ' : ' + weight;
-                    $("#offBody").append(text + "<br>");
-                }
-            });
-            cy2.on('tap', 'edge', function (evt) {
-                let text;
-                var edge = evt.target;
-                $('#offBody').text('');
-                $('#offcanvasScrollingLabel').html('Edge: ' + edge.data('id'));
-                $('#offBody').append("Source : " + edge.data('source') + '<br>');
-                $('#offBody').append("Destination : " + edge.data('target') + '<br>');
-                $('#offBody').append("Weight : " + edge.data('label') + '<br>');
-            });
-        }
->>>>>>> JaseSafeCopy
 
         function downloadJSON() {
             const jsonStr = JSON.stringify(graph, null, 2);
@@ -924,7 +612,6 @@
                 return;
             }
 
-<<<<<<< HEAD
 			const reader = new FileReader();
 			reader.onload = function (event) {
 				try {
@@ -982,290 +669,6 @@
 			refresh();
 			refreshTwo();
 		}
-=======
-            const reader = new FileReader();
-            reader.onload = function (event) {
-                try {
-                    const json = JSON.parse(event.target.result);
-                    graph = json;
-                    version = Object.keys(graph).length;
-                    document.getElementById('versionDisplay').innerText = version; // Update displayed version
-                    displayGraph();
-                    drawCytoscapeGraph();
-                    drawCy2Graph();
-                    $('.updateClass').css('display', 'inline');
-                } catch (e) {
-                    alert("Error parsing JSON: " + e.message);
-                }
-            };
-            reader.readAsText(file);
-        }
-        
-        function addNotes(message)
-            {
-                changeNotes.push(`${message}`);
-                changeNotes.push(``);
-            }
-
-
-        function runAlgorithm(number) {
-            if (!document.querySelector('#runAllNodes').checked) {      // run single node
-            for (let i = 0; i < number; i++) {
-                    // update displayed version every iteration
-                    graph['version' + (version + 1)] = JSON.parse(JSON.stringify(graph['version' + version]));
-                    version++;
-                    versionTwo++;
-                    document.getElementById('versionDisplay').innerText = version;
-                    document.getElementById('versionDisplay2').innerText = versionTwo;
-
-                    // select a random source node
-                    const nodes = Object.keys(graph['version' + version]).filter(node => node !== 'changes');
-                    let source;
-
-                    do {
-                        source = nodes[Math.floor(Math.random() * nodes.length)];
-                    } while (noClass.includes(source));
-
-                    // get the edges of the selected source node
-                    const edges = graph['version' + version][source];
-
-                    // select a random target node that does not lead back to the source node
-                    let target;
-                    const targetNodes = Object.keys(edges);
-                    do {
-                        target = targetNodes[Math.floor(Math.random() * targetNodes.length)];
-                    } while (
-                        target === source ||
-                        noClass.includes(target));
-
-                    // find weights of the source and target nodes, and the edge weight
-                    const sourceWeight = parseFloat(graph['version' + version][source]['weight']);
-                    const targetWeight = parseFloat(graph['version' + version][target]['weight']);
-                    const edgeWeight = parseFloat(edges[target]);
-
-                    // find difference in node opinion and compare with edge weight
-                    let weightDiff = sourceWeight > targetWeight ? (sourceWeight - targetWeight) : (targetWeight - sourceWeight);
-                    weightDiff = parseFloat(weightDiff.toFixed(2));
-                    let c = [];
-
-                    // update graph
-                    if (weightDiff > edgeWeight) {
-                        newWeight = 0;
-
-                        // if (document.querySelector('#showAlerts').checked)
-                        // {
-                        //  alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${sourceWeight}) ${source} --(${newWeight})-- ${target} (${targetWeight})`);
-                        // }
-
-                        // delete broken edge from json
-                        delete graph['version' + version][source][target];
-                        delete graph['version' + version][target][source];
-
-                        // add change info to json
-                        let changesString = `${source} -${edgeWeight}- ${target} - broken`;
-                        c.push(changesString);
-                        addNotes(changesString);
-                        graph['version' + version]['changes'] = c;
-
-                        // if (document.querySelector('#showAlerts').checked)
-                        //  alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${sourceWeight}) ${source} --(${0})-- ${target} (${targetWeight})`);
-
-                        // make new edges from source and target
-                        replaceEdge(source, target);
-                    } else {
-                        // calculate new edge weight if not broken
-
-                        // check if either node has weight of 1
-                        if (sourceWeight === 1 || targetWeight === 1) {
-                            let avg = weightDiff / 4;
-                            avg = parseFloat(avg.toFixed(2));
-
-                            if (sourceWeight !== 1) {
-                                // update source if it is not 1
-                                avg = parseFloat(avg + sourceWeight);
-                                avg = parseFloat(avg.toFixed(2));
-                                graph['version' + version][source]['weight'] = avg;
-                                let changesString = `${source} ${sourceWeight} - ${avg}, ${target} ${targetWeight} unchanged`;
-                                c.push(changesString);
-                                addNotes(changesString);
-                                graph['version' + version]['changes'] = c;
-
-                                // if (document.querySelector('#showAlerts').checked)
-                                //  alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${avg}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})`);
-                            } else {
-                                // update target if it is not 1
-                                avg = parseFloat(avg + targetWeight);
-                                avg = parseFloat(avg.toFixed(2));
-                                graph['version' + version][target]['weight'] = avg;
-                                let changesString = `${source} ${sourceWeight} unchanged, ${target} ${targetWeight} - ${avg}`;
-                                c.push(changesString);
-                                addNotes(changesString);
-                                graph['version' + version]['changes'] = c;
-
-                                // if (document.querySelector('#showAlerts').checked)
-                                //  alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${avg})`);
-                            }
-
-                        } else {
-                            // if neither node weight is 1, update both
-                            let avg = weightDiff / 4;
-                            avg = parseFloat(avg.toFixed(2));
-                            let newS, newT;
-
-                            if (sourceWeight > targetWeight) {
-                                newS = parseFloat(sourceWeight - avg) > 0 ? parseFloat(sourceWeight - avg) : 0;
-                                newT = parseFloat(targetWeight + avg) > MAX_WEIGHT ? MAX_WEIGHT : parseFloat(targetWeight + avg);
-                            } else {
-                                newS = parseFloat(sourceWeight + avg) > MAX_WEIGHT ? MAX_WEIGHT : parseFloat(sourceWeight + avg);
-                                newT = parseFloat(targetWeight - avg) > 0 ? parseFloat(targetWeight - avg) : 0;
-                            }
-
-                            newS = parseFloat(newS.toFixed(2));
-                            newT = parseFloat(newT.toFixed(2));
-
-                            graph['version' + version][source]['weight'] = newS;
-                            graph['version' + version][target]['weight'] = newT;
-
-                            // add change info to json
-                            let changesString = `${source} ${sourceWeight} - ${newS} & ${target} ${targetWeight} - ${newT}`;
-                            c.push(changesString);
-                            addNotes(changesString);
-                            graph['version' + version]['changes'] = c;
-
-                            // if (document.querySelector('#showAlerts').checked)
-                            //  alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${newS}) ${source} --(${edgeWeight})-- ${target} (${newT})`);
-                        }
-                    }
-                }
-            } else {                                                    // run all nodes
-                for (let i = 0; i < number; i++) {
-                    // update graph version once for all nodes
-                    graph['version' + (version + 1)] = JSON.parse(JSON.stringify(graph['version' + version]));
-                    version++;
-                    versionTwo++;
-                    document.getElementById('versionDisplay').innerText = version;
-                    document.getElementById('versionDisplay2').innerText = versionTwo;
-
-                    // get list of nodes
-                    const nodes = Object.keys(graph['version' + version]).filter(node => node !== 'changes');
-                    let source;
-                    let c = [];
-
-                    // run algorithm on each node
-                    for (const node of nodes) {
-                        source = node;
-
-                        // get the edges of the selected source node
-                        const edges = graph['version' + version][source];
-
-                        // select a random target node that does not lead back to the source node
-                        let target;
-                        const targetNodes = Object.keys(edges);
-                        do {
-                            target = targetNodes[Math.floor(Math.random() * targetNodes.length)];
-                        } while (
-                            target === source ||
-                            noClass.includes(target));
-
-                        // find weights of the source and target nodes, and the edge weight
-                        const sourceWeight = parseFloat(graph['version' + version][source]['weight']);
-                        const targetWeight = parseFloat(graph['version' + version][target]['weight']);
-                        const edgeWeight = parseFloat(edges[target]);
-
-                        // find difference in node opinion and compare with edge weight
-                        let weightDiff = sourceWeight > targetWeight ? (sourceWeight - targetWeight) : (targetWeight - sourceWeight);
-                        weightDiff = parseFloat(weightDiff.toFixed(2));
-
-                        // update graph
-                        if (weightDiff > edgeWeight) {
-                            newWeight = 0;
-
-                            // if (document.querySelector('#showAlerts').checked)
-                            //  alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${sourceWeight}) ${source} --(${0})-- ${target} (${targetWeight})`);
-
-                            // delete broken edge from json
-                            delete graph['version' + version][source][target];
-                            delete graph['version' + version][target][source];
-
-                            // add change info to json
-                            let changesString = `${source} -${edgeWeight}- ${target} - broken`;
-                            c.push(changesString);
-                            addNotes(changesString);
-                            graph['version' + version]['changes'] = c;
-
-                            // make new edges from source and target
-                            replaceEdge(source, target);
-                        } else {
-                            // calculate new edge weight if not broken
-
-                            // check if either node has weight of 1
-                            if (sourceWeight === 1 || targetWeight === 1) {
-                                let avg = weightDiff / 4;
-                                avg = parseFloat(avg.toFixed(2));
-
-                                if (sourceWeight !== 1) {
-                                    // update source if it is not 1
-                                    avg = parseFloat(avg + sourceWeight);
-                                    avg = parseFloat(avg.toFixed(2));
-                                    graph['version' + version][source]['weight'] = avg;
-                                    let changesString = `${source} ${sourceWeight} - ${avg}, ${target} ${targetWeight} unchanged`;
-                                    c.push(changesString);
-                                    addNotes(changesString);
-                                    graph['version' + version]['changes'] = c;
-
-                                    // if (document.querySelector('#showAlerts').checked)
-                                    //  alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${avg}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})`);
-                                } else {
-                                    // update target if it is not 1
-                                    avg = parseFloat(avg + targetWeight);
-                                    avg = parseFloat(avg.toFixed(2));
-                                    graph['version' + version][target]['weight'] = avg;
-                                    let changesString = `${source} ${sourceWeight} unchanged, ${target} ${targetWeight} - ${avg}`;
-                                    c.push(changesString);
-                                    addNotes(changesString);
-                                    graph['version' + version]['changes'] = c;
-
-                                    // if (document.querySelector('#showAlerts').checked)
-                                    //  alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${avg})`);
-                                }
-
-                            } else {
-                                // if neither node weight is 1, update both 
-                                let avg = weightDiff / 4;
-                                avg = parseFloat(avg.toFixed(2));
-                                let newS, newT;
-
-                                if (sourceWeight > targetWeight) {
-                                    newS = parseFloat(sourceWeight - avg) > 0 ? parseFloat(sourceWeight - avg) : 0;
-                                    newT = parseFloat(targetWeight + avg) > MAX_WEIGHT ? MAX_WEIGHT : parseFloat(targetWeight + avg)
-                                } else {
-                                    newS = parseFloat(sourceWeight + avg) > MAX_WEIGHT ? MAX_WEIGHT : parseFloat(sourceWeight + avg);
-                                    newT = parseFloat(targetWeight - avg) > 0 ? parseFloat(targetWeight - avg) : 0;
-                                }
-
-                                newS = parseFloat(newS.toFixed(2));
-                                newT = parseFloat(newT.toFixed(2));
-
-                                graph['version' + version][source]['weight'] = newS;
-                                graph['version' + version][target]['weight'] = newT;
-
-                                // add change info to json
-                                let changesString = `${source} ${sourceWeight} - ${newS} & ${target} ${targetWeight} - ${newT}`;
-                                c.push(changesString);
-                                addNotes(changesString);
-                                graph['version' + version]['changes'] = c;
-
-                                // if (document.querySelector('#showAlerts').checked)
-                                //  alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${newS}) ${source} --(${edgeWeight})-- ${target} (${newT})`);
-                        }
-                    }
-                }
-            }
-            }
-            refresh();
-            refreshTwo();
-        }
->>>>>>> JaseSafeCopy
 
         function replaceEdge(source, target) {
             // add source and target to respective past edges
@@ -1337,7 +740,6 @@
             console.log(changesString);
         }
 
-<<<<<<< HEAD
 		function previous() {
 			version--;
 			if (version > 0) {
@@ -1360,30 +762,6 @@
 				versionTwo++;
 			}
 		}
-=======
-        function previous() {
-            version--;
-            if (version > 0) {
-                $('#versionDisplay').text(version);
-                refresh();
-            }
-            else {
-                version++;
-            }
-        }
-        
-        function previousTwo() {
-            console.log("Prev two");
-            versionTwo--;
-            if (versionTwo > 0) {
-                $('#versionDisplay2').text(versionTwo);
-                refreshTwo();
-            }
-            else {
-                versionTwo++;
-            }
-        }
->>>>>>> JaseSafeCopy
 
         function next() {
             version++;
@@ -1424,7 +802,6 @@
                 isPlaying = false;
             }
         });
-<<<<<<< HEAD
 		
 		function nextTwo() {
 			console.log("Next two");
@@ -1468,30 +845,6 @@
 			displayGraph();
 			drawCy2Graph();
 		}
-=======
-        
-        function nextTwo() {
-            console.log("Next two");
-            versionTwo++;
-            if (versionTwo <= Object.keys(graph).length) {
-                $('#versionDisplay2').text(versionTwo);
-                refreshTwo();
-            }
-            else {
-                versionTwo--;
-            }
-        }
-
-        function refresh() {
-            displayGraph();
-            drawCytoscapeGraph();
-        }
-        
-        function refreshTwo() {
-            displayGraph();
-            drawCy2Graph();
-        }
->>>>>>> JaseSafeCopy
 
         $('#offBody').on('blur', function () {
             console.log('found');
@@ -1499,7 +852,6 @@
             let tempStr = $('#offBody li').text();
             console.log(tempStr);
             $('#offBody li').each(function(index, element) {
-<<<<<<< HEAD
             	let data = ($(element).text()).split(' : ');
 				let curr = ($('#offcanvasScrollingLabel').text()).split(' ');
 				if (curr[0] == 'Node:'){
@@ -1600,149 +952,6 @@
 			$(me).closest("li").remove();
         }
 
-=======
-                let data = ($(element).text()).split(' : ');
-                let curr = ($('#offcanvasScrollingLabel').text()).split(' ');
-                if (curr[0] == 'Node:'){
-                    if (index == 1) {
-                        return;
-                    }
-                    let me = curr[1];
-                    console.log(me);
-                    if (parseFloat(data[1])==0){
-                        delete graph['version' + version][me][data[0]];
-                        delete graph['version'+version][data[0]][me];
-                    }
-                    else{
-                        graph['version'+version][me][data[0]]=parseFloat(data[1]);
-                        if (index == 0){
-                            return;
-                        }
-                        graph['version'+version][data[0]][me]=parseFloat(data[1]);
-                    }
-
-                }
-                else{
-                    console.log('in the else');
-                    if (index == 0) {
-                        return;
-                    }
-                    let me = curr[1];
-                    let targets = me.split('-');
-                    console.log(data);
-                    if (parseFloat(data[1])==0){
-                        delete graph['version' + version][targets[0]][targets[1]];
-                        delete graph['version'+version][targets[1]][targets[0]];
-                    }
-                    else{
-                        graph['version'+version][targets[0]][targets[1]]=parseFloat(data[1]);
-                        if (index == 0){
-                                return;
-                        }
-                        graph['version'+version][targets[1]][targets[0]]=parseFloat(data[1]);
-                    }
-
-                }
-            });
-            refresh();
-        });
-        function patchNotes() {
-                if(changeNotes.length == 0)
-                {
-                    alert("No changes yet.");
-                }
-                else
-                {
-                    alert("Changes:\n\n" + changeNotes.join("\n"));
-                }
-        }
-
-        
-        function showGraphTwo() { // Currently shows and hides the second graph (This will be removed if we can get dynamic graphs working.
-            var graphStat = document.getElementById("cy");
-            var graphTwoStat = document.getElementById("cy2");
-            if (graphTwoStat.style.display === "none") {
-                graphTwoStat.style.display = "flex";
-                next2.style.display="flex";
-                prev2.style.display="flex";
-                graphStat.style.width = "50%";
-            } else {
-                graphTwoStat.style.display = "none";
-                next2.style.display="none";
-                prev2.style.display="none";
-                graphStat.style.width = "100%";
-            }
-            
-            
-        }
-        
-        function newGraph(){    //This needs to dynamically add a new graph
-            totalGraphs++;
-            $('#TotalDisplay').text(totalGraphs);
-            if(currentGraph == 0 && totalGraphs == 1)
-                currentGraph = 1;
-                $('#secondGraphCurrent').text(currentGraph);
-            var graphStat = document.getElementById("cy");
-            var graphNewStat = document.getElementById("cy" + totalGraphs);
-            //var graphTwoStat = document.getElementById("cy2");
-            if(graphNewStat.style.display === "none") {
-                graphNewStat.style.display = "flex";
-                next2.style.display="flex";
-                prev2.style.display="flex";
-                cycleLeft.style.display="flex";
-                cycleRight.style.display="flex";
-                graphStat.style.width = "50%";
-            }
-        }
-        
-        function removeGraph(){ //This needs to remove the dynamically added graphs.
-            if(totalGraphs == 0)
-                alert("Don't.");
-            else
-            {
-                if(totalGraphs == currentGraph){
-                    currentGraph--;
-                    $('#secondGraphCurrent').text(currentGraph);
-                }
-                totalGraphs--;
-                $('#TotalDisplay').text(totalGraphs);
-                var graphStat = document.getElementById("cy");
-                var graphNewStat = document.getElementById("cy" + currentGraph);
-                //var graphTwoStat = document.getElementById("cy2");
-                if(totalGraphs == 0) {
-                    graphNewStat.style.display = "none";
-                    next2.style.display="none";
-                    prev2.style.display="none";
-                    cycleLeft.style.display="none";
-                    cycleRight.style.display="none";
-                    graphStat.style.width = "100%";
-                    currentGraph = 0;
-                }
-            }
-        }
-        
-        function cycleLeft(){
-            if(currentGraph == 1 && totalGraphs >= currentGraph)
-                alert("Can't.");
-            else if(currentGraph == 0 && totalGraphs == 0)
-                alert("Please make a new graph.");
-            else
-                currentGraph--;
-                
-            $('#secondGraphCurrent').text(currentGraph);
-        }
-        
-        function cycleRight(){
-            if(currentGraph == totalGraphs)
-                alert("Can't.");
-            else if(currentGraph == 0 && totalGraphs == 0)
-                alert("Please make a new graph.");
-            else
-                currentGraph++;
-                
-            $('#secondGraphCurrent').text(currentGraph);
-        }
->>>>>>> JaseSafeCopy
     </script>
 
 </body>
