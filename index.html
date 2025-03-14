@@ -33,8 +33,8 @@
 	</nav>
 	
 
-	<div class="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-md mt-3">
-		<h1 class="text-2xl font-bold mb-4">Weighted Undirected Graph Generator</h1>
+    <div class="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-md mt-3">
+        <h1 class="text-2xl font-bold mb-4">Weighted Undirected Graph Generator</h1>
 
         <div class="space-y-4">
             <div>
@@ -69,24 +69,24 @@
                     class="updateClass bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600 focus:outline-none">Switch
                 </button> -->
 
-                				<!-- Modal -->
-				<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel">
-				  <div class="modal-dialog">
-				    <div class="modal-content">
-				      <div class="modal-header">
-				        <h5 class="modal-title" id="exampleModalLabel">Character Sheet</h5>
-				        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-				      </div>
-				      <div class="modal-body">
-				        <ul></ul>
-				      </div>
-				      <div class="modal-footer">
-				        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-				        <button type="button" onclick="addPerson()" class="btn btn-primary">Add Person</button>
-				      </div>
-				    </div>
-				  </div>
-				</div>
+                                <!-- Modal -->
+                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Character Sheet</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">
+                        <ul></ul>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" onclick="addPerson()" class="btn btn-primary">Add Person</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
 
                 <button onclick="patchNotes()" id="patchBtn"
                     class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 focus:outline-none updateClass"
@@ -120,14 +120,14 @@
                     style="display:none;" value="#00FF00">
                 <label for="safeEdgeInput" class="updateClass" style="display:none;">Safe Edge Color</label>
 
-				<input type="color" id="unsafeEdgeInput" class="updateClass border px-1 py-1 rounded"
-					style="display:none;" value="#9C9C9C">
-				<label for="unsafeEdgeInput" class="updateClass" style="display:none;">Unsafe Edge Color</label>
-				<button onclick="patchNotes()" id="patchBtn"
-				class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 focus:outline-none updateClass" style="display:none;">Patch Notes</button>
-				<button onclick="addGraph()" id="GraphTwo"
-				class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none updateClass" style="display:none;">Add Graph</button>
-			</div>
+                <input type="color" id="unsafeEdgeInput" class="updateClass border px-1 py-1 rounded"
+                    style="display:none;" value="#9C9C9C">
+                <label for="unsafeEdgeInput" class="updateClass" style="display:none;">Unsafe Edge Color</label>
+                <button onclick="patchNotes()" id="patchBtn"
+                class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 focus:outline-none updateClass" style="display:none;">Patch Notes</button>
+                <button onclick="addGraph()" id="GraphTwo"
+                class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none updateClass" style="display:none;">Add Graph</button>
+            </div>
 
             <div class="mt-4">
                 <input type="file" id="fileInput" accept=".json" onchange="uploadJSON()"
@@ -140,10 +140,10 @@
             </div>
         </div>
 
-		<h2 class="text-xl font-semibold mt-6">Generated Graph:</h2>
-		<div class="flex items-start">
-			<div class="flex-none mr-4">Version: <span id="versionDisplay">1</span></div>
-			<div class="flex-none mr-4">SecondVersion: <span id="versionDisplay2">1</span></div>
+        <h2 class="text-xl font-semibold mt-6">Generated Graph:</h2>
+        <div class="flex items-start">
+            <div class="flex-none mr-4">Version: <span id="versionDisplay">1</span></div>
+            <div class="flex-none mr-4">SecondVersion: <span id="versionDisplay2">1</span></div>
 
             <div id="matrixContainer" class="flex-grow overflow-x-auto overflow-y-auto max-h-96 mx-4 self-center"
                 style="display: none;">
@@ -153,24 +153,24 @@
             </div>
 
             <div class="flex-none ml-auto">
-				<button onclick="refresh()" id="reset"
-					class="bg-purple-500 text-white px-2 py-2 rounded hover:bg-purple-600 focus:outline-none">Reset</button>
+                <button onclick="refresh()" id="reset"
+                    class="bg-purple-500 text-white px-2 py-2 rounded hover:bg-purple-600 focus:outline-none">Reset</button>
                 <button onclick="previous()" id="prev"
                     class="bg-purple-500 text-white px-2 py-2 rounded hover:bg-purple-600 focus:outline-none">Prev</button>
                 <button onclick="next()" id="next"
                     class="bg-purple-500 text-white px-2 py-2 rounded hover:bg-purple-600 focus:outline-none">Next</button>
                 <button onclick="" id="play"
                     class="bg-purple-500 text-white px-2 py-2 rounded hover:bg-purple-600 focus:outline-none">▶</button>
-				<button onclick="previousTwo()" id="prev2"
-					class="bg-purple-500 text-white px-2 py-2 rounded hover:bg-purple-600 focus:outline-none;" style="display:none;">Second Graph Prev</button>
-				<button onclick="nextTwo()" id="next2"
-					class="bg-purple-500 text-white px-2 py-2 rounded hover:bg-purple-600 focus:outline-none;" style="display:none;">Second Graph Next</button>
+                <button onclick="previousTwo()" id="prev2"
+                    class="bg-purple-500 text-white px-2 py-2 rounded hover:bg-purple-600 focus:outline-none;" style="display:none;">Second Graph Prev</button>
+                <button onclick="nextTwo()" id="next2"
+                    class="bg-purple-500 text-white px-2 py-2 rounded hover:bg-purple-600 focus:outline-none;" style="display:none;">Second Graph Next</button>
             </div>
         </div>
 
-		<div class="grid gap-4 grid-cols-1" id="field">
-			<div id="cy" class="h-[600px] border border-gray-300" style="width: auto; height: 600px;"></div>
-		</div>
+        <div class="grid gap-4 grid-cols-1" id="field">
+            <div id="cy" class="h-[600px] border border-gray-300" style="width: auto; height: 600px;"></div>
+        </div>
 	</div>
 
     <div class="offcanvas offcanvas-start !w-[200px]" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1"
@@ -187,7 +187,9 @@
 	<script>
         let displays = {};
 		let graph = {};
+		//let graph2 = {}; Don't.
 		let version = 1;
+		let versionTwo = 1;
 		let isMatrixVisible = false; // Track whether the matrix is visible or not
 		let dummy = 'circle';
 		let noClass = ['weight', 'Past Edges', 'changes'];
@@ -588,6 +590,7 @@
             // });
         }
 
+
         function downloadJSON() {
             const jsonStr = JSON.stringify(graph, null, 2);
             const blob = new Blob([jsonStr], { type: 'application/json' });
@@ -636,134 +639,20 @@
 
 		function runAlgorithm(number) {
 			if (!document.querySelector('#runAllNodes').checked) {		// run single node
-			for (let i = 0; i < number; i++) {
-					// update displayed version every iteration
-					graph['version' + (version + 1)] = JSON.parse(JSON.stringify(graph['version' + version]));
-					version++;
-					versionTwo++;
-					document.getElementById('versionDisplay').innerText = version;
-					document.getElementById('versionDisplay2').innerText = versionTwo;
+    			for (let i = 0; i < number; i++) {
+    					// update displayed version every iteration
+    					graph['version' + (version + 1)] = JSON.parse(JSON.stringify(graph['version' + version]));
+    					version++;
+    					versionTwo++;
+    					document.getElementById('versionDisplay').innerText = version;
+    					document.getElementById('versionDisplay2').innerText = versionTwo;
 
-                    // select a random source node
-                    const nodes = Object.keys(graph['version' + version]).filter(node => node !== 'changes');
-                    let source;
-
-                    do {
-                        source = nodes[Math.floor(Math.random() * nodes.length)];
-                    } while (noClass.includes(source));
-
-                    // get the edges of the selected source node
-                    const edges = graph['version' + version][source];
-
-                    // select a random target node that does not lead back to the source node
-                    let target;
-                    const targetNodes = Object.keys(edges);
-                    do {
-                        target = targetNodes[Math.floor(Math.random() * targetNodes.length)];
-                    } while (
-                        target === source ||
-                        noClass.includes(target));
-
-                    // find weights of the source and target nodes, and the edge weight
-                    const sourceWeight = parseFloat(graph['version' + version][source]['weight']);
-                    const targetWeight = parseFloat(graph['version' + version][target]['weight']);
-                    const edgeWeight = parseFloat(edges[target]);
-
-                    // find difference in node opinion and compare with edge weight
-                    let weightDiff = sourceWeight > targetWeight ? (sourceWeight - targetWeight) : (targetWeight - sourceWeight);
-                    weightDiff = parseFloat(weightDiff.toFixed(2));
-                    let c = [];
-
-                    // update graph
-                    if (weightDiff > edgeWeight) {
-                        newWeight = 0;
-
-                        // if (document.querySelector('#showAlerts').checked)
-                        // {
-                        //  alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${sourceWeight}) ${source} --(${newWeight})-- ${target} (${targetWeight})`);
-                        // }
-
-                        // delete broken edge from json
-                        delete graph['version' + version][source][target];
-                        delete graph['version' + version][target][source];
-
-                        // add change info to json
-                        let changesString = `${source} -${edgeWeight}- ${target} - broken`;
-                        c.push(changesString);
-                        addNotes(changesString);
-                        graph['version' + version]['changes'] = c;
-
-                        // if (document.querySelector('#showAlerts').checked)
-                        //  alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${sourceWeight}) ${source} --(${0})-- ${target} (${targetWeight})`);
-
-                        // make new edges from source and target
-                        replaceEdge(source, target);
-                    } else {
-                        // calculate new edge weight if not broken
-
-                        // check if either node has weight of 1
-                        if (sourceWeight === 1 || targetWeight === 1) {
-                            let avg = weightDiff / 4;
-                            avg = parseFloat(avg.toFixed(2));
-
-                            if (sourceWeight !== 1) {
-                                // update source if it is not 1
-                                avg = parseFloat(avg + sourceWeight);
-                                avg = parseFloat(avg.toFixed(2));
-                                graph['version' + version][source]['weight'] = avg;
-                                let changesString = `${source} ${sourceWeight} - ${avg}, ${target} ${targetWeight} unchanged`;
-                                c.push(changesString);
-                                addNotes(changesString);
-                                graph['version' + version]['changes'] = c;
-
-                                // if (document.querySelector('#showAlerts').checked)
-                                //  alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${avg}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})`);
-                            } else {
-                                // update target if it is not 1
-                                avg = parseFloat(avg + targetWeight);
-                                avg = parseFloat(avg.toFixed(2));
-                                graph['version' + version][target]['weight'] = avg;
-                                let changesString = `${source} ${sourceWeight} unchanged, ${target} ${targetWeight} - ${avg}`;
-                                c.push(changesString);
-                                addNotes(changesString);
-                                graph['version' + version]['changes'] = c;
-
-                                // if (document.querySelector('#showAlerts').checked)
-                                //  alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${avg})`);
-                            }
-
-                        } else {
-                            // if neither node weight is 1, update both
-                            let avg = weightDiff / 4;
-                            avg = parseFloat(avg.toFixed(2));
-                            let newS, newT;
-
-                            if (sourceWeight > targetWeight) {
-                                newS = parseFloat(sourceWeight - avg) > 0 ? parseFloat(sourceWeight - avg) : 0;
-                                newT = parseFloat(targetWeight + avg) > MAX_WEIGHT ? MAX_WEIGHT : parseFloat(targetWeight + avg);
-                            } else {
-                                newS = parseFloat(sourceWeight + avg) > MAX_WEIGHT ? MAX_WEIGHT : parseFloat(sourceWeight + avg);
-                                newT = parseFloat(targetWeight - avg) > 0 ? parseFloat(targetWeight - avg) : 0;
-                            }
-
-                            newS = parseFloat(newS.toFixed(2));
-                            newT = parseFloat(newT.toFixed(2));
-
-                            graph['version' + version][source]['weight'] = newS;
-                            graph['version' + version][target]['weight'] = newT;
-
-                            // add change info to json
-                            let changesString = `${source} ${sourceWeight} - ${newS} & ${target} ${targetWeight} - ${newT}`;
-                            c.push(changesString);
-                            addNotes(changesString);
-                            graph['version' + version]['changes'] = c;
 
 							// if (document.querySelector('#showAlerts').checked)
 							// 	alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${newS}) ${source} --(${edgeWeight})-- ${target} (${newT})`);
-						}
-					}
 				}
-			} else {													// run all nodes
+			}
+			else {													// run all nodes
 				for (let i = 0; i < number; i++) {
 					// update graph version once for all nodes
 					graph['version' + (version + 1)] = JSON.parse(JSON.stringify(graph['version' + version]));
@@ -772,121 +661,10 @@
 					document.getElementById('versionDisplay').innerText = version;
 					document.getElementById('versionDisplay2').innerText = versionTwo;
 
-                    // get list of nodes
-                    const nodes = Object.keys(graph['version' + version]).filter(node => node !== 'changes');
-                    let source;
-                    let c = [];
-
-                    // run algorithm on each node
-                    for (const node of nodes) {
-                        source = node;
-
-                        // get the edges of the selected source node
-                        const edges = graph['version' + version][source];
-
-                        // select a random target node that does not lead back to the source node
-                        let target;
-                        const targetNodes = Object.keys(edges);
-                        do {
-                            target = targetNodes[Math.floor(Math.random() * targetNodes.length)];
-                        } while (
-                            target === source ||
-                            noClass.includes(target));
-
-                        // find weights of the source and target nodes, and the edge weight
-                        const sourceWeight = parseFloat(graph['version' + version][source]['weight']);
-                        const targetWeight = parseFloat(graph['version' + version][target]['weight']);
-                        const edgeWeight = parseFloat(edges[target]);
-
-                        // find difference in node opinion and compare with edge weight
-                        let weightDiff = sourceWeight > targetWeight ? (sourceWeight - targetWeight) : (targetWeight - sourceWeight);
-                        weightDiff = parseFloat(weightDiff.toFixed(2));
-
-                        // update graph
-                        if (weightDiff > edgeWeight) {
-                            newWeight = 0;
-
-                            // if (document.querySelector('#showAlerts').checked)
-                            //  alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${sourceWeight}) ${source} --(${0})-- ${target} (${targetWeight})`);
-
-                            // delete broken edge from json
-                            delete graph['version' + version][source][target];
-                            delete graph['version' + version][target][source];
-
-                            // add change info to json
-                            let changesString = `${source} -${edgeWeight}- ${target} - broken`;
-                            c.push(changesString);
-                            addNotes(changesString);
-                            graph['version' + version]['changes'] = c;
-
-                            // make new edges from source and target
-                            replaceEdge(source, target);
-                        } else {
-                            // calculate new edge weight if not broken
-
-                            // check if either node has weight of 1
-                            if (sourceWeight === 1 || targetWeight === 1) {
-                                let avg = weightDiff / 4;
-                                avg = parseFloat(avg.toFixed(2));
-
-                                if (sourceWeight !== 1) {
-                                    // update source if it is not 1
-                                    avg = parseFloat(avg + sourceWeight);
-                                    avg = parseFloat(avg.toFixed(2));
-                                    graph['version' + version][source]['weight'] = avg;
-                                    let changesString = `${source} ${sourceWeight} - ${avg}, ${target} ${targetWeight} unchanged`;
-                                    c.push(changesString);
-                                    addNotes(changesString);
-                                    graph['version' + version]['changes'] = c;
-
-                                    // if (document.querySelector('#showAlerts').checked)
-                                    //  alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${avg}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})`);
-                                } else {
-                                    // update target if it is not 1
-                                    avg = parseFloat(avg + targetWeight);
-                                    avg = parseFloat(avg.toFixed(2));
-                                    graph['version' + version][target]['weight'] = avg;
-                                    let changesString = `${source} ${sourceWeight} unchanged, ${target} ${targetWeight} - ${avg}`;
-                                    c.push(changesString);
-                                    addNotes(changesString);
-                                    graph['version' + version]['changes'] = c;
-
-                                    // if (document.querySelector('#showAlerts').checked)
-                                    //  alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${avg})`);
-                                }
-
-                            } else {
-                                // if neither node weight is 1, update both 
-                                let avg = weightDiff / 4;
-                                avg = parseFloat(avg.toFixed(2));
-                                let newS, newT;
-
-                                if (sourceWeight > targetWeight) {
-                                    newS = parseFloat(sourceWeight - avg) > 0 ? parseFloat(sourceWeight - avg) : 0;
-                                    newT = parseFloat(targetWeight + avg) > MAX_WEIGHT ? MAX_WEIGHT : parseFloat(targetWeight + avg)
-                                } else {
-                                    newS = parseFloat(sourceWeight + avg) > MAX_WEIGHT ? MAX_WEIGHT : parseFloat(sourceWeight + avg);
-                                    newT = parseFloat(targetWeight - avg) > 0 ? parseFloat(targetWeight - avg) : 0;
-                                }
-
-                                newS = parseFloat(newS.toFixed(2));
-                                newT = parseFloat(newT.toFixed(2));
-
-                                graph['version' + version][source]['weight'] = newS;
-                                graph['version' + version][target]['weight'] = newT;
-
-                                // add change info to json
-                                let changesString = `${source} ${sourceWeight} - ${newS} & ${target} ${targetWeight} - ${newT}`;
-                                c.push(changesString);
-                                addNotes(changesString);
-                                graph['version' + version]['changes'] = c;
 
 								// if (document.querySelector('#showAlerts').checked)
 								// 	alert(`(${sourceWeight}) ${source} --(${edgeWeight})-- ${target} (${targetWeight})\n-->\n(${newS}) ${source} --(${edgeWeight})-- ${target} (${newT})`);
-						}
-					}
 				}
-			}
 			}
 			refresh();
 			refreshTwo();
@@ -1036,6 +814,18 @@
 				versionTwo--;
 			}
 		}
+		
+		function nextTwo() {
+			console.log("Next two");
+			versionTwo++;
+			if (versionTwo <= Object.keys(graph).length) {
+				$('#versionDisplay2').text(versionTwo);
+				refreshTwo();
+			}
+			else {
+				versionTwo--;
+			}
+		}
 
 		function refresh() {
 			displayGraph();
@@ -1044,6 +834,11 @@
             dispname.forEach(function(me){
                 drawCytoscapeGraph(me);
             });
+		}
+		
+		function refreshTwo() {
+			displayGraph();
+			drawCy2Graph();
 		}
 		
 		function refreshTwo() {
@@ -1111,6 +906,24 @@
         		{
         			alert("Changes:\n\n" + changeNotes.join("\n"));
         		}
+		}
+		
+		function showGraphTwo() { // Currently shows and hides the second graph
+			var graphStat = document.getElementById("cy");
+			var graphTwoStat = document.getElementById("cy2");
+			if (graphTwoStat.style.display === "none") {
+				graphTwoStat.style.display = "flex";
+				next2.style.display="flex";
+				prev2.style.display="flex";
+				graphStat.style.width = "50%";
+			} else {
+				graphTwoStat.style.display = "none";
+				next2.style.display="none";
+				prev2.style.display="none";
+				graphStat.style.width = "100%";
+			}
+			
+			
 		}
 
 		
