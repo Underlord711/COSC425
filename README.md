@@ -6,6 +6,8 @@
 
 **Generate Graph** - Create a graph with chosen number of vertices and edge weights. Allows up to three edges per vertex and creates (number of vertices * 3) / 2 edges for the initial graph version.
 
+**Upload JSON** - Load a past/premade graph to the website for testing.
+
 **Show Matrix** - Show and hide an adjacency matrix that represents edges in the graph. Edges can be changed using the matrix and they will be updated on the graph when clicking out of the matrix. 
 
 **Download JSON** - Download JSON file containing each graph version. Can choose JSON file to upload to create graph.
@@ -14,13 +16,15 @@
 
 **Patch Notes** - Display alert containing all changes that have happened to the graph since loading (will only display changes to graph from running the algorithm - loading graphs will not have any patch notes until the algorithm has been performed). 
 
+**Previous/Next** - Allow user to display each version of the graph, represented by the version counter on the top left of the graph. If there are no versions before or after the current graph the buttons do nothing. 
+
 **Run All Nodes** - Option to have the algorithm run on all nodes in the graph. If unchecked, a random node will be selected for testing. If checked, each node will be tested. 
 
 **Allow Past Edges** - Option to allow/prevent reforming broken relationships. If checked, nodes can select any other node they don't have an edge with to form a new relationship. If checked, nodes attempt to find a relationship with a new node. 
 
-**Graph Coloring** - Node color allows the user to change the color of nodes in the graph. Safe edge color represents edges that will not break if they are tested by the algorithm. Unsafe edge color represents edges that will break if they are tested. 
+**Randomization** - Option to allow/prevent a random chance of no change happening to node opinions' during an iteration of the algorithm. If randomization is active and triggered it will be logged in the JSON file. 
 
-**Previous/Next** - Allow user to display each version of the graph, represented by the version counter on the top left of the graph. If there are no versions before or after the current graph the buttons do nothing. 
+**Graph Coloring** - Node color allows the user to change the color of nodes in the graph. Safe edge color represents edges that will not break if they are tested by the algorithm. Unsafe edge color represents edges that will break if they are tested. 
 
 **Graph Layouts** - Dropdown menu that allows user to select how they want their graph to be displayed. Default display is circle. CoSE (Compound Spring Embedder) is a force-directed algorithm used to position nodes. fCoSE<sup>1, 2</sup> (Fast CoSE) is an optimized version of the CoSE algorithm. CiSE<sup>3</sup> (Circular Spring Embedder) is another force-directed algorithm that clusters nodes using Markov Clustering from the Cytoscape.js core. 
 
