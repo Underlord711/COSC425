@@ -1,0 +1,18 @@
+/* Styling for the slider container */
+.slider-container {
+    width: 300px;
+    margin: 50px auto;
+    text-align: center;
+  }
+  
+  /* Make the slider take up 100% width of its container */
+  .slider {
+    width: 100%;
+  }
+  
+  /* Styling for the displayed slider value text */
+  .slider-value {
+    margin-top: 10px;
+    font-size: 18px;
+  }
+  

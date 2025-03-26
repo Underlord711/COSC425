@@ -1,0 +1,60 @@
+/* styles.css */
+
+/* Basic Reset */
+body, ul, li, a, button {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+/* Navbar styles */
+nav {
+    background-color: maroon;
+    padding: 15px;
+    border: 3px solid gold;
+
+}
+
+nav ul {
+    display: flex;
+    justify-content: flex-start;
+}
+
+nav ul li {
+    margin: 0 15px;
+}
+
+/* Style for anchor links and buttons */
+nav ul li a, 
+nav ul li button {
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+    padding: 15px 20px;
+    display: block;
+    border-radius: 5px;
+    background-color: maroon;
+    cursor: pointer;
+}
+
+/* Hover effect for anchor links */
+nav ul li a:hover {
+    background-color: #f4a261;
+}
+
+/* Button specific styles */
+nav ul li button {
+    font-size: 16px;
+    border: none;
+}
+
+nav ul li button:hover {
+    border: 2px solid white;
+}
+
+/* Style the logo */
+.navbar-logo {
+    height: 100px;
+    width: auto;
+    display: block;
+}
