@@ -67,18 +67,13 @@
             Download JSON
           </button>
         </li>
-        <li>
-          <select
-            id="changeLayout"
-            class="updateClass mt-8"
-            style="display: none; background-color: gold; color: black"
-          >
-            <option select="selected">Circle</option>
-            <option>CoSE</option>
-            <option>fCoSE</option>
-            <option>CiSE</option>
-          </select>
-        </li>
+      <li>
+        <button type="button"
+          class="updateClass underline mt-3 bg-maroon text-white px-5 py-3 text-lg rounded-md hover:bg-orange-500 hidden"
+          data-bs-toggle="modal" data-bs-target="#optionsModal">
+          Options
+        </button>
+      </li>
       </ul>
     </nav>
     <div class="slider-container">
@@ -113,7 +108,7 @@
           />
         </div>
 
-        <div>
+        <div> 
           <label for="weight1" class="block text-sm font-medium"
             >Weight for Edge Type 1:</label
           >
@@ -140,18 +135,64 @@
         </div>
 
         <div class="space-x-4">
-          <!-- <button onclick="generateGraph()"
-                    class="bg-indigo-500 text-white px-4 py-2 rounded hover:bg-indigo-600 focus:outline-none">Generate
-                    Graph</button>
-                <button onclick="toggleMatrix()" style="display:none;" id="matrixBtn"
-                    class="updateClass bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 focus:outline-none">Show
-                    Matrix</button>
-                <button onclick="downloadJSON()" style="display:none;" id="downloadBtn"
-                    class="updateClass bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 focus:outline-none">Download
-                    JSON</button>
-                <button onclick="updateDisplay()" style="display:none;" id="updateBtn"
-                    class="updateClass bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600 focus:outline-none">Switch
-                </button> -->
+        <div class="modal fade" id="optionsModal" tabindex="-1" aria-labelledby="optionsModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="optionsModalLabel">Algorithm Options</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <label id="alertsLabel" for="runAllNodes" class="updateClass" style="display: none">Run All
+                  Nodes</label>
+                <input type="checkbox" id="runAllNodes" class="updateClass" style="display: none" checked />
+                <!-- trying to add tooltips to options menu -->
+                <!-- <div class="tooltip updateClass">
+                  WORDS WORDS WORDS
+                  <span class="tooltiptext updateClass">run all nodes tooltip</span>
+                </div> -->
+                </br>
+                <label id="pastEdgesLabel" for="allowPastEdges" class="updateClass" style="display: none">Allow Past
+                  Edges</label>
+                <input type="checkbox" id="allowPastEdges" class="updateClass" style="display: none" checked />
+                </br>
+                <label id="randomizationLabel" for="randomization" class="updateClass"
+                  style="display: none">Randomization</label>
+                <input type="checkbox" id="randomization" class="updateClass" style="display: none" checked />
+                </br>
+                <label for="nodeColor1Input" class="updateClass" style="display: none">Node Color 1</label>
+                <input type="color" id="nodeColor1Input" class="updateClass border px-1 py-1 rounded"
+                  style="display: none" value="#DEDEDE" />
+                </br>
+                <label for="nodeColor2Input" class="updateClass" style="display: none">Node Color 2</label>
+                <input type="color" id="nodeColor2Input" class="updateClass border px-1 py-1 rounded"
+                  style="display: none" value="#000000" />
+                </br>
+                <label for="safeEdgeInput" class="updateClass" style="display: none">Safe Edge Color</label>
+                <input type="color" id="safeEdgeInput" class="updateClass border px-1 py-1 rounded"
+                  style="display: none" value="#00FF00" />
+                </br>
+                <label for="unsafeEdgeInput" class="updateClass" style="display: none">Unsafe Edge Color</label>
+                <input type="color" id="unsafeEdgeInput" class="updateClass border px-1 py-1 rounded"
+                  style="display: none" value="#FF0000" />
+                </br>
+                <li>
+                  <label for="changeLayout" class="updateClass" style="display: none">Graph Layout</label>
+                  <select id="changeLayout" class="updateClass mt-8"
+                    style="display: none; background-color: transparent; color: black; border: 1px solid black;">
+                    <option select="selected">Circle</option>
+                    <option>CoSE</option>
+                    <option>fCoSE</option>
+                    <option>CiSE</option>
+                  </select>
+                </li>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
           <button
             onclick="patchNotes()"
             id="patchBtn"
@@ -175,85 +216,8 @@
             class="updateClass border px-2 py-1 rounded max-w-10"
             style="display: none"
           />
-
-          <input
-            type="checkbox"
-            id="runAllNodes"
-            class="updateClass"
-            style="display: none"
-            checked
-          />
-          <label
-            id="alertsLabel"
-            for="runAllNodes"
-            class="updateClass"
-            style="display: none"
-            >Run All Nodes</label
-          >
-
-          <!-- <input type="checkbox" id="showAlerts" class="updateClass" style="display:none;" checked>
-                <label id="alertsLabel" for="showAlerts" class="updateClass" style="display:none;">Show Alerts</label> -->
-          <!-- <input type="checkbox" id="showAlerts" class="updateClass" style="display:none;" checked>
-                <label id="alertsLabel" for="showAlerts" class="updateClass" style="display:none;">Show Alerts</label> -->
-
-          <input
-            type="checkbox"
-            id="allowPastEdges"
-            class="updateClass"
-            style="display: none"
-            checked
-          />
-          <label
-            id="pastEdgesLabel"
-            for="allowPastEdges"
-            class="updateClass"
-            style="display: none"
-            >Allow Past Edges</label
-          >
-
-          <input
-            type="color"
-            id="nodeColorInput"
-            class="updateClass border px-1 py-1 rounded"
-            style="display: none"
-            value="#000000"
-          />
-          <label for="nodeColorInput" class="updateClass" style="display: none"
-            >Node Color</label
-          >
-
-          <input
-            type="color"
-            id="safeEdgeInput"
-            class="updateClass border px-1 py-1 rounded"
-            style="display: none"
-            value="#00FF00"
-          />
-          <label for="safeEdgeInput" class="updateClass" style="display: none"
-            >Safe Edge Color</label
-          >
-
-          <input
-            type="color"
-            id="unsafeEdgeInput"
-            class="updateClass border px-1 py-1 rounded"
-            style="display: none"
-            value="#9C9C9C"
-          />
-          <label for="unsafeEdgeInput" class="updateClass" style="display: none"
-            >Unsafe Edge Color</label
-            >
-
-          <button
-            onclick="patchNotes()"
-            id="patchBtn"
-            class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 focus:outline-none updateClass"
-            style="display: none"
-          >
-            Patch Notes
-          </button>
-                <button onclick="addGraph()" id="GraphTwo"
-                class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none updateClass" style="display:none;">Add Graph</button>
+            <button onclick="addGraph()" id="GraphTwo"
+            class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none updateClass" style="display:none;">Add Graph</button>
         </div>
 
         <div class="mt-4">
@@ -413,7 +377,8 @@
 
       changeNotes = []; //Need this for Patch Notes
 
-      nodeColorInput.addEventListener("change", drawCytoscapeGraph, false);
+    nodeColor1Input.addEventListener("change", drawCytoscapeGraph, false);
+    nodeColor2Input.addEventListener("change", drawCytoscapeGraph, false);
       safeEdgeInput.addEventListener("change", drawCytoscapeGraph, false);
       unsafeEdgeInput.addEventListener("change", drawCytoscapeGraph, false);
 
@@ -667,10 +632,20 @@
         drawCytoscapeGraph();
       };
 
+    function hexToRgb(hex) {
+      var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+      return result ? [
+        parseInt(result[1], 16),
+        parseInt(result[2], 16),
+        parseInt(result[3], 16)
+     ] : null;
+    }
+
       function drawCytoscapeGraph(me = 'cy') {
         const elements = [];
-        let nodeColor = $("#nodeColorInput").val();
-        let safeEdgeColor = $("#safeEdgeInput").val();
+      let nodeColor1 = hexToRgb($("#nodeColor1Input").val());
+      let nodeColor2 = hexToRgb($("#nodeColor2Input").val());
+      let safeEdgeColor = $("#safeEdgeInput").val();
         let unsafeEdgeColor = $("#unsafeEdgeInput").val();
         let cy;
 
@@ -735,7 +710,14 @@
             {
               selector: "node",
               style: {
-                "background-color": nodeColor,
+              "background-color": function (elem) {
+                let r = nodeColor1[0] + parseFloat(elem.data("rel")) * (nodeColor2[0] - nodeColor1[0]);
+                let g = nodeColor1[1] + parseFloat(elem.data("rel")) * (nodeColor2[1] - nodeColor1[1]);
+                let b = nodeColor1[2] + parseFloat(elem.data("rel")) * (nodeColor2[2] - nodeColor1[2]);
+
+                let res = "rgb(" + r + ", " + g + ", " + b + ")";
+                return res;
+              },
                 label: function (elem) {
                   return elem.data("id") + "\n" + elem.data("rel");
                 },
