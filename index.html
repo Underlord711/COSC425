@@ -377,10 +377,10 @@
 
       changeNotes = []; //Need this for Patch Notes
 
-    nodeColor1Input.addEventListener("change", drawCytoscapeGraph, false);
-    nodeColor2Input.addEventListener("change", drawCytoscapeGraph, false);
-      safeEdgeInput.addEventListener("change", drawCytoscapeGraph, false);
-      unsafeEdgeInput.addEventListener("change", drawCytoscapeGraph, false);
+    nodeColor1Input.addEventListener("change", () => drawCytoscapeGraph('cy'), false);
+    nodeColor2Input.addEventListener("change", () => drawCytoscapeGraph('cy'), false);
+      safeEdgeInput.addEventListener("change", () => drawCytoscapeGraph('cy'), false);
+      unsafeEdgeInput.addEventListener("change", () => drawCytoscapeGraph('cy'), false);
 
       // function updateDisplay() {
       //    if (dummy == 'grid') {
