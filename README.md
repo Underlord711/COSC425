@@ -36,5 +36,7 @@
 **JSON** - Example of JSON file. Each graph version stores the vertices, their opinion (weight), and their edges. Past edges stores nodes from broken relationships. Each graph version has its own change log that describes what happened to each node in the graph. 
 
 **1.** U. Dogrusoz, E. Giral, A. Cetintas, A. Civril and E. Demir, "A Layout Algorithm For Undirected Compound Graphs", Information Sciences, 179, pp. 980-994, 2009.
+
 **2.** H. Balci and U. Dogrusoz, "fCoSE: A Fast Compound Graph Layout Algorithm with Constraint Support," in IEEE Transactions on Visualization and Computer Graphics, 28(12), pp. 4582-4593, 2022.
+
 **3.** M. Belviranli, A. Dilek and U. Dogrusoz, "CiSE: A Circular Spring Embedder Layout Algorithm" in IEEE Transactions on Visualization & Computer Graphics, vol. 19, no. 06, pp. 953-966, 2013.
