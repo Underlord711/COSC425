@@ -40,6 +40,9 @@
             Generate graph
           </button>
         </li>
+            <li><button type="button" class="btn underline mt-3 bg-maroon text-white px-5 py-3 text-lg rounded-md hover:bg-orange-500" data-bs-toggle="modal" data-bs-target="#exampleModal">
+          Character Sheet
+        </button></li>
         <li>
           <button
             onclick="uploadJSON()"
@@ -239,7 +242,8 @@
           />
           <label for="unsafeEdgeInput" class="updateClass" style="display: none"
             >Unsafe Edge Color</label
-          >
+            >
+
           <button
             onclick="patchNotes()"
             id="patchBtn"
@@ -248,14 +252,8 @@
           >
             Patch Notes
           </button>
-          <button
-            onclick="showGraphTwo()"
-            id="GraphTwo"
-            class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none updateClass"
-            style="display: none"
-          >
-            Graph Two
-          </button>
+                <button onclick="addGraph()" id="GraphTwo"
+                class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none updateClass" style="display:none;">Add Graph</button>
         </div>
 
         <div class="mt-4">
@@ -345,18 +343,9 @@
         </div>
       </div>
 
-      <div class="flex">
-        <div
-          id="cy"
-          class="w-32 flex-1 border border-gray-300 mt-6"
-          style="width: auto; height: 600px"
-        ></div>
-        <div
-          id="cy2"
-          class="w-32 flex-1 border border-gray-300 mt-6"
-          style="width: 50%; height: 600px; display: none"
-        ></div>
-      </div>
+        <div class="grid gap-4 grid-cols-1" id="field">
+            <div id="cy" class="h-[600px] border border-gray-300" style="width: auto; height: 600px;"></div>
+        </div>
     </div>
 
     <div
@@ -387,7 +376,27 @@
       </div>
     </div>
 
+                        <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Character Sheet</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <ul></ul>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" onclick="addPerson()" class="btn btn-primary">Add Person</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <script>
+    let displays = {};
       let graph = {};
       let version = 1;
       let versionTwo = 1;
@@ -400,7 +409,7 @@
       let toleranceLevel = 4;
 
       let nodeWeightOne; // used to fix position of node with weight 1 in graph
-	  
+      
 
       changeNotes = []; //Need this for Patch Notes
 
@@ -409,13 +418,13 @@
       unsafeEdgeInput.addEventListener("change", drawCytoscapeGraph, false);
 
       // function updateDisplay() {
-      // 	if (dummy == 'grid') {
-      // 		dummy = 'circle';
-      // 	}
-      // 	else {
-      // 		dummy = 'grid';
-      // 	}
-      // 	drawCytoscapeGraph();
+      //    if (dummy == 'grid') {
+      //        dummy = 'circle';
+      //    }
+      //    else {
+      //        dummy = 'grid';
+      //    }
+      //    drawCytoscapeGraph();
       // }
       function Slider(callback) {
         const slider = document.getElementById("mySlider");
@@ -439,97 +448,102 @@
         });
       }
 
-      function generateGraph() {
-        const numVertices = parseInt(
-          document.getElementById("numVertices").value
-        );
-        const weight1 = parseFloat(document.getElementById("weight1").value);
-        const weight2 = parseFloat(document.getElementById("weight2").value);
-        if (Object.keys(graph).length != 0) {
-          if (
-            confirm(
-              "Do you want to save this json file before overwriting graph?"
-            )
-          ) {
-            downloadJSON();
-          }
-        }
-        let one = false;
-        graph = { version1: {} };
-        for (let i = 0; i < numVertices; i++) {
-          const vertex = String.fromCharCode(65 + i);
-          let w = Math.random().toFixed(2);
-
-          if (w > MAX_WEIGHT && !one) {
-            w = 1;
-            nodeWeightOne = vertex;
-            one = true;
-          } else if (w > MAX_WEIGHT) {
-            w = MAX_WEIGHT;
-          }
-
-          graph["version" + version][vertex] = { weight: w }; //Initialing the object for each vertex.
-          graph["version" + version][vertex]["Past Edges"] = [];
-        }
-
-        if (!one) {
-          let vertex = String.fromCharCode(
-            65 + Math.floor(Math.random() * numVertices)
-          );
-          nodeWeightOne = vertex;
-          graph["version" + version][vertex]["weight"] = 1;
-        }
-
-        const edgesCount = Array(numVertices).fill(0);
-        const maxEdgesPerVertex = 3;
-        const totalEdgesNeeded = (numVertices * maxEdgesPerVertex) / 2;
-
-        let edgesCreated = 0;
-
-        while (edgesCreated < totalEdgesNeeded) {
-          let sourceIndex = Math.floor(Math.random() * numVertices);
-          let destinationIndex;
-
-          let attempts = 0;
-          do {
-            destinationIndex = Math.floor(Math.random() * numVertices);
-            attempts++;
-            if (attempts > 100) {
-              console.log("Too many attempts to find a valid edge.");
-              break;
+        function generateGraph() {
+            let vertexes = [];
+            let weights = [];
+            $('.modal-body ul li :text').each(function(me){
+                vertexes.push($(this).val());
+                weights.push($(this).next().val());
+            });
+            console.log(vertexes);
+            console.log(weights);
+            const numVertices = parseInt(document.getElementById('numVertices').value);
+            const weight1 = parseFloat(document.getElementById('weight1').value);
+            const weight2 = parseFloat(document.getElementById('weight2').value);
+            if (Object.keys(graph).length != 0) {
+                if (confirm('Do you want to save this json file before overwriting graph?')) {
+                    downloadJSON();
+                }
             }
-          } while (
-            destinationIndex === sourceIndex || // Prevent self-loops
-            edgesCount[sourceIndex] >= maxEdgesPerVertex ||
-            edgesCount[destinationIndex] >= maxEdgesPerVertex ||
-            graph.version1[String.fromCharCode(65 + sourceIndex)][
-              String.fromCharCode(65 + destinationIndex)
-            ]
-          );
+            let one = false;
+            graph = { version1: {} };
+            if (vertexes.length == 0){
+                for (let i = 0; i < numVertices; i++) {
+                    const vertex = String.fromCharCode(65 + i);
+                    let w = Math.random().toFixed(2);
 
-          if (
-            edgesCount[sourceIndex] < maxEdgesPerVertex &&
-            edgesCount[destinationIndex] < maxEdgesPerVertex
-          ) {
-            const source = String.fromCharCode(65 + sourceIndex);
-            const destination = String.fromCharCode(65 + destinationIndex);
-            const weight = Math.random() < 0.5 ? weight1 : weight2;
+                    if (w > MAX_WEIGHT && !one) {
+                        w = 1;
+                        one = true;
+                    } else if (w > MAX_WEIGHT) {
+                        w = MAX_WEIGHT;
+                    }
 
-            graph["version" + version][source][destination] = weight;
-            graph["version" + version][destination][source] = weight;
+                    vertexes.push(vertex);
+                    weights.push(w);
 
-            edgesCount[sourceIndex]++;
-            edgesCount[destinationIndex]++;
-            edgesCreated++;
-          }
+                    graph['version' + version][vertex] = { weight: w }; //Initialing the object for each vertex.
+                    graph['version' + version][vertex]['Past Edges'] = [];
+                }
+            }
+            else {
+                for (let i = 0; i < vertexes.length; i++){
+                    graph['version' + version][vertexes[i]] = { weight : weights[i]};
+                    graph['version' + version][vertexes[i]]['Past Edges'] = [];
+
+                }
+            }
+
+            if (!one) {
+                let vertex = vertexes[Math.floor(Math.random() * vertexes.length)];
+                graph['version' + version][vertex]['weight'] = 1;
+            }
+
+            const edgesCount = Array(vertexes.length).fill(0);
+            const maxEdgesPerVertex = 3;
+            const totalEdgesNeeded = (vertexes.length * maxEdgesPerVertex) / 2;
+
+            let edgesCreated = 0;
+
+            while (edgesCreated < totalEdgesNeeded) {
+                let sourceIndex = Math.floor(Math.random() * vertexes.length);
+                let destinationIndex;
+
+                let attempts = 0;
+                do {
+                    destinationIndex = Math.floor(Math.random() * vertexes.length);
+                    attempts++;
+                    if (attempts > 100) {
+                        console.log('Too many attempts to find a valid edge.');
+                        break;
+                    }
+                } while (
+                    destinationIndex === sourceIndex || // Prevent self-loops
+                    edgesCount[sourceIndex] >= maxEdgesPerVertex ||
+                    edgesCount[destinationIndex] >= maxEdgesPerVertex ||
+                    graph.version1[vertexes[sourceIndex]][vertexes[destinationIndex]]
+                );
+
+                if (edgesCount[sourceIndex] < maxEdgesPerVertex && edgesCount[destinationIndex] < maxEdgesPerVertex) {
+                    const source = vertexes[sourceIndex];
+                    const destination = vertexes[destinationIndex];
+                    const weight = Math.random() < 0.5 ? weight1 : weight2;
+
+                    graph['version' + version][source][destination] = weight;
+                    graph['version' + version][destination][source] = weight;
+
+                    edgesCount[sourceIndex]++;
+                    edgesCount[destinationIndex]++;
+                    edgesCreated++;
+                }
+            }
+
+            // graph['version1']['changes'] = {};
+            graph['version1']['changes'] = [];
+
+            refresh();
+            $('.updateClass').css('display', 'inline');
         }
-
-        // graph['version1']['changes'] = {};
-        graph["version1"]["changes"] = [];
-
-        refresh();
-        $(".updateClass").css("display", "inline");
-      }
 
       function toggleMatrix() {
         const matrixContainer = document.getElementById("matrixContainer");
@@ -653,7 +667,7 @@
         drawCytoscapeGraph();
       };
 
-      function drawCytoscapeGraph() {
+      function drawCytoscapeGraph(me = 'cy') {
         const elements = [];
         let nodeColor = $("#nodeColorInput").val();
         let safeEdgeColor = $("#safeEdgeInput").val();
@@ -667,9 +681,9 @@
           if (noClass.includes(source)) continue;
           elements.push({ data: { id: source, rel: edges.weight } });
           // if (source === nodeWeightOne) {
-          // 	elements.push({ data: { id: source, rel: edges.weight }, position: { x: 200, y: 200, locked: true } });
+          //    elements.push({ data: { id: source, rel: edges.weight }, position: { x: 200, y: 200, locked: true } });
           // } else {
-          // 	elements.push({ data: { id: source, rel: edges.weight } });
+          //    elements.push({ data: { id: source, rel: edges.weight } });
           // }
 
           for (const [destination, weight] of Object.entries(edges)) {
@@ -715,7 +729,7 @@
 
         // initialize cytoscape
         cy = cytoscape({
-          container: document.getElementById("cy"),
+          container: document.getElementById(me),
           elements: elements,
           style: [
             {
@@ -847,203 +861,6 @@
           $("#offBody").append(
             `</br><button class="underline bg-maroon px-5 py-3 text-lg rounded-md hover:bg-orange-500" onclick=\"testEdge('${source}', '${target}')\">Test Edges</button>`
           );
-        });
-      }
-
-      function drawCy2Graph() {
-        const elements = [];
-        let nodeColor = $("#nodeColorInput").val();
-        let safeEdgeColor = $("#safeEdgeInput").val();
-        let unsafeEdgeColor = $("#unsafeEdgeInput").val();
-        let cy;
-
-        // get elements of graph
-        for (const [source, edges] of Object.entries(
-          graph["version" + versionTwo]
-        )) {
-          if (noClass.includes(source)) continue;
-          elements.push({ data: { id: source, rel: edges.weight } });
-          // if (source === nodeWeightOne) {
-          // 	elements.push({ data: { id: source, rel: edges.weight }, position: { x: 200, y: 200, locked: true } });
-          // } else {
-          // 	elements.push({ data: { id: source, rel: edges.weight } });
-          // }
-
-          for (const [destination, weight] of Object.entries(edges)) {
-            if (noClass.includes(destination)) continue;
-            if (source !== destination) {
-              elements.push({
-                data: {
-                  id: destination,
-                  rel: graph["version" + versionTwo][destination]["weight"],
-                },
-              });
-              elements.push({
-                data: {
-                  id: `${source}-${destination}`,
-                  source: source,
-                  target: destination,
-                  label: weight.toFixed(2),
-                },
-              });
-            }
-          }
-        }
-
-        // graph styles based on layout
-        let nodeSize, fontSize, edgeWidth;
-        if (layout === "circle") {
-          nodeSize = "50px";
-          fontSize = "50px";
-          edgeWidth = 1;
-        } else if (layout === "cose") {
-          nodeSize = "5px";
-          fontSize = "3px";
-          edgeWidth = 0.25;
-        } else if (layout === "cise") {
-          nodeSize = "10px";
-          fontSize = "12px";
-          edgeWidth = 1;
-        } else if (layout === "fcose") {
-          nodeSize = "5px";
-          fontSize = "3px";
-          edgeWidth = 0.25;
-        }
-
-        // initialize cytoscape
-        cy = cytoscape({
-          container: document.getElementById("cy2"),
-          elements: elements,
-          style: [
-            {
-              selector: "node",
-              style: {
-                "background-color": nodeColor,
-                label: function (elem) {
-                  return elem.data("id") + "\n" + elem.data("rel");
-                },
-                color: "black",
-                "font-size": fontSize,
-                "text-wrap": "wrap",
-                height: nodeSize,
-                width: nodeSize,
-              },
-            },
-            {
-              selector: "edge",
-              style: {
-                width: edgeWidth,
-                "line-color": function (elem) {
-                  let s =
-                    graph["version" + versionTwo][elem.data("source")][
-                      "weight"
-                    ];
-                  let t =
-                    graph["version" + versionTwo][elem.data("target")][
-                      "weight"
-                    ];
-                  let w = elem.data("label");
-                  let weightDiff = Math.abs(s - t);
-                  return weightDiff > w ? unsafeEdgeColor : safeEdgeColor;
-                },
-                label: "data(label)",
-                "font-size": fontSize,
-                "text-justification": "left",
-                "text-margin-x": 5,
-                color: "black",
-              },
-            },
-          ],
-        });
-
-        // apply layout
-        if (layout === "circle" || layout === "cose" || layout === "fcose") {
-          cy.layout({
-            name: layout,
-            avoidOverlap: true,
-            nodeOverlap: 0,
-            spacingFactor: layout === "cose" ? 1.5 : 3,
-            animate: "end", //,
-            //positions: { nodeWeightOne: {x: 1000, y: 1000, locked: true}}
-          }).run();
-        } else if (layout === "cise") {
-          let clusters;
-
-          // get markov clusters for cise
-          try {
-            let options = {
-              expandFactor: 2,
-              inflateFactor: 2,
-              multFactor: 1,
-              maxIterations: 10,
-            };
-            clusters = cy.elements().markovClustering(options);
-          } catch (error) {
-            console.warn(
-              "Markov Clustering not available, defaulting to manual clusters."
-            );
-            clusters = [];
-          }
-
-          // label clusters for layout
-          clusters.forEach((cluster, i) => {
-            cluster.forEach((node) => node.data("clusterID", i));
-          });
-
-          let arrayOfClusterArrays = [];
-          cy.nodes().forEach(function (node) {
-            let clusterID = node.data("clusterID");
-            if (arrayOfClusterArrays[clusterID] === undefined) {
-              arrayOfClusterArrays[clusterID] = [];
-            }
-            arrayOfClusterArrays[clusterID].push(node.id());
-          });
-
-          console.log(arrayOfClusterArrays);
-
-          cy.layout({
-            name: "cise",
-            clusters: arrayOfClusterArrays,
-            animate: "end",
-            nodeSeparation: 75,
-            avoidOverlap: true,
-            nodeOverlap: 0,
-            nodeRepulsion: (node) => 5000,
-          }).run();
-        }
-
-        // sidebar functionality
-        cy.on("tap", "*", function (evt) {
-          var offcanvasElement = document.getElementById("offcanvasScrolling");
-          var bsOffcanvas = new bootstrap.Offcanvas(offcanvasElement);
-          bsOffcanvas.show();
-        });
-
-        cy.on("tap", "node", function (evt) {
-          let text;
-          var node = evt.target;
-          $("#offBody").text("");
-          $("#offcanvasScrollingLabel").html("Node: " + node.id());
-          for (const [destination, weight] of Object.entries(
-            graph["version" + versionTwo][node.id()]
-          )) {
-            text = destination + " : " + weight;
-            $("#offBody").append("<li>" + text + "</li>");
-          }
-          // $('#offBody').append(`</br><button class="underline bg-maroon px-5 py-3 text-lg rounded-md hover:bg-orange-500" onclick=\"testNode('${node.id()}')\">Test Node</button>`);
-        });
-
-        cy.on("tap", "edge", function (evt) {
-          let text;
-          var edge = evt.target;
-          let source = edge.data("source");
-          let target = edge.data("target");
-          $("#offBody").text("");
-          $("#offcanvasScrollingLabel").html("Edge: " + edge.data("id"));
-          $("#offBody").append("<li>Source : " + source + "</li>");
-          $("#offBody").append("<li>Destination : " + target + "</li>");
-          $("#offBody").append("<li>Weight : " + edge.data("label") + "</li>");
-          // $('#offBody').append(`</br><button class="underline bg-maroon px-5 py-3 text-lg rounded-md hover:bg-orange-500" onclick=\"testEdge('${source}', '${target}')\">Test Edges</button>`);
         });
       }
 
@@ -1359,7 +1176,7 @@
         // build array of possible connections (preventing past edges from reforming)
         if (!document.querySelector("#allowPastEdges").checked) {
           for (let i = 0; i < nodes.length; i++) {
-            let node = String.fromCharCode(65 + i); // convert number to char
+            let node = nodes[i]; // convert number to char
             // if node is NOT in past edges and there is not already an edge, add it to available nodes
             if (
               !sourceEdges.includes(node) &&
@@ -1372,7 +1189,7 @@
         } else {
           // build array of possible connections (allows past edges)
           for (let i = 0; i < nodes.length; i++) {
-            let node = String.fromCharCode(65 + i);
+            let node = nodes[i];
             if (
               node !== source &&
               node !== target &&
@@ -1516,10 +1333,14 @@
         }
       }
 
-      function refresh() {
+    function refresh() {
         displayGraph();
         drawCytoscapeGraph();
-      }
+        let dispname = Object.keys(displays);
+        dispname.forEach(function(me){
+            drawCytoscapeGraph(me);
+        });
+    }
 
       function refreshTwo() {
         displayGraph();
@@ -1576,7 +1397,8 @@
         });
         refresh();
       });
-      function patchNotes() {
+
+    function patchNotes() {
         if (changeNotes.length == 0) {
           alert("No changes yet.");
         } else {
@@ -1584,23 +1406,32 @@
         }
       }
 
-      function showGraphTwo() {
-        // Currently shows and hides the second graph
-        var graphStat = document.getElementById("cy");
-        var graphTwoStat = document.getElementById("cy2");
-        if (graphTwoStat.style.display === "none") {
-          graphTwoStat.style.display = "flex";
-          next2.style.display = "flex";
-          prev2.style.display = "flex";
-          graphStat.style.width = "50%";
-        } else {
-          graphTwoStat.style.display = "none";
-          next2.style.display = "none";
-          prev2.style.display = "none";
-          graphStat.style.width = "100%";
+    function addGraph() { // Currently shows and hides the second graph
+            let dispnum = Object.keys(displays).length+2;
+            let dispname = 'cy'+dispnum
+            $('#field').removeClass(`grid-cols-1 grid-cols-2 grid-cols-3 grid-cols-4`).addClass(`grid-cols-${dispnum}`);
+            displays[dispname] = 1
+            let ex = `<div id="${dispname}" class="h-[600px] border border-gray-300"></div>`;
+            $('#field').append(ex);
+            console.log($('#field').html());
+            drawCytoscapeGraph(dispname);
+            $('#reset').click();
         }
-        refreshTwo();
-      }
+        
+    function addPerson(){
+        let boxes = $("<li>").html(
+                    '<input type="text" class="text-box" placeholder="Enter text 1"> ' +
+                    '<input type="number" value="0.2" required>' +
+                    '<button type="button" onclick=popPerson(this) class="delbtn">Delete</button>'
+            );
+        $(".modal-body ul").append(boxes);
+    }
+
+    function popPerson(me){
+        $(me).closest("li").remove();
+    }
+
+
     </script>
   </body>
 </html>
