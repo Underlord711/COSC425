@@ -135,64 +135,6 @@
         </div>
 
         <div class="space-x-4">
-        <div class="modal fade" id="optionsModal" tabindex="-1" aria-labelledby="optionsModalLabel" aria-hidden="true">
-          <div class="modal-dialog">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="optionsModalLabel">Algorithm Options</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-              <div class="modal-body">
-                <label id="alertsLabel" for="runAllNodes" class="updateClass" style="display: none">Run All
-                  Nodes</label>
-                <input type="checkbox" id="runAllNodes" class="updateClass" style="display: none" checked />
-                <!-- trying to add tooltips to options menu -->
-                <!-- <div class="tooltip updateClass">
-                  WORDS WORDS WORDS
-                  <span class="tooltiptext updateClass">run all nodes tooltip</span>
-                </div> -->
-                </br>
-                <label id="pastEdgesLabel" for="allowPastEdges" class="updateClass" style="display: none">Allow Past
-                  Edges</label>
-                <input type="checkbox" id="allowPastEdges" class="updateClass" style="display: none" checked />
-                </br>
-                <label id="randomizationLabel" for="randomization" class="updateClass"
-                  style="display: none">Randomization</label>
-                <input type="checkbox" id="randomization" class="updateClass" style="display: none" checked />
-                </br>
-                <label for="nodeColor1Input" class="updateClass" style="display: none">Node Color 1</label>
-                <input type="color" id="nodeColor1Input" class="updateClass border px-1 py-1 rounded"
-                  style="display: none" value="#DEDEDE" />
-                </br>
-                <label for="nodeColor2Input" class="updateClass" style="display: none">Node Color 2</label>
-                <input type="color" id="nodeColor2Input" class="updateClass border px-1 py-1 rounded"
-                  style="display: none" value="#000000" />
-                </br>
-                <label for="safeEdgeInput" class="updateClass" style="display: none">Safe Edge Color</label>
-                <input type="color" id="safeEdgeInput" class="updateClass border px-1 py-1 rounded"
-                  style="display: none" value="#00FF00" />
-                </br>
-                <label for="unsafeEdgeInput" class="updateClass" style="display: none">Unsafe Edge Color</label>
-                <input type="color" id="unsafeEdgeInput" class="updateClass border px-1 py-1 rounded"
-                  style="display: none" value="#FF0000" />
-                </br>
-                <li>
-                  <label for="changeLayout" class="updateClass" style="display: none">Graph Layout</label>
-                  <select id="changeLayout" class="updateClass mt-8"
-                    style="display: none; background-color: transparent; color: black; border: 1px solid black;">
-                    <option select="selected">Circle</option>
-                    <option>CoSE</option>
-                    <option>fCoSE</option>
-                    <option>CiSE</option>
-                  </select>
-                </li>
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-              </div>
-            </div>
-          </div>
-        </div>
           <button
             onclick="patchNotes()"
             id="patchBtn"
@@ -360,6 +302,78 @@
         </div>
       </div>
     </div>
+
+    <div class="modal fade" id="optionsModal" tabindex="-1" aria-labelledby="optionsModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="optionsModalLabel">Algorithm Options</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <label id="alertsLabel" for="runAllNodes" class="updateClass" style="display: none">Run
+            All Nodes</label>
+          <input type="checkbox" id="runAllNodes" class="updateClass" style="display: none" checked />
+          <span class="tooltip-icon" data-tooltip="Test all nodes during an iteration of the algorithm. ">ⓘ</span>
+          </br>
+
+          <label id="pastEdgesLabel" for="allowPastEdges" class="updateClass" style="display: none">Allow Past
+            Edges</label>
+          <input type="checkbox" id="allowPastEdges" class="updateClass" style="display: none" checked />
+          <span class="tooltip-icon" data-tooltip="Allow nodes to reform edges that were previously broken.">ⓘ</span>
+          </br>
+
+          <label id="randomizationLabel" for="randomization" class="updateClass"
+            style="display: none">Randomization</label>
+          <input type="checkbox" id="randomization" class="updateClass" style="display: none" checked />
+          <span class="tooltip-icon" data-tooltip="Allow random chance for node opinions to not change.">ⓘ</span>
+          </br>
+
+          <label for="nodeColor1Input" class="updateClass" style="display: none">Node Color 1</label>
+          <input type="color" id="nodeColor1Input" class="updateClass border px-1 py-1 rounded" style="display: none"
+            value="#DEDEDE" />
+          <span class="tooltip-icon" data-tooltip="Set the intolerant (close to 0) node color.">ⓘ</span>
+          </br>
+
+          <label for="nodeColor2Input" class="updateClass" style="display: none">Node Color 2</label>
+          <input type="color" id="nodeColor2Input" class="updateClass border px-1 py-1 rounded" style="display: none"
+            value="#000000" />
+          <span class="tooltip-icon" data-tooltip="Set the tolerant (close to 1) node color.">ⓘ</span>
+          </br>
+
+          <label for="safeEdgeInput" class="updateClass" style="display: none">Safe Edge Color</label>
+          <input type="color" id="safeEdgeInput" class="updateClass border px-1 py-1 rounded" style="display: none"
+            value="#00FF00" />
+          <span class="tooltip-icon"
+            data-tooltip="Set the edge color for relationships that won't break when tested.">ⓘ</span>
+
+          </br>
+
+          <label for="unsafeEdgeInput" class="updateClass" style="display: none">Unsafe Edge Color</label>
+          <input type="color" id="unsafeEdgeInput" class="updateClass border px-1 py-1 rounded" style="display: none"
+            value="#FF0000" />
+          <span class="tooltip-icon"
+            data-tooltip="Set the edge color for relationships that will break when tested.">ⓘ</span>
+
+          </br>
+
+          <label for="changeLayout" class="updateClass" style="display: none">Graph Layout</label>
+          <select id="changeLayout" class="updateClass mt-8"
+            style="display: none; background-color: transparent; color: black; border: 1px solid black;">
+            <option select="selected">Circle</option>
+            <option>CoSE</option>
+            <option>fCoSE</option>
+            <option>CiSE</option>
+          </select>
+          <span class="tooltip-icon" data-tooltip="Select the graph layout.">ⓘ</span>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
     <script>
     let displays = {};
