@@ -43,20 +43,15 @@ function toggleMatrix() {
     }
   }
   document.addEventListener("DOMContentLoaded", function () {
-    let changeLayout = document.getElementById("changeLayout");
-
-    if (changeLayout) { // Ensure the element exists before accessing it
-        changeLayout.onchange = function () {
-            let layout = "circle";
-            if (this.value === "CoSE") layout = "cose";
-            else if (this.value === "CiSE") layout = "cise";
-            else if (this.value === "fCoSE") layout = "fcose";
-            drawCytoscapeGraph();
-        };
-    } else {
-        console.error("Element with ID 'changeLayout' not found.");
-    }
-});
+    document.getElementById("changeLayout").onchange = function () {
+      if (this.value === "Circle") layout = "circle";
+      else if (this.value === "CoSE") layout = "cose";
+      else if (this.value === "CiSE") layout = "cise";
+      else if (this.value === "fCoSE") layout = "fcose";
+      drawCytoscapeGraph();
+    };
+  });
+  
 
   
   function hexToRgb(hex) {
