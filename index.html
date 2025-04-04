@@ -104,6 +104,10 @@
           style="display: none">
           Patch Notes
         </button>
+        <!-- change here -->
+        <button onclick="addGraph()" id="GraphTwo"
+          class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none updateClass"
+          style="display:none;">Add Graph</button>
         <button onclick="runAlgorithm(parseInt(document.getElementById('inputValue').value))" style="display: none"
           id="runAlgorithm"
           class="updateClass bg-pink-500 text-white px-4 py-2 rounded hover:bg-pink-600 focus:outline-none">
@@ -111,9 +115,6 @@
         </button>
         <input type="number" value="1" id="inputValue" class="updateClass border px-2 py-1 rounded max-w-10"
           style="display: none" />
-        <button onclick="addGraph()" id="GraphTwo"
-          class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none updateClass"
-          style="display:none;">Add Graph</button>
       </div>
 
       <div class="mt-4">
@@ -262,6 +263,15 @@
 
           </br>
 
+          <!-- change here -->
+          <label id="lockNodeInput" for="lockNodePosition" class="updateClass" style="display: none">Lock Node
+            Position</label>
+          <input type="checkbox" id="lockNodePosition" class="updateClass" style="display: none" checked />
+          <span class="tooltip-icon"
+            data-tooltip="Lock the node with weight 1 to the top of the graph in circle layout.">ⓘ</span>
+
+          </br>
+
           <label for="changeLayout" class="updateClass" style="display: none">Graph Layout</label>
           <select id="changeLayout" class="updateClass mt-8"
             style="display: none; background-color: transparent; color: black; border: 1px solid black;">
@@ -301,6 +311,10 @@
     nodeColor2Input.addEventListener("change", () => drawCytoscapeGraph('cy'), false);
     safeEdgeInput.addEventListener("change", () => drawCytoscapeGraph('cy'), false);
     unsafeEdgeInput.addEventListener("change", () => drawCytoscapeGraph('cy'), false);
+    // change here
+    document.getElementById("lockNodePosition").addEventListener("change", function () {
+      drawCytoscapeGraph('cy');
+    });
 
 
     function Slider(callback) {
@@ -352,6 +366,8 @@
           if (w > MAX_WEIGHT && !one) {
             w = 1;
             one = true;
+            // change here
+            nodeWeightOne = vertex;
           } else if (w > MAX_WEIGHT) {
             w = MAX_WEIGHT;
           }
@@ -374,6 +390,8 @@
       if (!one) {
         let vertex = vertexes[Math.floor(Math.random() * vertexes.length)];
         graph['version' + version][vertex]['weight'] = 1;
+        // change here
+        nodeWeightOne = vertex;
       }
 
       const edgesCount = Array(vertexes.length).fill(0);
@@ -544,25 +562,20 @@
       ] : null;
     }
 
+    // change here
     function drawCytoscapeGraph(me = 'cy') {
       const elements = [];
       let nodeColor1 = hexToRgb($("#nodeColor1Input").val());
       let nodeColor2 = hexToRgb($("#nodeColor2Input").val());
       let safeEdgeColor = $("#safeEdgeInput").val();
       let unsafeEdgeColor = $("#unsafeEdgeInput").val();
+      let lockNode = document.getElementById("lockNodePosition").checked;
       let cy;
 
-      // get elements of graph
-      for (const [source, edges] of Object.entries(
-        graph["version" + version]
-      )) {
+      for (const [source, edges] of Object.entries(graph["version" + version])) {
         if (noClass.includes(source)) continue;
+
         elements.push({ data: { id: source, rel: edges.weight } });
-        // if (source === nodeWeightOne) {
-        //    elements.push({ data: { id: source, rel: edges.weight }, position: { x: 200, y: 200, locked: true } });
-        // } else {
-        //    elements.push({ data: { id: source, rel: edges.weight } });
-        // }
 
         for (const [destination, weight] of Object.entries(edges)) {
           if (noClass.includes(destination)) continue;
@@ -585,27 +598,26 @@
         }
       }
 
-      // graph styles based on layout
+      // graph node and edge styles
       let nodeSize, fontSize, edgeWidth;
       if (layout === "circle") {
-        nodeSize = "50px";
-        fontSize = "50px";
-        edgeWidth = 1;
+        nodeSize = "70%";
+        fontSize = "50%";
+        edgeWidth = 5;
       } else if (layout === "cose") {
-        nodeSize = "5px";
-        fontSize = "3px";
-        edgeWidth = 0.25;
+        nodeSize = "5%";
+        fontSize = "5%";
+        edgeWidth = 1;
       } else if (layout === "cise") {
-        nodeSize = "10px";
-        fontSize = "12px";
+        nodeSize = "7%";
+        fontSize = "7%";
         edgeWidth = 1;
       } else if (layout === "fcose") {
-        nodeSize = "30px";
-        fontSize = "30px";
-        edgeWidth = "2px";
+        nodeSize = "10%";
+        fontSize = "10%";
+        edgeWidth = 1;
       }
 
-      // initialize cytoscape
       cy = cytoscape({
         container: document.getElementById(me),
         elements: elements,
@@ -617,9 +629,7 @@
                 let r = nodeColor1[0] + parseFloat(elem.data("rel")) * (nodeColor2[0] - nodeColor1[0]);
                 let g = nodeColor1[1] + parseFloat(elem.data("rel")) * (nodeColor2[1] - nodeColor1[1]);
                 let b = nodeColor1[2] + parseFloat(elem.data("rel")) * (nodeColor2[2] - nodeColor1[2]);
-
-                let res = "rgb(" + r + ", " + g + ", " + b + ")";
-                return res;
+                return `rgb(${r}, ${g}, ${b})`;
               },
               label: function (elem) {
                 return elem.data("id") + "\n" + elem.data("rel");
@@ -636,10 +646,8 @@
             style: {
               width: edgeWidth,
               "line-color": function (elem) {
-                let s =
-                  graph["version" + version][elem.data("source")]["weight"];
-                let t =
-                  graph["version" + version][elem.data("target")]["weight"];
+                let s = graph["version" + version][elem.data("source")]["weight"];
+                let t = graph["version" + version][elem.data("target")]["weight"];
                 let w = elem.data("label");
                 let weightDiff = Math.abs(s - t);
                 return weightDiff > w ? unsafeEdgeColor : safeEdgeColor;
@@ -654,50 +662,72 @@
         ],
       });
 
-      // apply layout
-      if (layout === "circle" || layout === "cose" || layout === "fcose") {
+      // layout application
+      if (layout === "circle") {
+        cy.layout({
+          name: "circle",
+          avoidOverlap: true,
+          spacingFactor: 3,
+          animate: true
+        }).run();
+
+        // lock node with weight one after layout finishes
+        if (lockNode) {
+          cy.once("layoutstop", () => {
+            const node = cy.getElementById(nodeWeightOne);
+            if (node) {
+              const boundingBox = cy.elements().boundingBox();
+              const centerX = (boundingBox.x1 + boundingBox.x2) / 2;
+              const topY = boundingBox.y1 - 100; // push it a little above top edge
+              node.position({ x: centerX, y: topY });
+              cy.fit(cy.elements(), 20);
+            }
+          });
+        }
+      } else if (layout === "cose" || layout === "fcose") {
         cy.layout({
           name: layout,
           avoidOverlap: true,
           nodeOverlap: 0,
-          spacingFactor: layout === "cose" ? 1.5 : 3,
-          animate: "end", //,
-          //positions: { nodeWeightOne: {x: 1000, y: 1000, locked: true}}
+          spacingFactor: 1.5,
+          animate: "end"
         }).run();
-      } else if (layout === "cise") {
-        let clusters;
 
-        // get markov clusters for cise
+        if (lockNode) {
+          cy.once("layoutstop", () => {
+            const node = cy.getElementById(nodeWeightOne);
+            if (node) {
+              const boundingBox = cy.elements().boundingBox();
+              const centerX = (boundingBox.x1 + boundingBox.x2) / 2;
+              const topY = boundingBox.y1 - 10; // push it a little above top edge
+              node.position({ x: centerX, y: topY });
+              cy.fit(cy.elements(), 20);
+            }
+          });
+        }
+      } else if (layout === "cise") {
+        let clusters = [];
         try {
-          let options = {
+          clusters = cy.elements().markovClustering({
             expandFactor: 2,
             inflateFactor: 2,
             multFactor: 1,
             maxIterations: 10,
-          };
-          clusters = cy.elements().markovClustering(options);
+          });
         } catch (error) {
-          console.warn(
-            "Markov Clustering not available, defaulting to manual clusters."
-          );
-          clusters = [];
+          console.warn("Markov Clustering not available, using default.");
         }
 
-        // label clusters for layout
         clusters.forEach((cluster, i) => {
           cluster.forEach((node) => node.data("clusterID", i));
         });
 
-        let arrayOfClusterArrays = [];
-        cy.nodes().forEach(function (node) {
-          let clusterID = node.data("clusterID");
-          if (arrayOfClusterArrays[clusterID] === undefined) {
-            arrayOfClusterArrays[clusterID] = [];
-          }
+        const arrayOfClusterArrays = [];
+        cy.nodes().forEach((node) => {
+          const clusterID = node.data("clusterID");
+          if (!arrayOfClusterArrays[clusterID]) arrayOfClusterArrays[clusterID] = [];
           arrayOfClusterArrays[clusterID].push(node.id());
         });
-
-        console.log(arrayOfClusterArrays);
 
         cy.layout({
           name: "cise",
@@ -706,8 +736,21 @@
           nodeSeparation: 75,
           avoidOverlap: true,
           nodeOverlap: 0,
-          nodeRepulsion: (node) => 5000,
+          nodeRepulsion: () => 5000
         }).run();
+
+        if (lockNode) {
+          cy.once("layoutstop", () => {
+            const node = cy.getElementById(nodeWeightOne);
+            if (node) {
+              const boundingBox = cy.elements().boundingBox();
+              const centerX = (boundingBox.x1 + boundingBox.x2) / 2;
+              const topY = boundingBox.y1 - 10; // push it a little above top edge
+              node.position({ x: centerX, y: topY });
+              cy.fit(cy.elements(), 20);
+            }
+          });
+        }
       }
 
       // sidebar functionality
@@ -779,7 +822,6 @@
           document.getElementById("versionDisplay").innerText = version; // Update displayed version
           displayGraph();
           drawCytoscapeGraph();
-          drawCy2Graph();
           $(".updateClass").css("display", "inline");
         } catch (e) {
           alert("Error parsing JSON: " + e.message);
@@ -1229,7 +1271,6 @@
 
     function refreshTwo() {
       displayGraph();
-      drawCy2Graph();
     }
 
     $(".btn-close").on("click", function () {
