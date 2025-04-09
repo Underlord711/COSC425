@@ -1,21 +1,23 @@
 <!DOCTYPE html>
 
 <html lang="en">
-
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Weighted Undirected Graph Generator</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <script src="https://unpkg.com/cytoscape@3.24.0/dist/cytoscape.min.js"></script>
-  <!-- cytoscape import -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.21.0/cytoscape.min.js"></script>
-  <script src="https://unpkg.com/layout-base/layout-base.js"></script>
-  <!-- for fcose and cise layout -->
-  <script src="https://unpkg.com/avsdf-base/avsdf-base.js"></script>
-  <script src="https://unpkg.com/cose-base/cose-base.js"></script>
-  <script src="https://unpkg.com/cytoscape-fcose/cytoscape-fcose.js"></script>
-  <script src="https://unpkg.com/cytoscape-cise/cytoscape-cise.js"></script>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Weighted Undirected Graph Generator</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://unpkg.com/cytoscape@3.24.0/dist/cytoscape.min.js"></script>
+    <!-- cytoscape import -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.21.0/cytoscape.min.js"></script>
+    <script src="https://unpkg.com/layout-base/layout-base.js"></script>
+    <!-- for fcose and cise layout -->
+    <script src="https://unpkg.com/avsdf-base/avsdf-base.js"></script>
+    <script src="https://unpkg.com/cose-base/cose-base.js"></script>
+    <script src="https://unpkg.com/cytoscape-fcose/cytoscape-fcose.js"></script>
+    <script src="https://unpkg.com/cytoscape-cise/cytoscape-cise.js"></script>
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -41,64 +43,90 @@
             Generate graph
           </button>
         </li>
-            <li><button type="button" class="btn underline mt-3 bg-maroon text-white px-5 py-3 text-lg rounded-md hover:bg-orange-500" data-bs-toggle="modal" data-bs-target="#exampleModal">
+        <!-- change here -->
+            <li><button class="underline mt-3 bg-maroon text-white px-5 py-3 text-lg rounded-md hover:bg-orange-500" data-bs-toggle="modal" data-bs-target="#exampleModal">
           Character Sheet
         </button></li>
+        <li>
+          <button
+            onclick="uploadJSON()"
+            class="underline mt-3 bg-maroon text-white px-5 py-3 text-lg rounded-md hover:bg-orange-500"
+          >
+            Upload JSON
+          </button>
+        </li>
+        <li>
+          <button
+            onclick="toggleMatrix()"
+            class="updateClass underline mt-3 bg-maroon text-white px-5 py-3 text-lg rounded-md hover:bg-orange-500 hidden"
+          >
+            Show matrix
+          </button>
+        </li>
+        <li>
+          <button
+            onclick="downloadJSON()"
+            class="updateClass underline mt-3 bg-maroon text-white px-5 py-3 text-lg rounded-md hover:bg-orange-500 hidden"
+          >
+            Download JSON
+          </button>
+        </li>
       <li>
-        <button onclick="uploadJSON()"
-          class="underline mt-3 bg-maroon text-white px-5 py-3 text-lg rounded-md hover:bg-orange-500">
-          Upload JSON
-        </button>
-      </li>
-      <li>
-        <button onclick="toggleMatrix()"
-          class="updateClass underline mt-3 bg-maroon text-white px-5 py-3 text-lg rounded-md hover:bg-orange-500 hidden">
-          Show matrix
-        </button>
-      </li>
-      <li>
-        <button onclick="downloadJSON()"
-          class="updateClass underline mt-3 bg-maroon text-white px-5 py-3 text-lg rounded-md hover:bg-orange-500 hidden">
-          Download JSON
-        </button>
-      </li>
-      <li>
+        <!-- change here -->
         <button type="button"
           class="updateClass underline mt-3 bg-maroon text-white px-5 py-3 text-lg rounded-md hover:bg-orange-500 hidden"
           data-bs-toggle="modal" data-bs-target="#optionsModal">
-          Options
+          Graph Options
         </button>
       </li>
-    </ul>
-  </nav>
-  <div class="slider-container">
-    <input type="range" min="3" max="5" value="1" class="slider" id="mySlider" />
-    <div class="slider-value" id="sliderValue">Tolerance Level</div>
-  </div>
+      </ul>
+    </nav>
 
-  <div class="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-md mt-3">
-    <h1 class="text-2xl font-bold mb-4">
-      Weighted Undirected Graph Generator
-    </h1>
+    <div class="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-md mt-3">
+      <h1 class="text-2xl font-bold mb-4">
+        Weighted Undirected Graph Generator
+      </h1>
 
-    <div class="space-y-4">
-      <div>
-        <label for="numVertices" class="block text-sm font-medium">Number of Vertices:</label>
-        <input type="number" id="numVertices" value="10" min="4" required
-          class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2" />
-      </div>
+      <div class="space-y-4">
+        <div>
+          <label for="numVertices" class="block text-sm font-medium"
+            >Number of Vertices:</label
+          >
+          <input
+            type="number"
+            id="numVertices"
+            value="10"
+            min="4"
+            required
+            class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2"
+          />
+        </div>
 
-      <div>
-        <label for="weight1" class="block text-sm font-medium">Weight for Edge Type 1:</label>
-        <input type="number" id="weight1" value="0.2" required
-          class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2" />
-      </div>
+        <div> 
+          <label for="weight1" class="block text-sm font-medium"
+            >Weight for Edge Type 1:</label
+          >
+          <input
+            type="number"
+            id="weight1"
+            value="0.2"
+            required
+            class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2"
+          />
+        </div>
 
-      <div>
-        <label for="weight2" class="block text-sm font-medium">Weight for Edge Type 2:</label>
-        <input type="number" id="weight2" value="0.9" required
-          class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2" />
-      </div>
+        <div>
+          <label for="weight2" class="block text-sm font-medium"
+            >Weight for Edge Type 2:</label
+          >
+          <input
+            type="number"
+            id="weight2"
+            value="0.9"
+            required
+            class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2"
+          />
+        </div>
 
         <div class="space-x-4">
           <button
@@ -109,6 +137,9 @@
           >
             Patch Notes
           </button>
+          <!-- change here -->
+          <button onclick="addGraph()" id="GraphTwo"
+            class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none updateClass" style="display:none;">Add Graph</button>
           <button
             onclick="runAlgorithm(parseInt(document.getElementById('inputValue').value))"
             style="display: none"
@@ -124,19 +155,26 @@
             class="updateClass border px-2 py-1 rounded max-w-10"
             style="display: none"
           />
-            <button onclick="addGraph()" id="GraphTwo"
-            class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none updateClass" style="display:none;">Add Graph</button>
-        </div>
+          </div>
 
-      <div class="mt-4">
-        <input type="file" id="fileInput" accept=".json" onchange="uploadJSON()"
-          class="block w-full text-sm text-gray-500 border border-gray-300 rounded-lg cursor-pointer" />
-        <button id="uploadBtn" style="display: none" onclick="uploadJSON()"
-          class="mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none">
-          Upload JSON
-        </button>
+        <div class="mt-4">
+          <input
+            type="file"
+            id="fileInput"
+            accept=".json"
+            onchange="uploadJSON()"
+            class="block w-full text-sm text-gray-500 border border-gray-300 rounded-lg cursor-pointer"
+          />
+          <button
+            id="uploadBtn"
+            style="display: none"
+            onclick="uploadJSON()"
+            class="mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none"
+          >
+            Upload JSON
+          </button>
+        </div>
       </div>
-    </div>
 
       <h2 class="text-xl font-semibold mt-6">Generated Graph:</h2>
       <div class="flex items-start">
@@ -149,159 +187,116 @@
         </div>
         -->
 
-      <div id="matrixContainer" class="flex-grow overflow-x-auto overflow-y-auto max-h-96 mx-4 self-center"
-        style="display: none">
-        <table id="graphTable" class="min-w-full table-auto border-collapse bg-white shadow-md rounded-lg text-sm">
-        </table>
-      </div>
-
-      <div class="flex-none ml-auto">
-        <button onclick="refresh()" id="reset"
-          class="bg-purple-500 text-white px-2 py-2 rounded hover:bg-purple-600 focus:outline-none">
-          Reset
-        </button>
-        <button onclick="previous()" id="prev"
-          class="bg-purple-500 text-white px-2 py-2 rounded hover:bg-purple-600 focus:outline-none">
-          Prev
-        </button>
-        <button onclick="next()" id="next"
-          class="bg-purple-500 text-white px-2 py-2 rounded hover:bg-purple-600 focus:outline-none">
-          Next
-        </button>
-        <button onclick="" id="play"
-          class="bg-purple-500 text-white px-2 py-2 rounded hover:bg-purple-600 focus:outline-none">
-          ▶
-        </button>
-        <button onclick="previousTwo()" id="prev2"
-          class="bg-purple-500 text-white px-2 py-2 rounded hover:bg-purple-600 focus:outline-none;"
-          style="display: none">
-          Second Graph Prev
-        </button>
-        <button onclick="nextTwo()" id="next2"
-          class="bg-purple-500 text-white px-2 py-2 rounded hover:bg-purple-600 focus:outline-none;"
-          style="display: none">
-          Second Graph Next
-        </button>
-      </div>
-    </div>
-
-    <div class="grid gap-4 grid-cols-1" id="field">
-      <div id="cy" class="h-[600px] border border-gray-300" style="width: auto; height: 600px;"></div>
-    </div>
-  </div>
-
-  <div class="offcanvas offcanvas-start !w-[200px]" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1"
-    id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel">
-    <div class="offcanvas-header">
-      <h5 class="offcanvas-title" id="offcanvasScrollingLabel" contenteditable="true">
-        Node:
-      </h5>
-      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-    </div>
-    <div class="offcanvas-body" contenteditable="true" id="offBody">
-      <p></p>
-    </div>
-  </div>
-
-  <!-- Modal -->
-  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Character Sheet</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div
+          id="matrixContainer"
+          class="flex-grow overflow-x-auto overflow-y-auto max-h-96 mx-4 self-center"
+          style="display: none"
+        >
+          <table
+            id="graphTable"
+            class="min-w-full table-auto border-collapse bg-white shadow-md rounded-lg text-sm"
+          ></table>
         </div>
-        <div class="modal-body">
-          <ul></ul>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="button" onclick="addPerson()" class="btn btn-primary">Add Person</button>
+
+        <div class="flex-none ml-auto">
+          <button
+            onclick="refresh()"
+            id="reset"
+            class="bg-purple-500 text-white px-2 py-2 rounded hover:bg-purple-600 focus:outline-none"
+          >
+            Reset
+          </button>
+          <button
+            onclick="previous()"
+            id="prev"
+            class="bg-purple-500 text-white px-2 py-2 rounded hover:bg-purple-600 focus:outline-none"
+          >
+            Prev
+          </button>
+          <button
+            onclick="next()"
+            id="next"
+            class="bg-purple-500 text-white px-2 py-2 rounded hover:bg-purple-600 focus:outline-none"
+          >
+            Next
+          </button>
+          <button
+            onclick=""
+            id="play"
+            class="bg-purple-500 text-white px-2 py-2 rounded hover:bg-purple-600 focus:outline-none"
+          >
+            ▶
+          </button>
+          <button
+            onclick="previousTwo()"
+            id="prev2"
+            class="bg-purple-500 text-white px-2 py-2 rounded hover:bg-purple-600 focus:outline-none;"
+            style="display: none"
+          >
+            Second Graph Prev
+          </button>
+          <button
+            onclick="nextTwo()"
+            id="next2"
+            class="bg-purple-500 text-white px-2 py-2 rounded hover:bg-purple-600 focus:outline-none;"
+            style="display: none"
+          >
+            Second Graph Next
+          </button>
         </div>
       </div>
+
+        <div class="grid gap-4 grid-cols-1" id="field">
+            <div id="cy" class="h-[600px] border border-gray-300" style="width: auto; height: 600px;"></div>
+        </div>
     </div>
-  </div>
 
-  <div class="modal fade" id="optionsModal" tabindex="-1" aria-labelledby="optionsModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="optionsModalLabel">Algorithm Options</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <label id="alertsLabel" for="runAllNodes" class="updateClass" style="display: none">Run
-            All Nodes</label>
-          <input type="checkbox" id="runAllNodes" class="updateClass" style="display: none" checked />
-          <span class="tooltip-icon" data-tooltip="Test all nodes during an iteration of the algorithm. ">ⓘ</span>
-          </br>
+    <div
+      class="offcanvas offcanvas-start !w-[200px]"
+      data-bs-scroll="true"
+      data-bs-backdrop="false"
+      tabindex="-1"
+      id="offcanvasScrolling"
+      aria-labelledby="offcanvasScrollingLabel"
+    >
+      <div class="offcanvas-header">
+        <h5
+          class="offcanvas-title"
+          id="offcanvasScrollingLabel"
+          contenteditable="true"
+        >
+          Node:
+        </h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="offcanvas"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="offcanvas-body" contenteditable="true" id="offBody">
+        <p></p>
+      </div>
+    </div>
 
-          <label id="pastEdgesLabel" for="allowPastEdges" class="updateClass" style="display: none">Allow Past
-            Edges</label>
-          <input type="checkbox" id="allowPastEdges" class="updateClass" style="display: none" checked />
-          <span class="tooltip-icon" data-tooltip="Allow nodes to reform edges that were previously broken.">ⓘ</span>
-          </br>
-
-          <label id="randomizationLabel" for="randomization" class="updateClass"
-            style="display: none">Randomization</label>
-          <input type="checkbox" id="randomization" class="updateClass" style="display: none" checked />
-          <span class="tooltip-icon" data-tooltip="Allow random chance for node opinions to not change.">ⓘ</span>
-          </br>
-
-          <label for="nodeColor1Input" class="updateClass" style="display: none">Node Color 1</label>
-          <input type="color" id="nodeColor1Input" class="updateClass border px-1 py-1 rounded" style="display: none"
-            value="#DEDEDE" />
-          <span class="tooltip-icon" data-tooltip="Set the intolerant (close to 0) node color.">ⓘ</span>
-          </br>
-
-          <label for="nodeColor2Input" class="updateClass" style="display: none">Node Color 2</label>
-          <input type="color" id="nodeColor2Input" class="updateClass border px-1 py-1 rounded" style="display: none"
-            value="#000000" />
-          <span class="tooltip-icon" data-tooltip="Set the tolerant (close to 1) node color.">ⓘ</span>
-          </br>
-
-          <label for="safeEdgeInput" class="updateClass" style="display: none">Safe Edge Color</label>
-          <input type="color" id="safeEdgeInput" class="updateClass border px-1 py-1 rounded" style="display: none"
-            value="#00FF00" />
-          <span class="tooltip-icon"
-            data-tooltip="Set the edge color for relationships that won't break when tested.">ⓘ</span>
-
-          </br>
-
-          <label for="unsafeEdgeInput" class="updateClass" style="display: none">Unsafe Edge Color</label>
-          <input type="color" id="unsafeEdgeInput" class="updateClass border px-1 py-1 rounded" style="display: none"
-            value="#FF0000" />
-          <span class="tooltip-icon"
-            data-tooltip="Set the edge color for relationships that will break when tested.">ⓘ</span>
-
-          </br>
-
-          <!-- change here -->
-          <label id="lockNodeInput" for="lockNodePosition" class="updateClass" style="display: none">Lock Node
-            Position</label>
-          <input type="checkbox" id="lockNodePosition" class="updateClass" style="display: none" checked />
-          <span class="tooltip-icon"
-            data-tooltip="Lock the node with weight 1 to the top of the graph in circle layout.">ⓘ</span>
-
-          </br>
-
-          <label for="changeLayout" class="updateClass" style="display: none">Graph Layout</label>
-          <select id="changeLayout" class="updateClass mt-8"
-            style="display: none; background-color: transparent; color: black; border: 1px solid black;">
-            <option select="selected">Circle</option>
-            <option>CoSE</option>
-            <option>fCoSE</option>
-            <option>CiSE</option>
-          </select>
-          <span class="tooltip-icon" data-tooltip="Select the graph layout.">ⓘ</span>
-
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Character Sheet</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <ul></ul>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" onclick="addPerson()" class="btn btn-primary">Add Person</button>
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
     <div class="modal fade" id="optionsModal" tabindex="-1" aria-labelledby="optionsModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -329,6 +324,21 @@
           <span class="tooltip-icon" data-tooltip="Allow random chance for node opinions to not change.">ⓘ</span>
           </br>
 
+          <div class="slider-container">
+            <div class="slider-value updateClass" id="sliderValue">Tolerance Level</div>
+            <input
+              type="range"
+              min="3"
+              max="5"
+              value="1"
+              class="slider"
+              id="mySlider"
+            />
+            <span class="tooltip-icon" data-tooltip="Set the tolerance level for algorithm calculations.">ⓘ</span>
+          </div>
+
+          </br>
+
           <label for="nodeColor1Input" class="updateClass" style="display: none">Node Color 1</label>
           <input type="color" id="nodeColor1Input" class="updateClass border px-1 py-1 rounded" style="display: none"
             value="#DEDEDE" />
@@ -357,6 +367,15 @@
 
           </br>
 
+          <label id="lockNodeInput" for="lockNodePosition" class="updateClass" style="display: none">Lock Node
+            Position</label>
+          <input type="checkbox" id="lockNodePosition" class="updateClass" style="display: none" checked />
+          <input type="text" id="lockNodeValue" class="updateClass" style="display: none; border: 1px solid black;">
+          <span class="tooltip-icon"
+            data-tooltip="Lock a node to the top of the graph in circle layout.">ⓘ</span>
+
+          </br>
+
           <label for="changeLayout" class="updateClass" style="display: none">Graph Layout</label>
           <select id="changeLayout" class="updateClass mt-8"
             style="display: none; background-color: transparent; color: black; border: 1px solid black;">
@@ -375,6 +394,4 @@
     </div>
   </div>
   </body>
-</html>
-
 </html>

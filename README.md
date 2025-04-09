@@ -24,7 +24,11 @@
 
 **Randomization** - Option to allow/prevent a random chance of no change happening to node opinions' during an iteration of the algorithm. If randomization is active and triggered it will be logged in the JSON file. 
 
-**Graph Coloring** - Node color allows the user to change the color of nodes in the graph. Safe edge color represents edges that will not break if they are tested by the algorithm. Unsafe edge color represents edges that will break if they are tested. 
+**Tolerance Slider** - Option to change the tolerance level of nodes in the graph. There are three options: unwilling to change (3), open to change (4, default), and willing to change (5). Changing this value changes what number the weight difference of the two nodes is divided by. 
+
+**Graph Coloring** - Node color allows the user to change the color of nodes in the graph, done with a gradient between the two selected colors. Safe edge color represents edges that will not break if they are tested by the algorithm. Unsafe edge color represents edges that will break if they are tested. 
+
+**Lock Node Position** - Option to manually set the position of a node to the top center of the graph display, ignoring its placement by the selected layout. The default selected node has a weight of 1 but this can be changed by the user. The node is still moveable by the user. 
 
 **Graph Layouts** - Dropdown menu that allows user to select how they want their graph to be displayed. Default display is circle. CoSE (Compound Spring Embedder) is a force-directed algorithm used to position nodes. fCoSE<sup>1, 2</sup> (Fast CoSE) is an optimized version of the CoSE algorithm. CiSE<sup>3</sup> (Circular Spring Embedder) is another force-directed algorithm that clusters nodes using Markov Clustering from the Cytoscape.js core. 
 
