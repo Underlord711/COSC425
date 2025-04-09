@@ -376,7 +376,7 @@ function downloadExcel() {
       vertices.forEach(source => {
         let row = [source];
         vertices.forEach(target => {
-          row.push(matrix[source]?.[target] || "0");
+          row.push(matrix[source]?.[target] || "X");
         });
         data.push(row);
       });
