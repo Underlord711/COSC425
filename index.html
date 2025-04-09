@@ -22,6 +22,9 @@
 			<li><button type="button" class="btn underline mt-3 bg-maroon text-white px-5 py-3 text-lg rounded-md hover:bg-orange-500" data-bs-toggle="modal" data-bs-target="#exampleModal">
 				  Character Sheet
 				</button></li>
+            <li><button type="button" class="btn underline mt-3 bg-maroon text-white px-5 py-3 text-lg rounded-md hover:bg-orange-500" data-bs-toggle="modal" data-bs-target="#edgeModal">
+                  Add Edges
+                </button></li>
 			<li><button onclick="uploadJSON()" class="underline mt-3 bg-maroon text-white px-5 py-3 text-lg rounded-md hover:bg-orange-500">Upload JSON</button></li>
 			<li><button onclick="toggleMatrix()" class="updateClass underline mt-3 bg-maroon text-white px-5 py-3 text-lg rounded-md hover:bg-orange-500 hidden">Show matrix</button></li>
 			<li><button onclick="downloadJSON()" class="updateClass underline mt-3 bg-maroon text-white px-5 py-3 text-lg rounded-md hover:bg-orange-500 hidden">Download JSON</button></li>
@@ -83,10 +86,31 @@
 				      <div class="modal-footer">
 				        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
 				        <button type="button" onclick="addPerson()" class="btn btn-primary">Add Person</button>
+                        <input type="checkbox" id="noEdge">
 				      </div>
 				    </div>
 				  </div>
 				</div>
+
+                                <!-- Modal -->
+                <div class="modal fade" id="edgeModal" tabindex="-1" aria-labelledby="exampleModalLabel">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Add Edges</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">
+                        <ul></ul>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" onclick="EdgeOption()" class="btn btn-primary">New Edge</button>
+                        <input type="checkbox" id="noEdge">
+                      </div>
+                    </div>
+                  </div>
+                </div>
 
                 <button onclick="patchNotes()" id="patchBtn"
                     class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 focus:outline-none updateClass"
@@ -215,8 +239,6 @@
                 vertexes.push($(this).val());
                 weights.push($(this).next().val());
             });
-            console.log(vertexes);
-            console.log(weights);
             const numVertices = parseInt(document.getElementById('numVertices').value);
             const weight1 = parseFloat(document.getElementById('weight1').value);
             const weight2 = parseFloat(document.getElementById('weight2').value);
@@ -259,42 +281,44 @@
                 graph['version' + version][vertex]['weight'] = 1;
             }
 
-            const edgesCount = Array(vertexes.length).fill(0);
-            const maxEdgesPerVertex = 3;
-            const totalEdgesNeeded = (vertexes.length * maxEdgesPerVertex) / 2;
+            if (!($('#noEdge').is(':checked'))){
+                const edgesCount = Array(vertexes.length).fill(0);
+                const maxEdgesPerVertex = 3;
+                const totalEdgesNeeded = (vertexes.length * maxEdgesPerVertex) / 2;
 
-            let edgesCreated = 0;
+                let edgesCreated = 0;
 
-            while (edgesCreated < totalEdgesNeeded) {
-                let sourceIndex = Math.floor(Math.random() * vertexes.length);
-                let destinationIndex;
+                while (edgesCreated < totalEdgesNeeded) {
+                    let sourceIndex = Math.floor(Math.random() * vertexes.length);
+                    let destinationIndex;
 
-                let attempts = 0;
-                do {
-                    destinationIndex = Math.floor(Math.random() * vertexes.length);
-                    attempts++;
-                    if (attempts > 100) {
-                        console.log('Too many attempts to find a valid edge.');
-                        break;
+                    let attempts = 0;
+                    do {
+                        destinationIndex = Math.floor(Math.random() * vertexes.length);
+                        attempts++;
+                        if (attempts > 100) {
+                            console.log('Too many attempts to find a valid edge.');
+                            break;
+                        }
+                    } while (
+                        destinationIndex === sourceIndex || // Prevent self-loops
+                        edgesCount[sourceIndex] >= maxEdgesPerVertex ||
+                        edgesCount[destinationIndex] >= maxEdgesPerVertex ||
+                        graph.version1[vertexes[sourceIndex]][vertexes[destinationIndex]]
+                    );
+
+                    if (edgesCount[sourceIndex] < maxEdgesPerVertex && edgesCount[destinationIndex] < maxEdgesPerVertex) {
+                        const source = vertexes[sourceIndex];
+                        const destination = vertexes[destinationIndex];
+                        const weight = Math.random() < 0.5 ? weight1 : weight2;
+
+                        graph['version' + version][source][destination] = weight;
+                        graph['version' + version][destination][source] = weight;
+
+                        edgesCount[sourceIndex]++;
+                        edgesCount[destinationIndex]++;
+                        edgesCreated++;
                     }
-                } while (
-                    destinationIndex === sourceIndex || // Prevent self-loops
-                    edgesCount[sourceIndex] >= maxEdgesPerVertex ||
-                    edgesCount[destinationIndex] >= maxEdgesPerVertex ||
-                    graph.version1[vertexes[sourceIndex]][vertexes[destinationIndex]]
-                );
-
-                if (edgesCount[sourceIndex] < maxEdgesPerVertex && edgesCount[destinationIndex] < maxEdgesPerVertex) {
-                    const source = vertexes[sourceIndex];
-                    const destination = vertexes[destinationIndex];
-                    const weight = Math.random() < 0.5 ? weight1 : weight2;
-
-                    graph['version' + version][source][destination] = weight;
-                    graph['version' + version][destination][source] = weight;
-
-                    edgesCount[sourceIndex]++;
-                    edgesCount[destinationIndex]++;
-                    edgesCreated++;
                 }
             }
 
@@ -314,12 +338,15 @@
         function displayGraph() {
             const table = document.getElementById('graphTable');
             table.innerHTML = ''; // Clear previous content
+            let vertexes = Object.keys(graph['version'+version]);
 
             // Create header row (with an extra cell at the top-left)
             const headerRow = document.createElement('tr');
             headerRow.innerHTML = '<th class="border px-4 py-2 sticky"></th>'; // Top-left empty cell
-            for (let i = 0; i < Object.keys(graph['version' + version]).length - 1; i++) {
-                headerRow.innerHTML += `<th class="border px-4 py-2 text-center sticky">${String.fromCharCode(65 + i)}</th>`;
+            for (i of vertexes) {
+                if (!(noClass.includes(i))){
+                    headerRow.innerHTML += `<th class="border px-4 py-2 text-center sticky">${i}</th>`;
+                }
             }
             table.appendChild(headerRow);
 
@@ -1066,6 +1093,7 @@
 			});
             refresh();
         });
+
 		function patchNotes() {
         		if(changeNotes.length == 0)
         		{
@@ -1077,12 +1105,11 @@
         		}
 		}
 
-		
 		function addGraph() { // Currently shows and hides the second graph
             let dispnum = Object.keys(displays).length+2;
             let dispname = 'cy'+dispnum
             $('#field').removeClass(`grid-cols-1 grid-cols-2 grid-cols-3 grid-cols-4`).addClass(`grid-cols-${dispnum}`);
-            displays[dispname] = 1
+            displays[dispname] = 1;
             let ex = `<div id="${dispname}" class="h-[600px] border border-gray-300"></div>`;
             $('#field').append(ex);
             console.log($('#field').html());
@@ -1102,6 +1129,21 @@
         function popPerson(me){
 			$(me).closest("li").remove();
         }
+
+        function EdgeOpion(){
+            const keysArray = Object.keys(graph['version'+version]);
+            const $select = $('<select>', { id: 'edge' });
+            keysArray.forEach(key => {
+              const capitalized = key.charAt(0).toUpperCase() + key.slice(1);
+              $select.append(
+                $('<option>', { value: key, text: capitalized })
+                '<button type="button" onclick=popPerson(this) class="delbtn">Delete</button>'
+              );
+            });
+
+            $('#modalBody').append($select);
+        }
+
 
     </script>
 
