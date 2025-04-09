@@ -53,102 +53,102 @@ function Slider(callback) {
   });
 }
 
-  function generateGraph() {
-      let vertexes = [];
-      let weights = [];
-      $('.modal-body ul li :text').each(function(me){
-          vertexes.push($(this).val());
-          weights.push($(this).next().val());
-      });
-      console.log(vertexes);
-      console.log(weights);
-      const numVertices = parseInt(document.getElementById('numVertices').value);
-      const weight1 = parseFloat(document.getElementById('weight1').value);
-      const weight2 = parseFloat(document.getElementById('weight2').value);
-      if (Object.keys(graph).length != 0) {
-          if (confirm('Do you want to save this json file before overwriting graph?')) {
-              downloadJSON();
-          }
-      }
-      let one = false;
-      graph = { version1: {} };
-      if (vertexes.length == 0){
-          for (let i = 0; i < numVertices; i++) {
-              const vertex = String.fromCharCode(65 + i);
-              let w = Math.random().toFixed(2);
+function generateGraph() {
+    let vertexes = [];
+    let weights = [];
+    $('.modal-body ul li :text').each(function(me){
+        vertexes.push($(this).val());
+        weights.push($(this).next().val());
+    });
+    const numVertices = parseInt(document.getElementById('numVertices').value);
+    const weight1 = parseFloat(document.getElementById('weight1').value);
+    const weight2 = parseFloat(document.getElementById('weight2').value);
+    if (Object.keys(graph).length != 0) {
+        if (confirm('Do you want to save this json file before overwriting graph?')) {
+            downloadJSON();
+        }
+    }
+    let one = false;
+    graph = { version1: {} };
+    if (vertexes.length == 0){
+        for (let i = 0; i < numVertices; i++) {
+            const vertex = String.fromCharCode(65 + i);
+            let w = Math.random().toFixed(2);
 
-              if (w > MAX_WEIGHT && !one) {
-                  w = 1;
-                  one = true;
-              } else if (w > MAX_WEIGHT) {
-                  w = MAX_WEIGHT;
-              }
+            if (w > MAX_WEIGHT && !one) {
+                w = 1;
+                one = true;
+            } else if (w > MAX_WEIGHT) {
+                w = MAX_WEIGHT;
+            }
 
-              vertexes.push(vertex);
-              weights.push(w);
+            vertexes.push(vertex);
+            weights.push(w);
 
-              graph['version' + version][vertex] = { weight: w }; //Initialing the object for each vertex.
-              graph['version' + version][vertex]['Past Edges'] = [];
-          }
-      }
-      else {
-          for (let i = 0; i < vertexes.length; i++){
-              graph['version' + version][vertexes[i]] = { weight : weights[i]};
-              graph['version' + version][vertexes[i]]['Past Edges'] = [];
+            graph['version' + version][vertex] = { weight: w }; //Initialing the object for each vertex.
+            graph['version' + version][vertex]['Past Edges'] = [];
+        }
+    }
+    else {
+        for (let i = 0; i < vertexes.length; i++){
+            graph['version' + version][vertexes[i]] = { weight : weights[i]};
+            graph['version' + version][vertexes[i]]['Past Edges'] = [];
 
-          }
-      }
+        }
+    }
 
-      if (!one) {
-          let vertex = vertexes[Math.floor(Math.random() * vertexes.length)];
-          graph['version' + version][vertex]['weight'] = 1;
-      }
+    if (!one) {
+        let vertex = vertexes[Math.floor(Math.random() * vertexes.length)];
+        graph['version' + version][vertex]['weight'] = 1;
+    }
 
-      const edgesCount = Array(vertexes.length).fill(0);
-      const maxEdgesPerVertex = 3;
-      const totalEdgesNeeded = (vertexes.length * maxEdgesPerVertex) / 2;
+    if (!($('#noEdge').is(':checked'))){
+        const edgesCount = Array(vertexes.length).fill(0);
+        const maxEdgesPerVertex = 3;
+        const totalEdgesNeeded = (vertexes.length * maxEdgesPerVertex) / 2;
 
-      let edgesCreated = 0;
+        let edgesCreated = 0;
 
-      while (edgesCreated < totalEdgesNeeded) {
-          let sourceIndex = Math.floor(Math.random() * vertexes.length);
-          let destinationIndex;
+        while (edgesCreated < totalEdgesNeeded) {
+            let sourceIndex = Math.floor(Math.random() * vertexes.length);
+            let destinationIndex;
 
-          let attempts = 0;
-          do {
-              destinationIndex = Math.floor(Math.random() * vertexes.length);
-              attempts++;
-              if (attempts > 100) {
-                  console.log('Too many attempts to find a valid edge.');
-                  break;
-              }
-          } while (
-              destinationIndex === sourceIndex || // Prevent self-loops
-              edgesCount[sourceIndex] >= maxEdgesPerVertex ||
-              edgesCount[destinationIndex] >= maxEdgesPerVertex ||
-              graph.version1[vertexes[sourceIndex]][vertexes[destinationIndex]]
-          );
+            let attempts = 0;
+            do {
+                destinationIndex = Math.floor(Math.random() * vertexes.length);
+                attempts++;
+                if (attempts > 100) {
+                    console.log('Too many attempts to find a valid edge.');
+                    break;
+                }
+            } while (
+                destinationIndex === sourceIndex || // Prevent self-loops
+                edgesCount[sourceIndex] >= maxEdgesPerVertex ||
+                edgesCount[destinationIndex] >= maxEdgesPerVertex ||
+                graph.version1[vertexes[sourceIndex]][vertexes[destinationIndex]]
+            );
 
-          if (edgesCount[sourceIndex] < maxEdgesPerVertex && edgesCount[destinationIndex] < maxEdgesPerVertex) {
-              const source = vertexes[sourceIndex];
-              const destination = vertexes[destinationIndex];
-              const weight = Math.random() < 0.5 ? weight1 : weight2;
+            if (edgesCount[sourceIndex] < maxEdgesPerVertex && edgesCount[destinationIndex] < maxEdgesPerVertex) {
+                const source = vertexes[sourceIndex];
+                const destination = vertexes[destinationIndex];
+                const weight = Math.random() < 0.5 ? weight1 : weight2;
 
-              graph['version' + version][source][destination] = weight;
-              graph['version' + version][destination][source] = weight;
+                graph['version' + version][source][destination] = weight;
+                graph['version' + version][destination][source] = weight;
 
-              edgesCount[sourceIndex]++;
-              edgesCount[destinationIndex]++;
-              edgesCreated++;
-          }
-      }
+                edgesCount[sourceIndex]++;
+                edgesCount[destinationIndex]++;
+                edgesCreated++;
+            }
+        }
+    }
 
-      // graph['version1']['changes'] = {};
-      graph['version1']['changes'] = [];
+    // graph['version1']['changes'] = {};
+    graph['version1']['changes'] = [];
 
-      refresh();
-      $('.updateClass').css('display', 'inline');
-  }
+    refresh();
+    $('.updateClass').css('display', 'inline');
+}
 
 
 
@@ -358,3 +358,27 @@ function addPerson(){
 function popPerson(me){
   $(me).closest("li").remove();
 }
+
+function EdgeOpion(){
+    const keysArray = Object.keys(graph['version'+version]);
+    const $select = $('<select>', { id: 'edge' });
+    keysArray.forEach(key => {
+      const capitalized = key.charAt(0).toUpperCase() + key.slice(1);
+      $select.append(
+        $('<option>', { value: key, text: capitalized })
+        '<button type="button" onclick=popPerson(this) class="delbtn">Delete</button>'
+      );
+    });
+
+    $('#modalBody').append($select);
+}
+
+ 
+
+
+
+
+
+
+
+
