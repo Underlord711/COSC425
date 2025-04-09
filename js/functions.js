@@ -359,20 +359,6 @@ function popPerson(me){
   $(me).closest("li").remove();
 }
 
-function EdgeOpion(){
-    const keysArray = Object.keys(graph['version'+version]);
-    const $select = $('<select>', { id: 'edge' });
-    keysArray.forEach(key => {
-      const capitalized = key.charAt(0).toUpperCase() + key.slice(1);
-      $select.append(
-        $('<option>', { value: key, text: capitalized })
-        '<button type="button" onclick=popPerson(this) class="delbtn">Delete</button>'
-      );
-    });
-
-    $('#modalBody').append($select);
-}
-
  
 
 
