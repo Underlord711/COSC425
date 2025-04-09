@@ -45,7 +45,8 @@
             Generate graph
           </button>
         </li>
-            <li><button type="button" class="btn underline mt-3 bg-maroon text-white px-5 py-3 text-lg rounded-md hover:bg-orange-500" data-bs-toggle="modal" data-bs-target="#exampleModal">
+        <!-- change here -->
+            <li><button class="underline mt-3 bg-maroon text-white px-5 py-3 text-lg rounded-md hover:bg-orange-500" data-bs-toggle="modal" data-bs-target="#exampleModal">
           Character Sheet
         </button></li>
         <li>
@@ -80,25 +81,15 @@
       </button>
     </li>
       <li>
+        <!-- change here -->
         <button type="button"
           class="updateClass underline mt-3 bg-maroon text-white px-5 py-3 text-lg rounded-md hover:bg-orange-500 hidden"
           data-bs-toggle="modal" data-bs-target="#optionsModal">
-          Options
+          Graph Options
         </button>
       </li>
       </ul>
     </nav>
-    <div class="slider-container">
-      <input
-        type="range"
-        min="3"
-        max="5"
-        value="1"
-        class="slider"
-        id="mySlider"
-      />
-      <div class="slider-value" id="sliderValue">Tolerance Level</div>
-    </div>
 
     <div class="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-md mt-3">
       <h1 class="text-2xl font-bold mb-4">
@@ -155,6 +146,9 @@
           >
             Patch Notes
           </button>
+          <!-- change here -->
+          <button onclick="addGraph()" id="GraphTwo"
+            class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none updateClass" style="display:none;">Add Graph</button>
           <button
             onclick="runAlgorithm(parseInt(document.getElementById('inputValue').value))"
             style="display: none"
@@ -170,9 +164,7 @@
             class="updateClass border px-2 py-1 rounded max-w-10"
             style="display: none"
           />
-            <button onclick="addGraph()" id="GraphTwo"
-            class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none updateClass" style="display:none;">Add Graph</button>
-        </div>
+          </div>
 
         <div class="mt-4">
           <input
@@ -296,7 +288,7 @@
       </div>
     </div>
 
-                        <!-- Modal -->
+    <!-- Modal -->
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -341,6 +333,21 @@
           <span class="tooltip-icon" data-tooltip="Allow random chance for node opinions to not change.">ⓘ</span>
           </br>
 
+          <div class="slider-container">
+            <div class="slider-value updateClass" id="sliderValue">Tolerance Level</div>
+            <input
+              type="range"
+              min="3"
+              max="5"
+              value="1"
+              class="slider"
+              id="mySlider"
+            />
+            <span class="tooltip-icon" data-tooltip="Set the tolerance level for algorithm calculations.">ⓘ</span>
+          </div>
+
+          </br>
+
           <label for="nodeColor1Input" class="updateClass" style="display: none">Node Color 1</label>
           <input type="color" id="nodeColor1Input" class="updateClass border px-1 py-1 rounded" style="display: none"
             value="#DEDEDE" />
@@ -366,6 +373,15 @@
             value="#FF0000" />
           <span class="tooltip-icon"
             data-tooltip="Set the edge color for relationships that will break when tested.">ⓘ</span>
+
+          </br>
+
+          <label id="lockNodeInput" for="lockNodePosition" class="updateClass" style="display: none">Lock Node
+            Position</label>
+          <input type="checkbox" id="lockNodePosition" class="updateClass" style="display: none" checked />
+          <input type="text" id="lockNodeValue" class="updateClass" style="display: none; border: 1px solid black;">
+          <span class="tooltip-icon"
+            data-tooltip="Lock a node to the top of the graph in circle layout.">ⓘ</span>
 
           </br>
 

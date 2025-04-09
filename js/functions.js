@@ -16,10 +16,16 @@ let nodeWeightOne; // used to fix position of node with weight 1 in graph
 changeNotes = []; //Need this for Patch Notes
 
 document.addEventListener("DOMContentLoaded", function () {
-    document.getElementById("nodeColor1Input").addEventListener("change", () => drawCytoscapeGraph('cy'), false);
-    document.getElementById("nodeColor2Input").addEventListener("change", () => drawCytoscapeGraph('cy'), false);
-    document.getElementById("safeEdgeInput").addEventListener("change", () => drawCytoscapeGraph('cy'), false);
-    document.getElementById("unsafeEdgeInput").addEventListener("change", () => drawCytoscapeGraph('cy'), false);
+  document.getElementById("nodeColor1Input").addEventListener("change", () => drawCytoscapeGraph('cy'), false);
+  document.getElementById("nodeColor2Input").addEventListener("change", () => drawCytoscapeGraph('cy'), false);
+  document.getElementById("safeEdgeInput").addEventListener("change", () => drawCytoscapeGraph('cy'), false);
+  document.getElementById("unsafeEdgeInput").addEventListener("change", () => drawCytoscapeGraph('cy'), false);
+  // change here
+  document.getElementById("lockNodePosition").addEventListener("change", () => drawCytoscapeGraph('cy'), false);
+  document.getElementById("lockNodeValue").addEventListener("input", function () {
+    nodeWeightOne = this.value.trim();
+    drawCytoscapeGraph();
+  });
 });
 
 // function updateDisplay() {
@@ -53,102 +59,104 @@ function Slider(callback) {
   });
 }
 
-  function generateGraph() {
-      let vertexes = [];
-      let weights = [];
-      $('.modal-body ul li :text').each(function(me){
-          vertexes.push($(this).val());
-          weights.push($(this).next().val());
-      });
-      console.log(vertexes);
-      console.log(weights);
-      const numVertices = parseInt(document.getElementById('numVertices').value);
-      const weight1 = parseFloat(document.getElementById('weight1').value);
-      const weight2 = parseFloat(document.getElementById('weight2').value);
-      if (Object.keys(graph).length != 0) {
-          if (confirm('Do you want to save this json file before overwriting graph?')) {
-              downloadJSON();
-          }
-      }
-      let one = false;
-      graph = { version1: {} };
-      if (vertexes.length == 0){
-          for (let i = 0; i < numVertices; i++) {
-              const vertex = String.fromCharCode(65 + i);
-              let w = Math.random().toFixed(2);
-
-              if (w > MAX_WEIGHT && !one) {
-                  w = 1;
-                  one = true;
-              } else if (w > MAX_WEIGHT) {
-                  w = MAX_WEIGHT;
-              }
-
-              vertexes.push(vertex);
-              weights.push(w);
-
-              graph['version' + version][vertex] = { weight: w }; //Initialing the object for each vertex.
-              graph['version' + version][vertex]['Past Edges'] = [];
-          }
-      }
-      else {
-          for (let i = 0; i < vertexes.length; i++){
-              graph['version' + version][vertexes[i]] = { weight : weights[i]};
-              graph['version' + version][vertexes[i]]['Past Edges'] = [];
-
-          }
-      }
-
-      if (!one) {
-          let vertex = vertexes[Math.floor(Math.random() * vertexes.length)];
-          graph['version' + version][vertex]['weight'] = 1;
-      }
-
-      const edgesCount = Array(vertexes.length).fill(0);
-      const maxEdgesPerVertex = 3;
-      const totalEdgesNeeded = (vertexes.length * maxEdgesPerVertex) / 2;
-
-      let edgesCreated = 0;
-
-      while (edgesCreated < totalEdgesNeeded) {
-          let sourceIndex = Math.floor(Math.random() * vertexes.length);
-          let destinationIndex;
-
-          let attempts = 0;
-          do {
-              destinationIndex = Math.floor(Math.random() * vertexes.length);
-              attempts++;
-              if (attempts > 100) {
-                  console.log('Too many attempts to find a valid edge.');
-                  break;
-              }
-          } while (
-              destinationIndex === sourceIndex || // Prevent self-loops
-              edgesCount[sourceIndex] >= maxEdgesPerVertex ||
-              edgesCount[destinationIndex] >= maxEdgesPerVertex ||
-              graph.version1[vertexes[sourceIndex]][vertexes[destinationIndex]]
-          );
-
-          if (edgesCount[sourceIndex] < maxEdgesPerVertex && edgesCount[destinationIndex] < maxEdgesPerVertex) {
-              const source = vertexes[sourceIndex];
-              const destination = vertexes[destinationIndex];
-              const weight = Math.random() < 0.5 ? weight1 : weight2;
-
-              graph['version' + version][source][destination] = weight;
-              graph['version' + version][destination][source] = weight;
-
-              edgesCount[sourceIndex]++;
-              edgesCount[destinationIndex]++;
-              edgesCreated++;
-          }
-      }
-
-      // graph['version1']['changes'] = {};
-      graph['version1']['changes'] = [];
-
-      refresh();
-      $('.updateClass').css('display', 'inline');
+function generateGraph() {
+  let vertexes = [];
+  let weights = [];
+  $('.modal-body ul li :text').each(function (me) {
+    vertexes.push($(this).val());
+    weights.push($(this).next().val());
+  });
+  console.log(vertexes);
+  console.log(weights);
+  const numVertices = parseInt(document.getElementById('numVertices').value);
+  const weight1 = parseFloat(document.getElementById('weight1').value);
+  const weight2 = parseFloat(document.getElementById('weight2').value);
+  if (Object.keys(graph).length != 0) {
+    if (confirm('Do you want to save this json file before overwriting graph?')) {
+      downloadJSON();
+    }
   }
+  let one = false;
+  graph = { version1: {} };
+  if (vertexes.length == 0) {
+    for (let i = 0; i < numVertices; i++) {
+      const vertex = String.fromCharCode(65 + i);
+      let w = Math.random().toFixed(2);
+
+      if (w > MAX_WEIGHT && !one) {
+        w = 1;
+        one = true;
+        nodeWeightOne = vertex;
+      } else if (w > MAX_WEIGHT) {
+        w = MAX_WEIGHT;
+      }
+
+      vertexes.push(vertex);
+      weights.push(w);
+
+      graph['version' + version][vertex] = { weight: w }; //Initialing the object for each vertex.
+      graph['version' + version][vertex]['Past Edges'] = [];
+    }
+  }
+  else {
+    for (let i = 0; i < vertexes.length; i++) {
+      graph['version' + version][vertexes[i]] = { weight: weights[i] };
+      graph['version' + version][vertexes[i]]['Past Edges'] = [];
+
+    }
+  }
+
+  if (!one) {
+    let vertex = vertexes[Math.floor(Math.random() * vertexes.length)];
+    graph['version' + version][vertex]['weight'] = 1;
+    nodeWeightOne = vertex;
+  }
+
+  const edgesCount = Array(vertexes.length).fill(0);
+  const maxEdgesPerVertex = 3;
+  const totalEdgesNeeded = (vertexes.length * maxEdgesPerVertex) / 2;
+
+  let edgesCreated = 0;
+
+  while (edgesCreated < totalEdgesNeeded) {
+    let sourceIndex = Math.floor(Math.random() * vertexes.length);
+    let destinationIndex;
+
+    let attempts = 0;
+    do {
+      destinationIndex = Math.floor(Math.random() * vertexes.length);
+      attempts++;
+      if (attempts > 100) {
+        console.log('Too many attempts to find a valid edge.');
+        break;
+      }
+    } while (
+      destinationIndex === sourceIndex || // Prevent self-loops
+      edgesCount[sourceIndex] >= maxEdgesPerVertex ||
+      edgesCount[destinationIndex] >= maxEdgesPerVertex ||
+      graph.version1[vertexes[sourceIndex]][vertexes[destinationIndex]]
+    );
+
+    if (edgesCount[sourceIndex] < maxEdgesPerVertex && edgesCount[destinationIndex] < maxEdgesPerVertex) {
+      const source = vertexes[sourceIndex];
+      const destination = vertexes[destinationIndex];
+      const weight = Math.random() < 0.5 ? weight1 : weight2;
+
+      graph['version' + version][source][destination] = weight;
+      graph['version' + version][destination][source] = weight;
+
+      edgesCount[sourceIndex]++;
+      edgesCount[destinationIndex]++;
+      edgesCreated++;
+    }
+  }
+
+  // graph['version1']['changes'] = {};
+  graph['version1']['changes'] = [];
+
+  refresh();
+  $('.updateClass').css('display', 'inline');
+}
 
 
 
@@ -265,8 +273,8 @@ function refresh() {
   displayGraph();
   drawCytoscapeGraph();
   let dispname = Object.keys(displays);
-  dispname.forEach(function(me){
-      drawCytoscapeGraph(me);
+  dispname.forEach(function (me) {
+    drawCytoscapeGraph(me);
   });
 }
 
@@ -335,27 +343,27 @@ function patchNotes() {
 }
 
 function addGraph() { // Currently shows and hides the second graph
-      let dispnum = Object.keys(displays).length+2;
-      let dispname = 'cy'+dispnum
-      $('#field').removeClass(`grid-cols-1 grid-cols-2 grid-cols-3 grid-cols-4`).addClass(`grid-cols-${dispnum}`);
-      displays[dispname] = 1
-      let ex = `<div id="${dispname}" class="h-[600px] border border-gray-300"></div>`;
-      $('#field').append(ex);
-      console.log($('#field').html());
-      drawCytoscapeGraph(dispname);
-      $('#reset').click();
-  }
-  
-function addPerson(){
+  let dispnum = Object.keys(displays).length + 2;
+  let dispname = 'cy' + dispnum
+  $('#field').removeClass(`grid-cols-1 grid-cols-2 grid-cols-3 grid-cols-4`).addClass(`grid-cols-${dispnum}`);
+  displays[dispname] = 1
+  let ex = `<div id="${dispname}" class="h-[600px] border border-gray-300"></div>`;
+  $('#field').append(ex);
+  console.log($('#field').html());
+  drawCytoscapeGraph(dispname);
+  $('#reset').click();
+}
+
+function addPerson() {
   let boxes = $("<li>").html(
-              '<input type="text" class="text-box" placeholder="Enter text 1"> ' +
-              '<input type="number" value="0.2" required>' +
-              '<button type="button" onclick=popPerson(this) class="delbtn">Delete</button>'
-      );
+    '<input type="text" class="text-box" placeholder="Enter text 1"> ' +
+    '<input type="number" value="0.2" required>' +
+    '<button type="button" onclick=popPerson(this) class="delbtn">Delete</button>'
+  );
   $(".modal-body ul").append(boxes);
 }
 
-function popPerson(me){
+function popPerson(me) {
   $(me).closest("li").remove();
 }
 function downloadExcel() {
