@@ -142,8 +142,8 @@
         <h2 class="text-xl font-semibold mt-6">Generated Graph:</h2>
         <div class="flex items-start">
             <div class="flex-none mr-4">Version: <span id="versionDisplay">1</span></div>
-            <div class="flex-none mr-4">Second Graph's Version: <span id="versionDisplay2">1</span></div>
-            <div class="flex-none mr-4">Total Secondary Graphs: <span id="TotalDisplay">0</span></div>
+            <div class="flex-none mr-4">Current Graph Verison: <span id="versionDisplay2">1</span></div>
+            <div class="flex-none mr-4">Total Graphs: <span id="TotalDisplay">1</span></div>
 
             <div id="matrixContainer" class="flex-grow overflow-x-auto overflow-y-auto max-h-96 mx-4 self-center"
                 style="display: none;">
@@ -166,7 +166,7 @@
                     class="bg-purple-500 text-white px-2 py-2 rounded hover:bg-purple-600 focus:outline-none;" style="display:none;">New Graph Prev</button>
                 <button onclick="cycleLeft()" id="cycleLeft"
                     class="bg-purple-500 text-white px-2 py-2 rounded hover:bg-purple-600 focus:outline-none;" style="display:flex;">Cycle Graph Left</button>
-                <div class="flex-none mr-4">Current Secondary Graph: <span id="secondGraphCurrent">0</span></div>
+                <div class="flex-none mr-4">Current Graph: <span id="secondGraphCurrent">1</span></div>
                 <button onclick="cycleRight()" id="cycleRight"
                     class="bg-purple-500 text-white px-2 py-2 rounded hover:bg-purple-600 focus:outline-none;" style="display:flex;">Cycle Graph Right</button>
                 <button onclick="nextTwo()" id="next2"
@@ -195,8 +195,8 @@
         let graph = {};
         let version = 1;
         let versionTwo = 1;
-        let totalGraphs = 0;
-        let currentGraph = 0;
+        let totalGraphs = 1;
+        let currentGraph = 1;
         let isMatrixVisible = false; // Track whether the matrix is visible or not
         let dummy = 'circle';
         let noClass = ['weight', 'Past Edges', 'changes'];
@@ -937,17 +937,30 @@
         }
 
         function previous() {
-            version--;
-            if (version > 0) {
-                $('#versionDisplay').text(version);
-                refresh();
+            if(currentGraph > 1)
+            {
+            	versionTwo++;
+            	if (versionTwo <= Object.keys(displays).length+2) {
+                	document.getElementById('versionDisplay2').innerText = versionTwo;
+                	refreshTwo();
+            	}
+            	else {
+                	versionTwo--;
+            	}
             }
             else {
-                version++;
+            	version--;
+            	if (version > 0) {
+                	$('#versionDisplay').text(version);
+                	refresh();
+            	}
+            	else {
+                	version++;
+            	}
             }
         }
         
-        function previousTwo() {
+        /*function previousTwo() {
             console.log("Prev two");
             versionTwo--;
             if (versionTwo > 0) {
@@ -957,16 +970,30 @@
             else {
                 versionTwo++;
             }
-        }
+        }*/
 
         function next() {
-            version++;
-            if (version <= Object.keys(graph).length) {
-                $('#versionDisplay').text(version);
-                refresh();
+            if(currentGraph > 1)
+            {
+            	versionTwo++;
+            	if (versionTwo <= Object.keys(displays).length+2) {
+                	$('#versionDisplay').text(version);
+                	refreshTwo();
+            	}
+            	else {
+                	versionTwo--;
+            	}
             }
-            else {
-                version--;
+            else
+            {
+            	version++;
+            	if (version <= Object.keys(graph).length) {
+                	$('#versionDisplay').text(version);
+                	refresh();
+            	}
+            	else {
+                	version--;
+            	}
             }
         }
 
@@ -999,17 +1026,17 @@
             }
         });
         
-        function nextTwo() {
+        /*function nextTwo() {
             console.log("Next two");
             versionTwo++;
-            if (versionTwo <= Object.keys(graph).length) {
+            if (versionTwo <= Object.keys(displays).length+2) {
                 $('#versionDisplay2').text(versionTwo);
                 refreshTwo();
             }
             else {
                 versionTwo--;
             }
-        }
+        }*/
 
         function refresh() {
             displayGraph();
@@ -1106,48 +1133,99 @@
             
         }
         
-        function addGraph() { // Currently shows and hides the second graph
+        function addGraph() { // Adds a new graph and increases the total num of secondary graohs
             let dispnum = Object.keys(displays).length+2;
-            let dispname = 'cy'+dispnum
+            let dispname = 'cy'+dispnum;
+            totalGraphs = dispnum;
             $('#field').removeClass(`grid-cols-1 grid-cols-2 grid-cols-3 grid-cols-4`).addClass(`grid-cols-${dispnum}`);
-            displays[dispname] = 1
+            displays[dispname] = 1;
             let ex = `<div id="${dispname}" class="h-[600px] border border-gray-300"></div>`;
             $('#field').append(ex);
             console.log($('#field').html());
             drawCytoscapeGraph(dispname);
             $('#reset').click();
+            
+            if(totalGraphs == 1)
+            {
+            	currentGraph++;
+            	$('#secondGraphCurrent').text(currentGraph);
+            }
+            
+            //totalGraphs++;
+            $('#TotalDisplay').text(totalGraphs);
         }
         
         function removeGraph(){ //This needs to remove the dynamically added graphs.
-            if(totalGraphs == 0)
+            /*if(totalGraphs == 1)
                 alert("Don't.");
             else
             {
+                let dispnum = Object.keys(displays).length+2;
+            	let dispname = 'cy'+dispnum;
+            	
+            	delete displays[dispname]
+            	
+            	
+            	let ex = `<div id="${dispname}" class="h-[600px] border border-gray-300"></div>`;
+            	$(ex).remove();
+            	
+            	$('#field').removeClass(`grid-cols-1 grid-cols-2 grid-cols-3 grid-cols-4`).removeClass(`grid-cols-${dispnum}`);
+                
+                dispnum = Object.keys(displays).length+2;
+                
                 if(totalGraphs == currentGraph){
                     currentGraph--;
                     $('#secondGraphCurrent').text(currentGraph);
                 }
-                totalGraphs--;
+                totalGraphs = dispnum;
+                //totalGraphs--;
                 $('#TotalDisplay').text(totalGraphs);
                 var graphStat = document.getElementById("cy");
-                var graphNewStat = document.getElementById("cy" + currentGraph);
+                var graphNewStat = document.getElementById(dispname);
                 //var graphTwoStat = document.getElementById("cy2");
-                if(totalGraphs == 0) {
+                if(totalGraphs == 1) {
                     graphNewStat.style.display = "none";
                     next2.style.display="none";
                     prev2.style.display="none";
                     cycleLeft.style.display="none";
                     cycleRight.style.display="none";
                     graphStat.style.width = "100%";
-                    currentGraph = 0;
+                    currentGraph = 1;
                 }
-            }
-        }
+            }*/
+            
+           let keys = Object.keys(displays);
+    if (keys.length === 0) return;
+
+    // Get the last added graph
+    let lastDisp = keys[keys.length - 1];
+    
+    // Remove the graph div from the DOM
+    $(`#${lastDisp}`).remove();
+
+    // Remove it from the tracking object
+    delete displays[lastDisp];
+
+    // Update totalGraphs count
+    totalGraphs = Object.keys(displays).length + 1;
+
+    // Update the grid columns class
+    $('#field').removeClass(`grid-cols-1 grid-cols-2 grid-cols-3 grid-cols-4`)
+               .addClass(`grid-cols-${totalGraphs}`);
+
+    // Optional counter reset
+    if (totalGraphs <= 1) {
+        currentGraph = 0;
+        $('#secondGraphCurrent').text(currentGraph);
+    }
+
+    $('#TotalDisplay').text(totalGraphs);
+    }
         
         function cycleLeft(){
             if(currentGraph == 1 && totalGraphs >= currentGraph)
                 alert("Can't.");
-            else if(currentGraph == 0 && totalGraphs == 0)
+            else if(currentGraph == 1 && totalGraphs == 1)
                 alert("Please make a new graph.");
             else
                 currentGraph--;
@@ -1158,7 +1236,7 @@
         function cycleRight(){
             if(currentGraph == totalGraphs)
                 alert("Can't.");
-            else if(currentGraph == 0 && totalGraphs == 0)
+            else if(currentGraph == 1 && totalGraphs == 1)
                 alert("Please make a new graph.");
             else
                 currentGraph++;
