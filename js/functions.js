@@ -358,3 +358,35 @@ function addPerson(){
 function popPerson(me){
   $(me).closest("li").remove();
 }
+function downloadExcel() {
+  let workbook = XLSX.utils.book_new();
+
+  // Iterate through all keys that start with 'version'
+  Object.keys(graph).forEach(versionKey => {
+    if (versionKey.startsWith("version")) {
+      let data = [];
+      let matrix = graph[versionKey];
+      let vertices = Object.keys(matrix).filter(v => !["changes", "Past Edges", "weight"].includes(v));
+      
+      // Prepare headers
+      let headers = [" "].concat(vertices);
+      data.push(headers);
+
+      // Build rows of the matrix
+      vertices.forEach(source => {
+        let row = [source];
+        vertices.forEach(target => {
+          row.push(matrix[source]?.[target] || "0");
+        });
+        data.push(row);
+      });
+
+      // Create sheet
+      let sheet = XLSX.utils.aoa_to_sheet(data);
+      XLSX.utils.book_append_sheet(workbook, sheet, versionKey); // Each version in a separate sheet
+    }
+  });
+
+  // Save workbook
+  XLSX.writeFile(workbook, "full_graph_data.xlsx");
+}

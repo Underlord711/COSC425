@@ -10,6 +10,8 @@
 
 **Download JSON** - Download JSON file containing each graph version. Can choose JSON file to upload to create graph.
 
+**Download Spreadsheet** - Download Excel spreadsheet file containing each graph version. Each version is saved on a seperate sheet, accessible from the tabs at the bottom of the display in Execl. 
+
 **Run Algorithm** - Runs the algorithm on the current version of the graph. Will overwrite later versions (if running algorithm on graph version 1 while graph version 2 exists, version 2 will be overwritten with results of algorithm). Input box next to Run Algorithm button allows user to select how many times they would like to run the algorithm.
 
 **Patch Notes** - Display alert containing all changes that have happened to the graph since loading (will only display changes to graph from running the algorithm - loading graphs will not have any patch notes until the algorithm has been performed). 
