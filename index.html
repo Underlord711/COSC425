@@ -24,11 +24,9 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="js/functions.js"></script>
-    <script src="js/algorithm.js"></script>
-    <script src="js/graph.js"></script>
     <link rel="stylesheet" href="css/matrix.css" />
     <link rel="stylesheet" href="css/nav.css" />
+    <!-- Link to your CSS file -->
   </head>
   <body class="bg-gray-100 p-6">
     <!-- Navigation Bar -->
@@ -45,10 +43,16 @@
             Generate graph
           </button>
         </li>
-        <!-- change here -->
-            <li><button class="underline mt-3 bg-maroon text-white px-5 py-3 text-lg rounded-md hover:bg-orange-500" data-bs-toggle="modal" data-bs-target="#exampleModal">
-          Character Sheet
-        </button></li>
+        <li>
+          <button
+            type="button"
+            class="btn underline mt-3 bg-maroon text-white px-5 py-3 text-lg rounded-md hover:bg-orange-500"
+            data-bs-toggle="modal"
+            data-bs-target="#exampleModal"
+          >
+            Character Sheet
+          </button>
+        </li>
         <li>
           <button
             onclick="uploadJSON()"
@@ -87,7 +91,7 @@
           data-bs-toggle="modal" data-bs-target="#optionsModal">
           Graph Options
         </button>
-      </li>
+        </li>
       </ul>
     </nav>
 
@@ -111,7 +115,7 @@
           />
         </div>
 
-        <div> 
+        <div>
           <label for="weight1" class="block text-sm font-medium"
             >Weight for Edge Type 1:</label
           >
@@ -139,6 +143,21 @@
 
         <div class="space-x-4">
           <button
+          onclick="runAlgorithm(parseInt(document.getElementById('inputValue').value))"
+          style="display: none"
+          id="runAlgorithm"
+          class="updateClass bg-pink-500 text-white px-4 py-2 rounded hover:bg-pink-600 focus:outline-none"
+        >
+          Run Algorithm
+        </button>
+        <input
+          type="number"
+          value="1"
+          id="inputValue"
+          class="updateClass border px-2 py-1 rounded max-w-10"
+          style="display: none"
+        />
+          <button
             onclick="patchNotes()"
             id="patchBtn"
             class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 focus:outline-none updateClass"
@@ -146,25 +165,23 @@
           >
             Patch Notes
           </button>
-          <!-- change here -->
-          <button onclick="addGraph()" id="GraphTwo"
-            class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none updateClass" style="display:none;">Add Graph</button>
           <button
-            onclick="runAlgorithm(parseInt(document.getElementById('inputValue').value))"
+            onclick="addGraph()"
+            id="GraphTwo"
+            class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none updateClass"
             style="display: none"
-            id="runAlgorithm"
-            class="updateClass bg-pink-500 text-white px-4 py-2 rounded hover:bg-pink-600 focus:outline-none"
           >
-            Run Algorithm
+            Add Graph
           </button>
-          <input
-            type="number"
-            value="1"
-            id="inputValue"
-            class="updateClass border px-2 py-1 rounded max-w-10"
+          <button
+            onclick="removeGraph()"
+            id="removeGraph"
+            class="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600 focus:outline-none updateClass"
             style="display: none"
-          />
-          </div>
+          >
+            Remove Graph
+          </button>
+        </div>
 
         <div class="mt-4">
           <input
@@ -190,11 +207,12 @@
         <div class="flex-none mr-4">
           Version: <span id="versionDisplay">1</span>
         </div>
-        <!--
         <div class="flex-none mr-4">
-          SecondVersion: <span id="versionDisplay2">1</span>
+          Current Graph Verison: <span id="versionDisplay2">1</span>
         </div>
-        -->
+        <div class="flex-none mr-4">
+          Total Graphs: <span id="TotalDisplay">1</span>
+        </div>
 
         <div
           id="matrixContainer"
@@ -236,13 +254,33 @@
           >
             ▶
           </button>
+
           <button
             onclick="previousTwo()"
             id="prev2"
             class="bg-purple-500 text-white px-2 py-2 rounded hover:bg-purple-600 focus:outline-none;"
             style="display: none"
           >
-            Second Graph Prev
+            New Graph Prev
+          </button>
+          <button
+            onclick="cycleLeft()"
+            id="cycleLeft"
+            class="bg-purple-500 text-white px-2 py-2 rounded hover:bg-purple-600 focus:outline-none;"
+            style="display: flex"
+          >
+            Cycle Graph Left
+          </button>
+          <div class="flex-none mr-4">
+            Current Graph: <span id="secondGraphCurrent">1</span>
+          </div>
+          <button
+            onclick="cycleRight()"
+            id="cycleRight"
+            class="bg-purple-500 text-white px-2 py-2 rounded hover:bg-purple-600 focus:outline-none;"
+            style="display: flex"
+          >
+            Cycle Graph Right
           </button>
           <button
             onclick="nextTwo()"
@@ -250,14 +288,18 @@
             class="bg-purple-500 text-white px-2 py-2 rounded hover:bg-purple-600 focus:outline-none;"
             style="display: none"
           >
-            Second Graph Next
+            New Graph Next
           </button>
         </div>
       </div>
 
-        <div class="grid gap-4 grid-cols-1" id="field">
-            <div id="cy" class="h-[600px] border border-gray-300" style="width: auto; height: 600px;"></div>
-        </div>
+      <div class="grid gap-4 grid-cols-1" id="field">
+        <div
+          id="cy"
+          class="h-[600px] border border-gray-300"
+          style="width: auto; height: 600px"
+        ></div>
+      </div>
     </div>
 
     <div
@@ -400,7 +442,10 @@
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
         </div>
       </div>
+      </div>
     </div>
-  </div>
   </body>
+  <script src="js/functions.js"></script>
+  <script src="js/algorithm.js"></script>
+  <script src="js/graph.js"></script>
 </html>
