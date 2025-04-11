@@ -390,38 +390,53 @@ function addPerson() {
 function popPerson(me) {
   $(me).closest("li").remove();
 }
-function downloadExcel() {
-  let workbook = XLSX.utils.book_new();
+async function downloadExcel() {
+  const workbook = new ExcelJS.Workbook();
 
-  // Iterate through all keys that start with 'version'
   Object.keys(graph).forEach(versionKey => {
     if (versionKey.startsWith("version")) {
-      let data = [];
-      let matrix = graph[versionKey];
-      let vertices = Object.keys(matrix).filter(v => !["changes", "Past Edges", "weight"].includes(v));
-      
-      // Prepare headers
-      let headers = [" "].concat(vertices);
-      data.push(headers);
+      const worksheet = workbook.addWorksheet(versionKey);
 
-      // Build rows of the matrix
+      const matrix = graph[versionKey];
+      const vertices = Object.keys(matrix).filter(v => !["changes", "Past Edges", "weight"].includes(v));
+
+      // Prepare headers
+      const headers = [" "].concat(vertices);
+      worksheet.addRow(headers);
+
+      // Build and add rows
       vertices.forEach(source => {
-        let row = [source];
+        const rowData = [source];
         vertices.forEach(target => {
-          row.push(matrix[source]?.[target] || "X");
+          rowData.push(matrix[source]?.[target] || "X");
         });
-        data.push(row);
+        worksheet.addRow(rowData);
       });
 
-      // Create sheet
-      let sheet = XLSX.utils.aoa_to_sheet(data);
-      XLSX.utils.book_append_sheet(workbook, sheet, versionKey); // Each version in a separate sheet
+      // Apply right-alignment to all cells except header row
+      worksheet.eachRow((row, rowNumber) => {
+        row.eachCell((cell, colNumber) => {
+          // Skip top-left cell and header row's first cell
+          if (rowNumber > 1 || colNumber > 1) {
+            cell.alignment = { horizontal: 'right' };
+          }
+        });
+      });
     }
   });
 
-  // Save workbook
-  XLSX.writeFile(workbook, "full_graph_data.xlsx");
+  // Generate and download the file in browser
+  const buffer = await workbook.xlsx.writeBuffer();
+  const blob = new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = "full_graph_data.xlsx";
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
 }
+
 function removeGraph(){ //This needs to remove the dynamically added graphs.
   let keys = Object.keys(displays);
   if (keys.length === 0) return;
