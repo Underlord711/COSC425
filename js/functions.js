@@ -20,6 +20,10 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("nodeColor2Input").addEventListener("change", () => drawCytoscapeGraph('cy'), false);
     document.getElementById("safeEdgeInput").addEventListener("change", () => drawCytoscapeGraph('cy'), false);
     document.getElementById("unsafeEdgeInput").addEventListener("change", () => drawCytoscapeGraph('cy'), false);
+    const modal = document.getElementById('edgeModal');
+    modal.addEventListener('hidden.bs.modal',function(){
+      onModalClose();
+    });
 });
 
 // function updateDisplay() {
@@ -384,6 +388,21 @@ function addEdge(){
 
 function clearModal(){
     $("#edgeModal .modal-body ul").empty();
+}
+
+function onModalClose(){
+  $("#edgeModal.modal-body ul").each(function(me){
+    node1 = $(this).val();
+    node2 = $(this).next().val();
+    value = $(this).next().next().val();
+    graph['version' + version][node1][node2]=value;
+    graph['version' + version][node2][node1]=value;
+    console.log(value);
+
+  });
+  refresh();
+  console.log("hit travis");
+
 }
  
 
