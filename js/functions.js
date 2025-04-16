@@ -381,6 +381,10 @@ function addEdge(){
 
   $("#edgeModal .modal-body ul").append($li);
 }
+
+function clearModal(){
+    $("#edgeModal .modal-body ul").empty();
+}
  
 
 
