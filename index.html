@@ -204,17 +204,22 @@
       </div>
 
       <h2 class="text-xl font-semibold mt-6">Generated Graph:</h2>
-      <div class="flex items-start">
-        <div class="flex-none mr-4">
-          Version: <span id="versionDisplay">1</span>
-        </div>
-        <div class="flex-none mr-4">
-          Current Graph Verison: <span id="versionDisplay2">1</span>
-        </div>
-        <div class="flex-none mr-4">
-          Total Graphs: <span id="TotalDisplay">1</span>
-        </div>
 
+      <div class="flex items-start flex-wrap gap-4 pb-2">
+        <!-- Version Info -->
+        <div class="flex space-x-4">
+          <div class="flex-none">
+            <span class="font-medium">Version:</span> <span id="versionDisplay">1</span>
+          </div>
+          <div class="flex-none">
+            <span class="font-medium">Current Graph Version:</span> <span id="versionDisplay2">1</span>
+          </div>
+          <div class="flex-none">
+            <span class="font-medium">Total Graphs:</span> <span id="TotalDisplay">1</span>
+          </div>
+        </div>
+      
+        <!-- Matrix Container -->
         <div
           id="matrixContainer"
           class="flex-grow overflow-x-auto overflow-y-auto max-h-96 mx-4 self-center"
@@ -225,8 +230,9 @@
             class="min-w-full table-auto border-collapse bg-white shadow-md rounded-lg text-sm"
           ></table>
         </div>
-
-        <div class="flex-none ml-auto">
+      
+        <!-- Controls -->
+        <div class="flex flex-wrap gap-2 ml-auto items-center">
           <button
             onclick="refresh()"
             id="reset"
@@ -255,11 +261,11 @@
           >
             ▶
           </button>
-
+      
           <button
             onclick="previousTwo()"
             id="prev2"
-            class="bg-purple-500 text-white px-2 py-2 rounded hover:bg-purple-600 focus:outline-none;"
+            class="bg-purple-500 text-white px-2 py-2 rounded hover:bg-purple-600 focus:outline-none"
             style="display: none"
           >
             New Graph Prev
@@ -267,38 +273,37 @@
           <button
             onclick="cycleLeft()"
             id="cycleLeft"
-            class="bg-purple-500 text-white px-2 py-2 rounded hover:bg-purple-600 focus:outline-none;"
-            style="display: flex"
+            class="bg-purple-500 text-white px-2 py-2 rounded hover:bg-purple-600 focus:outline-none"
           >
             Cycle Graph Left
           </button>
-          <div class="flex-none mr-4">
-            Current Graph: <span id="secondGraphCurrent">1</span>
+          <div class="flex-none">
+            <span class="font-medium">Current Graph:</span> <span id="secondGraphCurrent">1</span>
           </div>
           <button
             onclick="cycleRight()"
             id="cycleRight"
-            class="bg-purple-500 text-white px-2 py-2 rounded hover:bg-purple-600 focus:outline-none;"
-            style="display: flex"
+            class="bg-purple-500 text-white px-2 py-2 rounded hover:bg-purple-600 focus:outline-none"
           >
             Cycle Graph Right
           </button>
           <button
             onclick="nextTwo()"
             id="next2"
-            class="bg-purple-500 text-white px-2 py-2 rounded hover:bg-purple-600 focus:outline-none;"
+            class="bg-purple-500 text-white px-2 py-2 rounded hover:bg-purple-600 focus:outline-none"
             style="display: none"
           >
             New Graph Next
           </button>
         </div>
       </div>
+      
 
       <div class="grid gap-4 grid-cols-1" id="field">
         <div
           id="cy"
           class="h-[600px] border border-gray-300"
-          style="width: auto; height: 600px"
+          style="width: auto; height: 700px"
         ></div>
       </div>
     </div>
@@ -421,7 +426,7 @@
 
           <label id="lockNodeInput" for="lockNodePosition" class="updateClass" style="display: none">Lock Node
             Position</label>
-          <input type="checkbox" id="lockNodePosition" class="updateClass" style="display: none" checked />
+          <input type="checkbox" id="lockNodePosition" class="updateClass" style="display: none"/>
           <input type="text" id="lockNodeValue" class="updateClass" style="display: none; border: 1px solid black;">
           <span class="tooltip-icon"
             data-tooltip="Lock a node to the top of the graph in circle layout.">ⓘ</span>
