@@ -62,7 +62,7 @@ function hexToRgb(hex) {
   ] : null;
 }
 
-function drawCytoscapeGraph(me = 'cy') {
+function drawCytoscapeGraph(me = 'cy', versionNum = version) {
   const elements = [];
   let nodeColor1 = hexToRgb($("#nodeColor1Input").val());
   let nodeColor2 = hexToRgb($("#nodeColor2Input").val());
@@ -82,7 +82,8 @@ function drawCytoscapeGraph(me = 'cy') {
         elements.push({
           data: {
             id: destination,
-            rel: graph["version" + version][destination]["weight"],
+            // rel: graph["version" + version][destination]["weight"],
+            rel: graph["version" + versionNum][destination]["weight"],
           },
         });
         elements.push({

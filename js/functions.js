@@ -356,27 +356,92 @@ function patchNotes() {
   }
 }
 
-function addGraph() { // Adds a new graph and increases the total num of secondary graohs
-  let dispnum = Object.keys(displays).length+2;
-  let dispname = 'cy'+dispnum;
-  totalGraphs = dispnum;
-  $('#field').removeClass(`grid-cols-1 grid-cols-2 grid-cols-3 grid-cols-4`).addClass(`grid-cols-${dispnum}`);
-  displays[dispname] = 1;
-  let ex = `<div id="${dispname}" class="h-[600px] border border-gray-300"></div>`;
-  $('#field').append(ex);
-  console.log($('#field').html());
-  drawCytoscapeGraph(dispname);
+// function addGraph() { // Adds a new graph and increases the total num of secondary graohs
+//   let dispnum = Object.keys(displays).length+2;
+//   let dispname = 'cy'+dispnum;
+//   totalGraphs = dispnum;
+  
+//   // Count available versions
+//   const versionKeys = Object.keys(graph).filter(k => k.startsWith("version"));
+//   const versionCount = versionKeys.length;
+  
+//   // if (versionCount <= 1) {
+//   //   alert("Not enough versions of the graph to distribute.");
+//   //   return;
+//   // }
+
+//   // Calculate the version to assign
+//   let assignedVersion;
+//   const displayCount = Object.keys(displays).length;
+
+//   if (displayCount === 0) {
+//     assignedVersion = 1; // First display
+//   } else if (displayCount === 1) {
+//     assignedVersion = Math.ceil(versionCount / 2); // Middle version
+//   } else {
+//     assignedVersion = versionCount; // Last version for 3rd and beyond
+//   }
+
+//   // Add to DOM
+//   $('#field').removeClass(`grid-cols-1 grid-cols-2 grid-cols-3 grid-cols-4`).addClass(`grid-cols-${dispnum}`);
+//   // displays[dispname] = 1;
+//   displays[dispname] = assignedVersion;
+
+//   let ex = `<div id="${dispname}" class="h-[600px] border border-gray-300"></div>`;
+//   $('#field').append(ex);
+
+//   // console.log($('#field').html());
+//   // drawCytoscapeGraph(dispname);
+//   console.log(`[+] Added ${dispname}, assigned version ${assignedVersion}`, $('#field').html());
+//   drawCytoscapeGraph(dispname, assignedVersion);
+  
+//   $('#reset').click();
+  
+//   if(totalGraphs == 1)
+//   {
+//     currentGraph++;
+//     $('#secondGraphCurrent').text(currentGraph);
+//   }
+  
+//   //totalGraphs++;
+//   $('#TotalDisplay').text(totalGraphs);
+// }
+
+function addGraph() {
+  const versionKeys = Object.keys(graph).filter(k => k.startsWith("version"));
+  const versionCount = versionKeys.length;
+
+  if (versionCount <= 1) {
+    alert("Not enough versions of the graph to distribute.");
+    return;
+  }
+
+  let displayNames = Object.keys(displays);  // Only the extra displays
+  let newDisplayId = 'cy' + (displayNames.length + 2);  // e.g., cy2, cy3, cy4
+  $('#field').removeClass().addClass(`grid grid-cols-${displayNames.length + 2}`);
+
+  // 1. Reassign previous displays to middle versions
+  const step = (versionCount - 2) / (displayNames.length + 1);
+  displayNames.forEach((disp, index) => {
+    const middleVersion = Math.round(1 + step * (index + 1)); // starts from version 2
+    displays[disp] = middleVersion;
+    drawCytoscapeGraph(disp, middleVersion);
+  });
+
+  // 2. Add new display and assign it the latest version
+  displays[newDisplayId] = versionCount;
+  $('#field').append(`<div id="${newDisplayId}" class="h-[600px] border border-gray-300"></div>`);
+  drawCytoscapeGraph(newDisplayId, versionCount);
+
+  // 3. Update counters
+  totalGraphs = displayNames.length + 2;
+  $('#TotalDisplay').text(totalGraphs);
   $('#reset').click();
   
-  if(totalGraphs == 1)
-  {
-    currentGraph++;
-    $('#secondGraphCurrent').text(currentGraph);
-  }
-  
-  //totalGraphs++;
-  $('#TotalDisplay').text(totalGraphs);
+  console.log(`[+] Added ${newDisplayId}, assigned version ${versionCount}`);
+  console.log($('#field').html());
 }
+
 
 function addPerson() {
   let boxes = $("<li>").html(
