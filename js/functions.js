@@ -352,13 +352,35 @@ function addPerson(){
               '<input type="number" value="0.2" required>' +
               '<button type="button" onclick=popPerson(this) class="delbtn">Delete</button>'
       );
-  $(".modal-body ul").append(boxes);
+  $("#exampleModal .modal-body ul").append(boxes);
 }
 
 function popPerson(me){
   $(me).closest("li").remove();
 }
 
+function addEdge(){
+  const $select = $('<select>', {
+  });
+  $.each(graph['version'+version], (key, value) => {
+    if(noClass.includes(key)){
+      return;
+    }
+    $('<option>', {
+      value: key,
+      text: key
+    }).appendTo($select);
+  });
+
+  const $clonedSelect = $select.clone();
+
+  const $edgeWeight = $('<input type="number" value="0.5" required>' +
+                  '<button type="button" onclick=popPerson(this) class="delbtn">Delete</button>');
+
+  const $li = $('<li>').append($select, $clonedSelect, $edgeWeight);
+
+  $("#edgeModal .modal-body ul").append($li);
+}
  
 
 
