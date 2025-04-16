@@ -1,11 +1,7 @@
 /* styles.css */
 
 /* Basic Reset */
-body,
-ul,
-li,
-a,
-button {
+body, ul, li, a, button {
     margin: 0;
     padding: 0;
     list-style: none;
@@ -29,7 +25,7 @@ nav ul li {
 }
 
 /* Style for anchor links and buttons */
-nav ul li a,
+nav ul li a, 
 nav ul li button {
     color: white;
     text-decoration: none;
@@ -61,34 +57,4 @@ nav ul li button:hover {
     height: 100px;
     width: auto;
     display: block;
-}
-
-.tooltip-icon {
-    position: relative;
-    cursor: pointer;
-    margin-left: 5px;
-    font-size: 14px;
-    color: black;
-}
-
-.tooltip-icon::after {
-    content: attr(data-tooltip);
-    position: absolute;
-    bottom: 125%;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: black;
-    color: white;
-    padding: 6px 10px;
-    border-radius: 5px;
-    white-space: nowrap;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.2s ease-in-out;
-    font-size: 12px;
-    z-index: 1000;
-}
-
-.tooltip-icon:hover::after {
-    opacity: 1;
 }
