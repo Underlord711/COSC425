@@ -873,6 +873,10 @@
                 }
             }
             }
+            for (const id of getAllGraphIDs()) {
+    graphVersions[id] = version;
+}
+            
             refresh();
             refreshTwo();
         }
@@ -1198,6 +1202,9 @@
             let dispnum = Object.keys(displays).length+2;
             let dispname = 'cy'+dispnum;
             totalGraphs = dispnum;
+            
+            graphVersions[dispname] = version;
+            
             $('#field').removeClass(`grid-cols-1 grid-cols-2 grid-cols-3 grid-cols-4`).addClass(`grid-cols-${dispnum}`);
             displays[dispname] = 1;
             let ex = `<div id="${dispname}" class="h-[600px] border border-gray-300"></div>`;
@@ -1312,9 +1319,10 @@
 
         currentGraph = 1; // Reset to "Main"
     }
-
+    
     // Ensure the proper graph is drawn
     drawCytoscapeGraph(graphs[currentGraph], activeGraph);
+    $('#versionDisplay2').text(graphVersions[activeGraph]);
 }
             
             }
@@ -1365,9 +1373,17 @@
 
     // Update label
     $('#secondGraphCurrent').text(activeGraph === "cy" ? "Main" : index);
+    
+    // Set default version if not present
+if (!graphVersions[activeGraph]) {
+    graphVersions[activeGraph] = 1;
+}
+
+
+$('#versionDisplay2').text(graphVersions[activeGraph]);
 
     // Show only the selected graph visually
-    showOnlyGraph(activeGraph); // If you're toggling containers
+    showOnlyGraph(activeGraph);
 
     // Draw/update the graph visually using correct data
     if (graphs[index]) {
@@ -1403,10 +1419,17 @@
     index += 1;
     activeGraph = graphIDs[index];
     currentGraph = index;
+    
+    if (!graphVersions[activeGraph]) {
+    graphVersions[activeGraph] = 1;
+	}
 
     $('#secondGraphCurrent').text(activeGraph === "cy" ? "Main" : index);
+$('#versionDisplay2').text(graphVersions[activeGraph]);
+
+
+showOnlyGraph(activeGraph);
     drawCytoscapeVersion(graphs[index], activeGraph);
-    
         }
 
         function addPerson(){
