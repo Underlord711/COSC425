@@ -390,20 +390,28 @@ function clearModal(){
     $("#edgeModal .modal-body ul").empty();
 }
 
-function onModalClose(){
-  $("#edgeModal.modal-body ul").each(function(me){
-    node1 = $(this).val();
-    node2 = $(this).next().val();
-    value = $(this).next().next().val();
-    graph['version' + version][node1][node2]=value;
-    graph['version' + version][node2][node1]=value;
-    console.log(value);
 
+function onModalClose() {
+  $("#edgeModal .modal-body ul li").each(function () {
+    const node1 = $(this).find('select').eq(0).val();
+    const node2 = $(this).find('select').eq(1).val();
+    const value = parseFloat($(this).find('input[type="number"]').val());
+
+    if (!graph['version' + version][node1]) {
+      graph['version' + version][node1] = {};
+    }
+    if (!graph['version' + version][node2]) {
+      graph['version' + version][node2] = {};
+    }
+
+    graph['version' + version][node1][node2] = value;
+    graph['version' + version][node2][node1] = value;
+
+    console.log(`${node1} -> ${node2} = ${value}`);
   });
   refresh();
-  console.log("hit travis");
-
 }
+
  
 
 
