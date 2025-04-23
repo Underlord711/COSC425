@@ -477,12 +477,39 @@ function removeGraph(){ //This needs to remove the dynamically added graphs.
 }
 
 function cycleRight(){
-    if(currentGraph == totalGraphs)
-        alert("Can't.");
-    else if(currentGraph == 1 && totalGraphs == 1)
-        alert("Please make a new graph.");
-    else
-        currentGraph++;
-        
-    $('#secondGraphCurrent').text(currentGraph);
+  /*if(currentGraph == totalGraphs)
+      alert("Can't.");
+  else if(currentGraph == 1 && totalGraphs == 1)
+      alert("Please make a new graph.");
+  else
+      currentGraph++;
+      
+  $('#secondGraphCurrent').text(currentGraph);*/
+  const graphIDs = getAllGraphIDs();
+let index = graphIDs.indexOf(activeGraph);
+
+if (index === -1) {
+alert("Active graph not found.");
+return;
+}
+
+if (index >= graphIDs.length - 1) {
+alert("Can't go further right.");
+return;
+}
+
+index += 1;
+activeGraph = graphIDs[index];
+currentGraph = index;
+
+if (!graphVersions[activeGraph]) {
+graphVersions[activeGraph] = 1;
+}
+
+$('#secondGraphCurrent').text(activeGraph === "cy" ? "Main" : index);
+$('#versionDisplay2').text(graphVersions[activeGraph]);
+
+
+showOnlyGraph(activeGraph);
+drawCytoscapeVersion(graphs[index], activeGraph);
 }
