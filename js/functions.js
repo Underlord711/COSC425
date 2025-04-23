@@ -4,15 +4,27 @@ let version = 1;
 let versionTwo = 1;
 let totalGraphs = 1;
 let currentGraph = 1;
+let activeGraph = "cy";
+let graphVersions = {}; // maps each graph ID to its current version
 let isMatrixVisible = false; // track whether the matrix is visible or not
 let layout = "circle"; // layout used for cytoscape
 let noClass = ["weight", "Past Edges", "changes"];
 const MAX_WEIGHT = 0.8;
+let graphNum = 0;
 let playInterval; // used for play button
 let isPlaying = false;
 let toleranceLevel = 4;
 
 let nodeWeightOne; // used to fix position of node with weight 1 in graph
+
+let graphs = {
+  cy: { currentVersion: 0, data: {} },  // Main graph
+  cy1: { currentVersion: 1, data: {} }, // Graph 1
+  cy2: { currentVersion: 2, data: {} }, // Graph 2
+  cy3: { currentVersion: 3, data: {} }  // Graph 3
+};
+
+let showOnlyGraphs = ["cy", "cy1", "cy2", "cy3"];
 
 
 changeNotes = []; //Need this for Patch Notes
@@ -202,51 +214,50 @@ function uploadJSON() {
 }
 
 function previous() {
-  if(currentGraph > 1)
-    {
-      versionTwo++;
-      if (versionTwo <= Object.keys(displays).length+2) {
-          document.getElementById('versionDisplay2').innerText = versionTwo;
-          refreshTwo();
-      }
-      else {
-          versionTwo--;
-      }
-  } else {
-    version--;
-    if (version > 0) {
-        $('#versionDisplay').text(version);
-        refresh();
-    }
-    else {
-        version++;
-    }
+  if (!activeGraph) return;
+
+  if (!graphVersions[activeGraph]) {
+    graphVersions[activeGraph] = 1;
   }
+
+  if (graphVersions[activeGraph] <= 1) {
+    alert("Already at earliest version.");
+    return;
+  }
+
+  graphVersions[activeGraph]--;
+
+  $('#versionDisplay2').text(graphVersions[activeGraph]);
+
+  const originalVersion = version;
+  version = graphVersions[activeGraph];
+  drawCytoscapeGraph(activeGraph);
+  version = originalVersion;
 }
 
 
 function next() {
-  if(currentGraph > 1)
-    {
-      versionTwo++;
-      if (versionTwo <= Object.keys(displays).length+2) {
-          $('#versionDisplay').text(version);
-          refreshTwo();
-      }
-      else {
-          versionTwo--;
-      }
-  }             else
-  {
-    version++;
-    if (version <= Object.keys(graph).length) {
-        $('#versionDisplay').text(version);
-        refresh();
-    }
-    else {
-        version--;
-    }
+  if (!activeGraph) return;
+
+  if (!graphVersions[activeGraph]) {
+    graphVersions[activeGraph] = 1;
   }
+
+  graphVersions[activeGraph]++;
+  const versionKey = 'version' + graphVersions[activeGraph];
+
+  if (!graph[versionKey]) {
+    graphVersions[activeGraph]--;
+    alert("Already at latest version.");
+    return;
+  }
+
+  $('#versionDisplay2').text(graphVersions[activeGraph]);
+
+  const originalVersion = version;
+  version = graphVersions[activeGraph];
+  drawCytoscapeGraph(activeGraph);
+  version = originalVersion;
 }
 
 $("#play").on("click", function () {
@@ -280,11 +291,16 @@ $("#play").on("click", function () {
 
 
 function refresh() {
-  displayGraph();
-  drawCytoscapeGraph();
+  // Refresh the main graph ('cy')
+  drawCytoscapeGraph('cy');
+
+  // Refresh all secondary graphs based on their versions in graphVersions
   let dispname = Object.keys(displays);
-  dispname.forEach(function (me) {
-    drawCytoscapeGraph(me);
+  dispname.forEach(function(me) {
+  if (me !== 'cy') { 
+    const versionNum = graphVersions[me] || version;  // Default to global version if no version is set
+    drawCytoscapeGraph(me);  // Draw secondary graphs with their respective versions
+    }
   });
 }
 
@@ -357,25 +373,35 @@ function patchNotes() {
 }
 
 function addGraph() { // Adds a new graph and increases the total num of secondary graohs
-  let dispnum = Object.keys(displays).length+2;
-  let dispname = 'cy'+dispnum;
-  totalGraphs = dispnum;
-  $('#field').removeClass(`grid-cols-1 grid-cols-2 grid-cols-3 grid-cols-4`).addClass(`grid-cols-${dispnum}`);
-  displays[dispname] = 1;
-  let ex = `<div id="${dispname}" class="h-[600px] border border-gray-300"></div>`;
-  $('#field').append(ex);
-  console.log($('#field').html());
-  drawCytoscapeGraph(dispname);
-  $('#reset').click();
-  
-  if(totalGraphs == 1)
+  if(totalGraphs == 4)
   {
-    currentGraph++;
-    $('#secondGraphCurrent').text(currentGraph);
+    return;
   }
-  
-  //totalGraphs++;
-  $('#TotalDisplay').text(totalGraphs);
+  else{
+    let dispnum = Object.keys(displays).length+2;
+    let dispname = 'cy'+dispnum;
+    totalGraphs = dispnum;
+    
+    graphVersions[dispname] = version;
+    
+    $('#field').removeClass(`grid-cols-1 grid-cols-2 grid-cols-3 grid-cols-4`).addClass(`grid-cols-${dispnum}`);
+    displays[dispname] = 1;
+    let ex = `<div id="${dispname}" class="h-[600px] border border-gray-300"></div>`;
+    $('#field').append(ex);
+    console.log($('#field').html());
+    drawCytoscapeGraph(dispname);
+    $('#reset').click();
+    
+    if(totalGraphs == 1)
+    {
+      currentGraph++;
+      $('#secondGraphCurrent').text(currentGraph);
+    }
+    
+    //totalGraphs++;
+    $('#TotalDisplay').text(totalGraphs);
+    
+    }
 }
 
 function addPerson() {
@@ -393,13 +419,14 @@ function popPerson(me) {
 async function downloadExcel() {
   const workbook = new ExcelJS.Workbook();
 
+  // Iterate through all keys that start with 'version'
   Object.keys(graph).forEach(versionKey => {
     if (versionKey.startsWith("version")) {
       const worksheet = workbook.addWorksheet(versionKey);
 
       const matrix = graph[versionKey];
       const vertices = Object.keys(matrix).filter(v => !["changes", "Past Edges", "weight"].includes(v));
-
+      
       // Prepare headers
       const headers = [" "].concat(vertices);
       worksheet.addRow(headers);
@@ -436,80 +463,168 @@ async function downloadExcel() {
   link.click();
   document.body.removeChild(link);
 }
-
 function removeGraph(){ //This needs to remove the dynamically added graphs.
-  let keys = Object.keys(displays);
-  if (keys.length === 0) return;
+  if (totalGraphs == 1) {
+    alert("Don't.");
+  } else {
+    let dispnum = Object.keys(displays).length + 1; // NOT +2
+    let dispname = 'cy' + dispnum;
 
-  // Get the last added graph
-  let lastDisp = keys[keys.length - 1];
-  
-  // Remove the graph div from the DOM
-  $(`#${lastDisp}`).remove();
+    // Remove the DOM element
+    $('#' + dispname).remove();
 
-  // Remove it from the tracking object
-  delete displays[lastDisp];
+    // Remove from the displays object
+    delete displays[dispname];
 
-  // Update totalGraphs count
-  totalGraphs = Object.keys(displays).length + 1;
+    // Update grid column class
+    $('#field').removeClass(`grid-cols-1 grid-cols-2 grid-cols-3 grid-cols-4`).addClass(`grid-cols-${dispnum - 1}`);
 
-  // Update the grid columns class
-  $('#field').removeClass(`grid-cols-1 grid-cols-2 grid-cols-3 grid-cols-4`)
-             .addClass(`grid-cols-${totalGraphs}`);
+    totalGraphs = dispnum - 1;
 
-  // Optional counter reset
-  if (totalGraphs <= 1) {
-      currentGraph = 0;
-      $('#secondGraphCurrent').text(currentGraph);
+    // Fix the currentGraph when removing the last graph or any intermediate graph
+    if (totalGraphs == currentGraph) {
+      currentGraph--;
+    }
+
+    // Ensure we aren't going below 0 (main graph index)
+    if (currentGraph < 0) {
+      currentGraph = 0; // reset to "Main"
+    }
+
+    // Update activeGraph based on the new totalGraphs
+    const graphIDs = getAllGraphIDs();
+    if (currentGraph >= graphIDs.length) {
+      activeGraph = graphIDs[graphIDs.length - 1]; // set activeGraph to the last available graph
+    } else {
+      activeGraph = graphIDs[currentGraph]; // set activeGraph to the current index
+    }
+
+    // Update the current graph label (Main if it's 0, otherwise show the index)
+    $('#secondGraphCurrent').text(currentGraph === 0 ? "Main" : currentGraph);
+
+    // Update the total display count
+    $('#TotalDisplay').text(totalGraphs);
+
+    var graphStat = document.getElementById("cy");
+    if (totalGraphs == 1) {
+      // Hide the navigation buttons when there’s only one graph
+      let next2 = document.getElementById("next2");
+      let prev2 = document.getElementById("prev2");
+
+      if (next2) next2.style.display = "none";
+      if (prev2) prev2.style.display = "none";
+      if (graphStat) graphStat.style.width = "100%";
+
+      currentGraph = 1; // Reset to "Main"
+    }
+    
+    // Ensure the proper graph is drawn
+    drawCytoscapeGraph(graphs[currentGraph], activeGraph);
+    $('#versionDisplay2').text(graphVersions[activeGraph]);
+  }
+}
+
+function getAllGraphIDs() {
+  return ["cy", ...Object.keys(displays)];
+}    
+
+function cycleLeft(){
+  const graphIDs = getAllGraphIDs(); // ["cy", "cy2", "cy3", ...]
+  let index = graphIDs.indexOf(activeGraph);
+
+  if (index === -1) {
+    alert("Active graph not found.");
+    return;
   }
 
-  $('#TotalDisplay').text(totalGraphs);
+  if (index <= 0) {
+    alert("Can't go further left.");
+    return;
   }
-  function cycleLeft(){
-    if(currentGraph == 1 && totalGraphs >= currentGraph)
-        alert("Can't.");
-    else if(currentGraph == 1 && totalGraphs == 1)
-        alert("Please make a new graph.");
-    else
-        currentGraph--;
-        
-    $('#secondGraphCurrent').text(currentGraph);
+
+  // Move one step left
+  index -= 1;
+  activeGraph = graphIDs[index];
+
+  // Update label
+  $('#secondGraphCurrent').text(activeGraph === "cy" ? "Main" : index);
+    
+  // Set default version if not present
+  if (!graphVersions[activeGraph]) {
+    graphVersions[activeGraph] = 1;
+  }
+
+
+  $('#versionDisplay2').text(graphVersions[activeGraph]);
+
+  // Show only the selected graph visually
+  showOnlyGraph(activeGraph);
+
+  // Draw/update the graph visually using correct data
+  if (graphs[index]) {
+    drawCytoscapeVersion(graphs[index], activeGraph);
+  } else {
+    console.warn("Graph data not found for index", index);
+  }
 }
 
 function cycleRight(){
-  /*if(currentGraph == totalGraphs)
-      alert("Can't.");
-  else if(currentGraph == 1 && totalGraphs == 1)
-      alert("Please make a new graph.");
-  else
-      currentGraph++;
-      
-  $('#secondGraphCurrent').text(currentGraph);*/
   const graphIDs = getAllGraphIDs();
-let index = graphIDs.indexOf(activeGraph);
+  let index = graphIDs.indexOf(activeGraph);
 
-if (index === -1) {
-alert("Active graph not found.");
-return;
+  if (index === -1) {
+    alert("Active graph not found.");
+    return;
+  }
+
+  if (index >= graphIDs.length - 1) {
+    alert("Can't go further right.");
+    return;
+  }
+
+  index += 1;
+  activeGraph = graphIDs[index];
+  currentGraph = index;
+  
+  if (!graphVersions[activeGraph]) {
+    graphVersions[activeGraph] = 1;
+  }
+
+  $('#secondGraphCurrent').text(activeGraph === "cy" ? "Main" : index);
+  $('#versionDisplay2').text(graphVersions[activeGraph]);
+  
+  showOnlyGraph(activeGraph);
+  drawCytoscapeVersion(graphs[index], activeGraph);
+
+
+  $('#secondGraphCurrent').text(activeGraph === "cy" ? "Main" : index);
+  $('#versionDisplay2').text(graphVersions[activeGraph]);
+
+
+  showOnlyGraph(activeGraph);
+  drawCytoscapeVersion(graphs[index], activeGraph);
+  $('#secondGraphCurrent').text(currentGraph);
 }
 
-if (index >= graphIDs.length - 1) {
-alert("Can't go further right.");
-return;
+
+function updateGraphToVersion(dispname, version){
+  if (graphHistory[version]) {
+    drawCytoscapeGraph(dispname, graphHistory[version]);
+  }
+}
+  
+function getAllGraphIDs() {
+  return ["cy", ...Object.keys(displays)];
 }
 
-index += 1;
-activeGraph = graphIDs[index];
-currentGraph = index;
+function drawCytoscapeVersion(graphID) {
+  const originalVersion = version;
 
-if (!graphVersions[activeGraph]) {
-graphVersions[activeGraph] = 1;
-}
+  if (!graphVersions[graphID]) {
+    graphVersions[graphID] = 1;
+  }
 
-$('#secondGraphCurrent').text(activeGraph === "cy" ? "Main" : index);
-$('#versionDisplay2').text(graphVersions[activeGraph]);
-
-
-showOnlyGraph(activeGraph);
-drawCytoscapeVersion(graphs[index], activeGraph);
+  version = graphVersions[graphID];
+  drawCytoscapeGraph(graphID);
+  version = originalVersion;
 }
