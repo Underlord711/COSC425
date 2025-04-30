@@ -410,6 +410,7 @@ function onModalClose() {
     console.log(`${node1} -> ${node2} = ${value}`);
   });
   refresh();
+  clearModal();
 }
 
  
