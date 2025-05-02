@@ -1,7 +1,11 @@
 /* styles.css */
 
 /* Basic Reset */
-body, ul, li, a, button {
+body,
+ul,
+li,
+a,
+button {
     margin: 0;
     padding: 0;
     list-style: none;
@@ -25,7 +29,7 @@ nav ul li {
 }
 
 /* Style for anchor links and buttons */
-nav ul li a, 
+nav ul li a,
 nav ul li button {
     color: white;
     text-decoration: none;
