@@ -20,6 +20,10 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("nodeColor2Input").addEventListener("change", () => drawCytoscapeGraph('cy'), false);
     document.getElementById("safeEdgeInput").addEventListener("change", () => drawCytoscapeGraph('cy'), false);
     document.getElementById("unsafeEdgeInput").addEventListener("change", () => drawCytoscapeGraph('cy'), false);
+    const modal = document.getElementById('edgeModal');
+    modal.addEventListener('hidden.bs.modal',function(){
+      onModalClose();
+    });
 });
 
 // function updateDisplay() {
@@ -385,6 +389,30 @@ function addEdge(){
 function clearModal(){
     $("#edgeModal .modal-body ul").empty();
 }
+
+
+function onModalClose() {
+  $("#edgeModal .modal-body ul li").each(function () {
+    const node1 = $(this).find('select').eq(0).val();
+    const node2 = $(this).find('select').eq(1).val();
+    const value = parseFloat($(this).find('input[type="number"]').val());
+
+    if (!graph['version' + version][node1]) {
+      graph['version' + version][node1] = {};
+    }
+    if (!graph['version' + version][node2]) {
+      graph['version' + version][node2] = {};
+    }
+
+    graph['version' + version][node1][node2] = value;
+    graph['version' + version][node2][node1] = value;
+
+    console.log(`${node1} -> ${node2} = ${value}`);
+  });
+  refresh();
+  clearModal();
+}
+
  
 
 
