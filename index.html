@@ -145,13 +145,11 @@
             onclick="patchNotes()"
             id="patchBtn"
             class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 focus:outline-none updateClass"
-            style="display: none"
           >
             Patch Notes
           </button>
           <button
             onclick="runAlgorithm(parseInt(document.getElementById('inputValue').value))"
-            style="display: none"
             id="runAlgorithm"
             class="updateClass bg-pink-500 text-white px-4 py-2 rounded hover:bg-pink-600 focus:outline-none"
           >
@@ -162,10 +160,16 @@
             value="1"
             id="inputValue"
             class="updateClass border px-2 py-1 rounded max-w-10"
-            style="display: none"
           />
             <button onclick="addGraph()" id="GraphTwo"
-            class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none updateClass" style="display:none;">Add Graph</button>
+            class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none updateClass">Add Graph</button>
+            <button
+            onclick="removeGraph()"
+            id="removeGraph"
+            class="bg-red-900 text-white px-4 py-2 rounded hover:bg-orange-500 focus:outline-none updateClass"
+          >
+            Remove Graph
+          </button>
         </div>
 
         <div class="mt-4">
@@ -178,7 +182,6 @@
           />
           <button
             id="uploadBtn"
-            style="display: none"
             onclick="uploadJSON()"
             class="mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none"
           >
@@ -239,26 +242,28 @@
             ▶
           </button>
           <button
-            onclick="previousTwo()"
-            id="prev2"
-            class="bg-purple-500 text-white px-2 py-2 rounded hover:bg-purple-600 focus:outline-none;"
-            style="display: none"
+            onclick="cycleLeft()"
+            id="cycleLeft"
+            class="bg-purple-500 text-white px-2 py-2 rounded hover:bg-purple-600 focus:outline-none"
           >
-            Second Graph Prev
+            Cycle Graph Left
           </button>
+          <div class="flex-none">
+            <span class="font-medium">Current Graph:</span> <span id="currGraph">cy0</span>
+            <span class="font-medium">Current Graph Version:</span> <span id="currGraphVer">1</span>
+          </div>
           <button
-            onclick="nextTwo()"
-            id="next2"
-            class="bg-purple-500 text-white px-2 py-2 rounded hover:bg-purple-600 focus:outline-none;"
-            style="display: none"
+            onclick="cycleRight()"
+            id="cycleRight"
+            class="bg-purple-500 text-white px-2 py-2 rounded hover:bg-purple-600 focus:outline-none"
           >
-            Second Graph Next
+            Cycle Graph Right
           </button>
         </div>
       </div>
 
         <div class="grid gap-4 grid-cols-1" id="field">
-            <div id="cy" class="h-[600px] border border-gray-300" style="width: auto; height: 600px;"></div>
+            <div id="cy0" class="h-[600px] border border-gray-300" style="width: auto; height: 600px;"></div>
         </div>
     </div>
 

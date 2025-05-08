@@ -1,7 +1,7 @@
-let displays = {};
 let graph = {};
 let version = 1;
-let versionTwo = 1;
+let displays = {'cy0':{'version':1}};
+let currGraph = 'cy0';
 let isMatrixVisible = false; // track whether the matrix is visible or not
 let layout = "circle"; // layout used for cytoscape
 let noClass = ["weight", "Past Edges", "changes"];
@@ -16,10 +16,10 @@ let nodeWeightOne; // used to fix position of node with weight 1 in graph
 changeNotes = []; //Need this for Patch Notes
 
 document.addEventListener("DOMContentLoaded", function () {
-    document.getElementById("nodeColor1Input").addEventListener("change", () => drawCytoscapeGraph('cy'), false);
-    document.getElementById("nodeColor2Input").addEventListener("change", () => drawCytoscapeGraph('cy'), false);
-    document.getElementById("safeEdgeInput").addEventListener("change", () => drawCytoscapeGraph('cy'), false);
-    document.getElementById("unsafeEdgeInput").addEventListener("change", () => drawCytoscapeGraph('cy'), false);
+    document.getElementById("nodeColor1Input").addEventListener("change", () => drawCytoscapeGraph(), false);
+    document.getElementById("nodeColor2Input").addEventListener("change", () => drawCytoscapeGraph(), false);
+    document.getElementById("safeEdgeInput").addEventListener("change", () => drawCytoscapeGraph(), false);
+    document.getElementById("unsafeEdgeInput").addEventListener("change", () => drawCytoscapeGraph(), false);
     const modal = document.getElementById('edgeModal');
     modal.addEventListener('hidden.bs.modal',function(){
       onModalClose();
@@ -122,7 +122,7 @@ function generateGraph() {
                 destinationIndex = Math.floor(Math.random() * vertexes.length);
                 attempts++;
                 if (attempts > 100) {
-                    console.log('Too many attempts to find a valid edge.');
+                    //console.log('Too many attempts to find a valid edge.');
                     break;
                 }
             } while (
@@ -196,33 +196,23 @@ function uploadJSON() {
 }
 
 function previous() {
-  version--;
-  if (version > 0) {
-    $("#versionDisplay").text(version);
+  displays[currGraph]['version']--;
+  if (displays[currGraph]['version'] > 0) {
+    $("#currGraphVer").text(displays[currGraph]['version']);
     refresh();
   } else {
-    version++;
+    displays[currGraph]['version']++;
   }
 }
 
-function previousTwo() {
-  console.log("Prev two");
-  versionTwo--;
-  if (versionTwo > 0) {
-    $("#versionDisplay2").text(versionTwo);
-    refreshTwo();
-  } else {
-    versionTwo++;
-  }
-}
 
 function next() {
-  version++;
-  if (version <= Object.keys(graph).length) {
-    $("#versionDisplay").text(version);
+  displays[currGraph]['version']++;
+  if (displays[currGraph]['version'] <= Object.keys(graph).length) {
+    $("#currGraphVer").text(displays[currGraph]['version']);
     refresh();
   } else {
-    version--;
+    displays[currGraph]['version']--;
   }
 }
 
@@ -254,16 +244,6 @@ $("#play").on("click", function () {
   }
 });
 
-function nextTwo() {
-  console.log("Next two");
-  versionTwo++;
-  if (versionTwo <= Object.keys(graph).length) {
-    $("#versionDisplay2").text(versionTwo);
-    refreshTwo();
-  } else {
-    versionTwo--;
-  }
-}
 
 function refresh() {
   displayGraph();
@@ -274,16 +254,11 @@ function refresh() {
   });
 }
 
-function refreshTwo() {
-  displayGraph();
-  drawCy2Graph();
-}
-
 $(".btn-close").on("click", function () {
-  console.log("found");
+  //console.log("found");
   let stuff;
   let tempStr = $("#offBody li").text();
-  console.log(tempStr);
+  //console.log(tempStr);
   $("#offBody li").each(function (index, element) {
     let data = $(element).text().split(" : ");
     let curr = $("#offcanvasScrollingLabel").text().split(" ");
@@ -292,7 +267,7 @@ $(".btn-close").on("click", function () {
         return;
       }
       let me = curr[1];
-      console.log(me);
+      //console.log(me);
       if (parseFloat(data[1]) == 0) {
         delete graph["version" + version][me][data[0]];
         delete graph["version" + version][data[0]][me];
@@ -304,13 +279,13 @@ $(".btn-close").on("click", function () {
         graph["version" + version][data[0]][me] = parseFloat(data[1]);
       }
     } else {
-      console.log("in the else");
+      //console.log("in the else");
       if (index == 0) {
         return;
       }
       let me = curr[1];
       let targets = me.split("-");
-      console.log(data);
+      //console.log(data);
       if (parseFloat(data[1]) == 0) {
         delete graph["version" + version][targets[0]][targets[1]];
         delete graph["version" + version][targets[1]][targets[0]];
@@ -339,16 +314,36 @@ function patchNotes() {
 }
 
 function addGraph() { // Currently shows and hides the second graph
-      let dispnum = Object.keys(displays).length+2;
-      let dispname = 'cy'+dispnum
-      $('#field').removeClass(`grid-cols-1 grid-cols-2 grid-cols-3 grid-cols-4`).addClass(`grid-cols-${dispnum}`);
-      displays[dispname] = 1
-      let ex = `<div id="${dispname}" class="h-[600px] border border-gray-300"></div>`;
-      $('#field').append(ex);
-      console.log($('#field').html());
-      drawCytoscapeGraph(dispname);
-      $('#reset').click();
-  }
+    let graphs = Object.keys(displays);
+    let dispnum = graphs.length;
+    let dispname = 'cy'+ dispnum;
+    if (dispnum == 4){
+      alert("Maximum # of Graphs Reached");
+      return;
+    }
+    $('#field').removeClass(`grid-cols-1 grid-cols-2 grid-cols-3 grid-cols-4`).addClass(`grid-cols-${dispnum+1}`);
+    displays[dispname] = {'version':1};
+    let ex = `<div id="${dispname}" class="h-[600px] border border-gray-300"></div>`;
+    $('#field').append(ex);
+    //console.log($('#field').html());
+    drawCytoscapeGraph(dispname);
+    setTimeout(refresh ,50);
+}
+
+function removeGraph() { // Currently shows and hides the second graph
+    let graphs = Object.keys(displays);
+    let dispnum = graphs.length -1;
+    let dispname = 'cy'+ dispnum;
+    if (dispnum == 0){
+      alert("Minimim # of Graphs Reached");
+      return;
+    }
+    $('#field').removeClass(`grid-cols-1 grid-cols-2 grid-cols-3 grid-cols-4`).addClass(`grid-cols-${dispnum}`);
+    delete displays[dispname];
+    //console.log(`Removing Graph: ${dispname}`);
+    $(`#${dispname}`).remove();
+    setTimeout(refresh ,50);
+}
   
 function addPerson(){
   let boxes = $("<li>").html(
@@ -407,11 +402,30 @@ function onModalClose() {
     graph['version' + version][node1][node2] = value;
     graph['version' + version][node2][node1] = value;
 
-    console.log(`${node1} -> ${node2} = ${value}`);
+    //console.log(`${node1} -> ${node2} = ${value}`);
   });
   refresh();
   clearModal();
 }
+
+function cycleLeft(){
+  let newStr = 'cy' + (parseInt(currGraph.split('cy')[1], 10) - 1);
+  if (!Object.keys(displays).includes(newStr)) return;
+  console.log(`From: ${currGraph} To: ${newStr}`);
+  currGraph = newStr;
+  $("#currGraphVer").text(displays[currGraph]['version']);
+  $("#currGraph").text(currGraph);
+}
+
+function cycleRight(){
+  let newStr = 'cy' + (parseInt(currGraph.split('cy')[1], 10) + 1);
+  if (!Object.keys(displays).includes(newStr)) return;
+  console.log(`From: ${currGraph} To: ${newStr}`);
+  currGraph = newStr;
+  $("#currGraphVer").text(displays[currGraph]['version']);
+  $("#currGraph").text(currGraph);
+}
+
 
  
 

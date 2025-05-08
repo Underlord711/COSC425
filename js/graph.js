@@ -63,33 +63,26 @@ function toggleMatrix() {
   ] : null;
   }
   
-  function drawCytoscapeGraph(me = 'cy') {
+  function drawCytoscapeGraph(me = 'cy0') {
+    let place = displays[me]['version'];
     const elements = [];
-  let nodeColor1 = hexToRgb($("#nodeColor1Input").val());
-  let nodeColor2 = hexToRgb($("#nodeColor2Input").val());
-  let safeEdgeColor = $("#safeEdgeInput").val();
+    let nodeColor1 = hexToRgb($("#nodeColor1Input").val());
+    let nodeColor2 = hexToRgb($("#nodeColor2Input").val());
+    let safeEdgeColor = $("#safeEdgeInput").val();
     let unsafeEdgeColor = $("#unsafeEdgeInput").val();
     let cy;
-  
-    // get elements of graph
-    for (const [source, edges] of Object.entries(
-      graph["version" + version]
+      for (const [source, edges] of Object.entries(
+      graph["version" + place]
     )) {
       if (noClass.includes(source)) continue;
       elements.push({ data: { id: source, rel: edges.weight } });
-      // if (source === nodeWeightOne) {
-      //    elements.push({ data: { id: source, rel: edges.weight }, position: { x: 200, y: 200, locked: true } });
-      // } else {
-      //    elements.push({ data: { id: source, rel: edges.weight } });
-      // }
-  
       for (const [destination, weight] of Object.entries(edges)) {
         if (noClass.includes(destination)) continue;
         if (source !== destination) {
           elements.push({
             data: {
               id: destination,
-              rel: graph["version" + version][destination]["weight"],
+              rel: graph["version" + place][destination]["weight"],
             },
           });
           elements.push({

@@ -6,8 +6,11 @@ function runAlgorithm(number) {
       // run all nodes
       runMultiple(number);
     }
+    displays[currGraph]['version'] = version;
     refresh();
-  }
+    $("#versionDisplay").text(version);
+    $("#currGraphVer").text(displays[currGraph]['version']);
+}
   
   function runSingle(number) {
     for (let i = 0; i < number; i++) {
@@ -166,7 +169,7 @@ function runAlgorithm(number) {
           Slider();
           let avg = weightDiff / toleranceLevel;
           avg = parseFloat(avg.toFixed(2));
-          console.log("Current alg value:", sliderValue);
+          //console.log("Current alg value:", sliderValue);
   
           if (sourceWeight !== 1) {
             // update source only if it is not 1
@@ -194,7 +197,7 @@ function runAlgorithm(number) {
           // if neither node weight is 1, update both
           let avg = weightDiff / toleranceLevel;
           avg = parseFloat(avg.toFixed(2));
-          console.log("Current alg value:", sliderValue);
+          //console.log("Current alg value:", sliderValue);
   
           let newS, newT;
   
@@ -298,7 +301,7 @@ function runAlgorithm(number) {
     // if there are no available nodes update changes and exit
     if (availableNodes.length === 0) {
       changesString = `No available edges from ${source} possible (past edges not allowed)`;
-      console.log(changesString);
+      //console.log(changesString);
       alertString += changesString + "\n";
       c.push(changesString);
       addNotes(changesString);
@@ -306,14 +309,14 @@ function runAlgorithm(number) {
       return;
     }
   
-    console.log(`source: ${source}\nbroken edge with: ${target}`);
-    console.log(`available nodes: ${availableNodes}`);
+    //console.log(`source: ${source}\nbroken edge with: ${target}`);
+    //console.log(`available nodes: ${availableNodes}`);
   
     // select random source node from what is available
     sourceNode =
       availableNodes[Math.floor(Math.random() * availableNodes.length)];
   
-    console.log(`new target: ${sourceNode}`);
+    //console.log(`new target: ${sourceNode}`);
   
     // update graph and changes
     graph["version" + version][source][sourceNode] = weightS;
@@ -410,6 +413,8 @@ function runAlgorithm(number) {
     }
   
     // update display
+    displays[currGraph]['version'] = version;
     refresh();
     $("#versionDisplay").text(version);
+    $("#currGraphVer").text(displays[currGraph]['version']);
   }
