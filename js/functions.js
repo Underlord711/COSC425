@@ -426,6 +426,54 @@ function cycleRight(){
   $("#currGraph").text(currGraph);
 }
 
+async function downloadExcel() {
+  const workbook = new ExcelJS.Workbook();
+
+  // Iterate through all keys that start with 'version'
+  Object.keys(graph).forEach(versionKey => {
+    if (versionKey.startsWith("version")) {
+      const worksheet = workbook.addWorksheet(versionKey);
+
+      const matrix = graph[versionKey];
+      const vertices = Object.keys(matrix).filter(v => !["changes", "Past Edges", "weight"].includes(v));
+      
+      // Prepare headers
+      const headers = [" "].concat(vertices);
+      worksheet.addRow(headers);
+
+      // Build and add rows
+      vertices.forEach(source => {
+        const rowData = [source];
+        vertices.forEach(target => {
+          rowData.push(matrix[source]?.[target] || "X");
+        });
+        worksheet.addRow(rowData);
+      });
+
+      // Apply right-alignment to all cells except header row
+      worksheet.eachRow((row, rowNumber) => {
+        row.eachCell((cell, colNumber) => {
+          // Skip top-left cell and header row's first cell
+          if (rowNumber > 1 || colNumber > 1) {
+            cell.alignment = { horizontal: 'right' };
+          }
+        });
+      });
+    }
+  });
+
+  // Generate and download the file in browser
+  const buffer = await workbook.xlsx.writeBuffer();
+  const blob = new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = "full_graph_data.xlsx";
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
 
  
 
