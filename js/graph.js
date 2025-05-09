@@ -1,8 +1,20 @@
 function toggleMatrix() {
-    const matrixContainer = document.getElementById("matrixContainer");
-    isMatrixVisible = !isMatrixVisible;
-    matrixContainer.style.display = isMatrixVisible ? "block" : "none";
+  const matrixContainer = document.getElementById("matrixContainer");
+
+  // Toggle visibility
+  isMatrixVisible = !isMatrixVisible;
+
+  if (isMatrixVisible) {
+    matrixContainer.style.display = "block";
+    matrixContainer.style.width = "100%"; // Ensure full width of parent
+    matrixContainer.style.height = "auto"; // Allow height to adjust based on content
+  } else {
+    matrixContainer.style.display = "none";
+    matrixContainer.style.width = "0"; // Collapse width
+    matrixContainer.style.height = "0"; // Collapse height
   }
+}
+
   function displayGraph() {
     const table = document.getElementById("graphTable");
     table.innerHTML = ""; // Clear previous content

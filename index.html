@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -38,7 +37,7 @@
         <li>
           <button
             onclick="generateGraph()"
-            class="underline mt-3 bg-maroon text-white px-5 py-3 text-lg rounded-md hover:bg-orange-500"
+            class="underline mt-3 bg-maroon text-white px-5 py-3 text-lg rounded-md hover:bg-orange-500 hover:outline-white"
           >
             Generate graph
           </button>
@@ -46,21 +45,27 @@
         <li>
           <button
             type="button"
-            class="btn underline mt-3 bg-maroon text-white px-5 py-3 text-lg rounded-md hover:bg-orange-500"
+            class="btn underline mt-3 bg-maroon text-white px-5 py-3 text-lg rounded-md hover:bg-orange-500 hover:outline-white"
             data-bs-toggle="modal"
             data-bs-target="#exampleModal"
           >
             Character Sheet
           </button>
         </li>
-          </button></li>
-            <li><button type="button" class="btn underline mt-3 bg-maroon text-white px-5 py-3 text-lg rounded-md hover:bg-orange-500" data-bs-toggle="modal" data-bs-target="#edgeModal">
-          Add Edges
-        </button></li>
+        <li>
+          <button
+            type="button"
+            class="btn underline mt-3 bg-maroon text-white px-5 py-3 text-lg rounded-md hover:bg-orange-500 hover:outline-white"
+            data-bs-toggle="modal"
+            data-bs-target="#edgeModal"
+          >
+            Add Edges
+          </button>
+        </li>
         <li>
           <button
             onclick="uploadJSON()"
-            class="underline mt-3 bg-maroon text-white px-5 py-3 text-lg rounded-md hover:bg-orange-500"
+            class="underline mt-3 bg-maroon text-white px-5 py-3 text-lg rounded-md hover:bg-orange-500 hover:outline-white"
           >
             Upload JSON
           </button>
@@ -68,7 +73,7 @@
         <li>
           <button
             onclick="toggleMatrix()"
-            class="updateClass underline mt-3 bg-maroon text-white px-5 py-3 text-lg rounded-md hover:bg-orange-500 hidden"
+            class="updateClass underline mt-3 bg-maroon text-white px-5 py-3 text-lg rounded-md hover:bg-orange-500 hover:outline-white hidden"
           >
             Show matrix
           </button>
@@ -76,25 +81,27 @@
         <li>
           <button
             onclick="downloadJSON()"
-            class="updateClass underline mt-3 bg-maroon text-white px-5 py-3 text-lg rounded-md hover:bg-orange-500 hidden"
+            class="updateClass underline mt-3 bg-maroon text-white px-5 py-3 text-lg rounded-md hover:bg-orange-500 hover:outline-white hidden"
           >
             Download JSON
           </button>
         </li>
-        <button 
-        onclick="downloadExcel()"
-        class="updateClass underline mt-3 bg-maroon text-white px-5 py-3 text-lg rounded-md hover:bg-orange-500 hidden"
-      >
-        Download Spreadsheet
-      </button>
-    </li>
-      <li>
-        <!-- change here -->
-        <button type="button"
-          class="updateClass underline mt-3 bg-maroon text-white px-5 py-3 text-lg rounded-md hover:bg-orange-500 hidden"
-          data-bs-toggle="modal" data-bs-target="#optionsModal">
-          Graph Options
+        <button
+          onclick="downloadExcel()"
+          class="updateClass underline mt-3 bg-maroon text-white px-5 py-3 text-lg rounded-md hover:bg-orange-500 hover:outline-white hidden"
+        >
+          Download Spreadsheet
         </button>
+        </li>
+        <li>
+          <button
+            type="button"
+            class="updateClass underline mt-3 bg-maroon text-white px-5 py-3 text-lg rounded-md hover:bg-orange-500 hover:outline-white hidden"
+            data-bs-toggle="modal"
+            data-bs-target="#optionsModal"
+          >
+            Graph Options
+          </button>
         </li>
       </ul>
     </nav>
@@ -146,141 +153,175 @@
         </div>
 
         <div class="space-x-4">
-          <button
-          onclick="runAlgorithm(parseInt(document.getElementById('inputValue').value))"
-          style="display: none"
-          id="runAlgorithm"
-          class="updateClass bg-pink-500 text-white px-4 py-2 rounded hover:bg-pink-600 focus:outline-none"
-        >
-          Run Algorithm
-        </button>
-        <input
-          type="number"
-          value="1"
-          id="inputValue"
-          class="updateClass border px-2 py-1 rounded max-w-10"
-          style="display: none"
-        />
-          <button
-            onclick="patchNotes()"
-            id="patchBtn"
-            class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 focus:outline-none updateClass"
-            style="display: none"
-          >
-            Patch Notes
-          </button>
-          <button
-            onclick="addGraph()"
-            id="GraphTwo"
-            class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none updateClass"
-            style="display: none"
-          >
-            Add Graph
-          </button>
-          <button
-            onclick="removeGraph()"
-            id="removeGraph"
-            class="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600 focus:outline-none updateClass"
-            style="display: none"
-          >
-            Remove Graph
-          </button>
-        </div>
+<button
+  onclick="runAlgorithm(parseInt(document.getElementById('inputValue').value))"
+  style="display: none"
+  id="runAlgorithm"
+  class="updateClass bg-[#800000] text-white px-4 py-2 rounded hover:bg-orange-500 hover:outline-white focus:outline-none"
+>
+  Run Algorithm
+</button>
 
-        <div class="mt-4">
-          <input
-            type="file"
-            id="fileInput"
-            accept=".json"
-            onchange="uploadJSON()"
-            class="block w-full text-sm text-gray-500 border border-gray-300 rounded-lg cursor-pointer"
-          />
-          <button
-            id="uploadBtn"
-            style="display: none"
-            onclick="uploadJSON()"
-            class="mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none"
-          >
-            Upload JSON
-          </button>
-        </div>
+<input
+  type="number"
+  value="1"
+  id="inputValue"
+  class="updateClass border px-2 py-1 rounded max-w-10"
+  style="display: none"
+/>
+
+<button
+  onclick="patchNotes()"
+  id="patchBtn"
+  class="bg-[#800000] text-white px-4 py-2 rounded hover:bg-orange-500 hover:outline-white focus:outline-none updateClass"
+  style="display: none"
+>
+  Patch Notes
+</button>
+
+<button
+  onclick="addGraph()"
+  id="GraphTwo"
+  class="bg-[#800000] text-white px-4 py-2 rounded hover:bg-orange-500 hover:outline-white focus:outline-none updateClass"
+  style="display: none"
+>
+  Add Graph
+</button>
+
+<button
+  onclick="removeGraph()"
+  id="removeGraph"
+  class="bg-[#800000] text-white px-4 py-2 rounded hover:bg-orange-500 hover:outline-white focus:outline-none updateClass"
+  style="display: none"
+>
+  Remove Graph
+</button>
+
+<div class="mt-4">
+  <input
+    type="file"
+    id="fileInput"
+    accept=".json"
+    onchange="uploadJSON()"
+    class="block w-full text-sm text-gray-500 border border-gray-300 rounded-lg cursor-pointer"
+  />
+  <button
+    id="uploadBtn"
+    style="display: none"
+    onclick="uploadJSON()"
+    class="mt-2 bg-[#800000] text-white px-4 py-2 rounded hover:bg-orange-500 hover:outline-white focus:outline-none"
+  >
+    Upload JSON
+  </button>
+</div>
+
       </div>
+<h2 class="text-xl font-semibold mt-6">Generated Graph:</h2>
 
-      <h2 class="text-xl font-semibold mt-6">Generated Graph:</h2>
-      <div class="flex items-start">
-        <div class="flex-none mr-4">
-          Version: <span id="versionDisplay">1</span>
-        </div>
-        <div class="flex-none mr-4">
-            <span class="font-medium">Current Graph Version:</span> <span id="currGraphVer">1</span>
-        </div>
-        <div class="flex-none mr-4">
-            <span class="font-medium">Current Graph:</span> <span id="currGraph">cy0</span>
-        </div>
+<div class="flex items-start space-x-4">
+  <div class="flex-none">
+    Version: <span id="versionDisplay">1</span>
+  </div>
+  <div class="flex-none">
+    <span class="font-medium">Current Graph Version:</span> <span id="currGraphVer">1</span>
+  </div>
+  <div class="flex-none">
+    <span class="font-medium">Current Graph:</span> <span id="currGraph">cy0</span>
+  </div>
+</div>
 
-        <div
-          id="matrixContainer"
-          class="flex-grow overflow-x-auto overflow-y-auto max-h-96 mx-4 self-center"
-          style="display: none"
-        >
-          <table
-            id="graphTable"
-            class="min-w-full table-auto border-collapse bg-white shadow-md rounded-lg text-sm"
-          ></table>
-        </div>
+<!-- Matrix Container: Placed between the version labels and the buttons -->
+<div
+  id="matrixContainer"
+  class="flex-grow overflow-x-auto overflow-y-auto max-h-96 mx-4 self-center transition-all duration-500 ease-in-out mt-6"
+  style="display: none; width: auto; height: auto;">
+  <table
+    id="graphTable"
+    class="min-w-full table-auto border-collapse bg-white shadow-md rounded-lg text-sm"
+  >
+    <thead>
+      <tr class="bg-[#800000] text-white">
+        <th class="py-2 px-4 text-left">Column 1</th>
+        <th class="py-2 px-4 text-left">Column 2</th>
+        <th class="py-2 px-4 text-left">Column 3</th>
+        <!-- Add more headers if needed -->
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="border-t hover:bg-gray-100">
+        <td class="py-2 px-4">Data 1</td>
+        <td class="py-2 px-4">Data 2</td>
+        <td class="py-2 px-4">Data 3</td>
+      </tr>
+      <tr class="border-t hover:bg-gray-100">
+        <td class="py-2 px-4">Data 4</td>
+        <td class="py-2 px-4">Data 5</td>
+        <td class="py-2 px-4">Data 6</td>
+      </tr>
+      <!-- Add more rows as needed -->
+    </tbody>
+  </table>
+</div>
 
-        <div class="flex-none ml-auto">
-          <button
-            onclick="refresh()"
-            id="reset"
-            class="bg-purple-500 text-white px-2 py-2 rounded hover:bg-purple-600 focus:outline-none"
-          >
-            Reset
-          </button>
-          <button
-            onclick="previous()"
-            id="prev"
-            class="bg-purple-500 text-white px-2 py-2 rounded hover:bg-purple-600 focus:outline-none"
-          >
-            Prev
-          </button>
-          <button
-            onclick="next()"
-            id="next"
-            class="bg-purple-500 text-white px-2 py-2 rounded hover:bg-purple-600 focus:outline-none"
-          >
-            Next
-          </button>
-          <button
-            onclick=""
-            id="play"
-            class="bg-purple-500 text-white px-2 py-2 rounded hover:bg-purple-600 focus:outline-none"
-          >
-            ▶
-          </button>
-          <button
-            onclick="cycleLeft()"
-            id="cycleLeft"
-            class="bg-purple-500 text-white px-2 py-2 rounded hover:bg-purple-600 focus:outline-none;"
-            style="display: flex"
-          >
-            Cycle Graph Left
-          </button>
-          <button
-            onclick="cycleRight()"
-            id="cycleRight"
-            class="bg-purple-500 text-white px-2 py-2 rounded hover:bg-purple-600 focus:outline-none;"
-            style="display: flex"
-          >
-            Cycle Graph Right
-          </button>
-        </div>
-      </div>
+<!-- Horizontal line separating buttons from the matrix container -->
+<div class="w-full border-t border-gray-300 mt-6"></div>
 
-      <div class="grid gap-4 grid-cols-1" id="field">
-            <div id="cy0" class="h-[600px] border border-gray-300" style="width: auto; height: 600px;"></div>
-      </div>
-    </div>
+<!-- Button container, placed below the matrix container -->
+<div class="flex justify-start space-x-4 mt-4 overflow-x-auto w-full">
+  <button
+    onclick="refresh()"
+    id="reset"
+    class="bg-[#800000] text-white px-4 py-2 rounded hover:bg-orange-500 focus:outline-none"
+  >
+    Reset
+  </button>
+
+  <button
+    onclick="previous()"
+    id="prev"
+    class="bg-[#800000] text-white px-4 py-2 rounded hover:bg-orange-500 focus:outline-none"
+  >
+    Prev
+  </button>
+
+  <button
+    onclick="next()"
+    id="next"
+    class="bg-[#800000] text-white px-4 py-2 rounded hover:bg-orange-500 focus:outline-none"
+  >
+    Next
+  </button>
+
+  <button
+    onclick=""
+    id="play"
+    class="bg-[#800000] text-white px-4 py-2 rounded hover:bg-orange-500 focus:outline-none"
+  >
+    ▶
+  </button>
+
+  <button
+    onclick="cycleLeft()"
+    id="cycleLeft"
+    class="bg-[#800000] text-white px-4 py-2 rounded hover:bg-orange-500 focus:outline-none"
+  >
+    Cycle Graph Left
+  </button>
+
+  <button
+    onclick="cycleRight()"
+    id="cycleRight"
+    class="bg-[#800000] text-white px-4 py-2 rounded hover:bg-orange-500 focus:outline-none"
+  >
+    Cycle Graph Right
+  </button>
+</div>
+
+<!-- The grid container for the graph -->
+<div class="grid gap-4 grid-cols-1 mt-6" id="field">
+  <div id="cy0" class="h-[600px] border border-gray-300" style="width: auto; height: 600px;"></div>
+</div>
+
 
     <div
       class="offcanvas offcanvas-start !w-[200px]"
@@ -315,8 +356,13 @@
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Character Sheet</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <h5 class="modal-title" id="exampleModalLabel">Modal Title</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
           </div>
           <div class="modal-body">
             <ul></ul>
@@ -440,8 +486,8 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          </div>
         </div>
-      </div>
       </div>
     </div>
   </body>
