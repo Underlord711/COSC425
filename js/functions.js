@@ -255,6 +255,8 @@ function refresh() {
 }
 
 $(".btn-close").on("click", function () {
+  let tempvar = version;
+  version = currGraph.version;
   //console.log("found");
   let stuff;
   let tempStr = $("#offBody li").text();
@@ -303,6 +305,7 @@ $(".btn-close").on("click", function () {
     }
   });
   refresh();
+  version = tempvar;
 });
 
 function patchNotes() {
