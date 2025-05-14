@@ -236,7 +236,7 @@ function runAlgorithm(number) {
           graph["version" + version]["changes"] = c;
         }
       } else {
-        let changeString = `${source} ${sourceWeight} unchanged, ${target} ${targetWeight} unchanged`;
+        let changeString = `${source} ${sourceWeight} unchanged, ${target} ${targetWeight} unchanged (random chance)`;
         c.push(changeString);
         graph["version" + version]["changes"] = c;
       }
