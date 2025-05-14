@@ -18,6 +18,7 @@ function toggleMatrix() {
   function displayGraph() {
     const table = document.getElementById("graphTable");
     table.innerHTML = ""; // Clear previous content
+    let arr = Object.keys(graph["version" + version]);
   
     // Create header row (with an extra cell at the top-left)
     const headerRow = document.createElement("tr");
@@ -27,9 +28,7 @@ function toggleMatrix() {
       i < Object.keys(graph["version" + version]).length - 1;
       i++
     ) {
-      headerRow.innerHTML += `<th class="border px-4 py-2 text-center sticky">${String.fromCharCode(
-        65 + i
-      )}</th>`;
+      headerRow.innerHTML += `<th class="border px-4 py-2 text-center sticky">${arr[i]}</th>`;
     }
     table.appendChild(headerRow);
   
