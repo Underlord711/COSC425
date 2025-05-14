@@ -339,7 +339,6 @@ function addGraph() { // Currently shows and hides the second graph
 function removeGraph() { // Currently shows and hides the second graph
     let graphs = Object.keys(displays);
     let dispnum = graphs.length -1;
-    currGraph = 'cy' + (dispnum -1);
     let dispname = 'cy'+ dispnum;
     if (dispnum == 1){
       $('.graphstuff').hide();
@@ -353,6 +352,7 @@ function removeGraph() { // Currently shows and hides the second graph
     //console.log(`Removing Graph: ${dispname}`);
     $(`#${dispname}`).remove();
     setTimeout(refresh ,50);
+    cycleLeft();
 }
   
 function addPerson(){
