@@ -59,6 +59,7 @@ function Slider(callback) {
 }
 
 function generateGraph() {
+   document.getElementById('fileInput').style.display = 'none';
     let vertexes = [];
     let weights = [];
     $('.modal-body ul li :text').each(function(me){
