@@ -24,6 +24,11 @@ document.addEventListener("DOMContentLoaded", function () {
     modal.addEventListener('hidden.bs.modal',function(){
       onModalClose();
     });
+    document.getElementById("lockNodePosition").addEventListener("change", () => drawCytoscapeGraph('cy'), false);
+    document.getElementById("lockNodeValue").addEventListener("input", function () {
+        nodeWeightOne = this.value.trim();
+        drawCytoscapeGraph();
+    });
 });
 
 // function updateDisplay() {
