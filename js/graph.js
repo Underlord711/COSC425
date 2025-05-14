@@ -112,21 +112,21 @@ function toggleMatrix() {
     // graph styles based on layout
     let nodeSize, fontSize, edgeWidth;
     if (layout === "circle") {
-      nodeSize = "50px";
-      fontSize = "50px";
-      edgeWidth = 1;
+      nodeSize = "70%";
+      fontSize = "50%";
+      edgeWidth = 5;
     } else if (layout === "cose") {
-      nodeSize = "5px";
-      fontSize = "3px";
-      edgeWidth = 0.25;
+      nodeSize = "5%";
+      fontSize = "5%";
+      edgeWidth = 1;
     } else if (layout === "cise") {
-      nodeSize = "10px";
-      fontSize = "12px";
+      nodeSize = "7%";
+      fontSize = "7%";
       edgeWidth = 1;
     } else if (layout === "fcose") {
-      nodeSize = "5px";
-      fontSize = "3px";
-      edgeWidth = 0.25;
+      nodeSize = "10%";
+      fontSize = "10%";
+      edgeWidth = 1;
     }
   
     // initialize cytoscape
