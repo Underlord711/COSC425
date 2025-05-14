@@ -105,6 +105,13 @@
       </h1>
 
       <div class="space-y-4">
+          <input
+    type="file"
+    id="fileInput"
+    accept=".json"
+    onchange="uploadJSON()"
+    class="block w-full text-sm text-gray-500 border border-gray-300 rounded-lg cursor-pointer"
+  />
         <div>
           <label for="numVertices" class="block text-sm font-medium"
             >Number of Vertices:</label
@@ -191,13 +198,6 @@
 </button>
 
 <div class="mt-4">
-  <input
-    type="file"
-    id="fileInput"
-    accept=".json"
-    onchange="uploadJSON()"
-    class="block w-full text-sm text-gray-500 border border-gray-300 rounded-lg cursor-pointer"
-  />
   <button
     id="uploadBtn"
     style="display: none"
