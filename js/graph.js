@@ -81,6 +81,7 @@ function toggleMatrix() {
     let nodeColor2 = hexToRgb($("#nodeColor2Input").val());
     let safeEdgeColor = $("#safeEdgeInput").val();
     let unsafeEdgeColor = $("#unsafeEdgeInput").val();
+    let lockNode = document.getElementById("lockNodePosition").checked;
     let cy;
       for (const [source, edges] of Object.entries(
       graph["version" + place]
@@ -232,6 +233,23 @@ function toggleMatrix() {
         nodeRepulsion: (node) => 5000,
       }).run();
     }
+
+    // lock node with weight one after layout finishes
+    if (lockNode) {
+      cy.once("layoutstop", () => {
+        const node = cy.getElementById(nodeWeightOne);
+        if (node) {
+          const boundingBox = cy.elements().boundingBox();
+          const centerX = (boundingBox.x1 + boundingBox.x2) / 2;
+          const topY = boundingBox.y1 - 10; // push it a little above top edge
+          node.position({ x: centerX, y: topY });
+          cy.fit(cy.elements(), 20);
+        }
+      });
+    }
+
+    // set original value of text box in option menu
+    document.getElementById("lockNodeValue").value = nodeWeightOne;
   
     // sidebar functionality
     cy.on("tap", "*", function (evt) {
