@@ -184,7 +184,7 @@
 <button
   onclick="removeGraph()"
   id="removeGraph"
-  class="bg-[#800000] text-white px-4 py-2 rounded hover:bg-orange-500 hover:outline-white focus:outline-none updateClass"
+  class="bg-[#800000] text-white px-4 py-2 rounded hover:bg-orange-500 hover:outline-white focus:outline-none updateClass graphstuff"
   style="display: none"
 >
   Remove Graph
@@ -219,7 +219,7 @@
     <span class="font-medium">Current Graph Version:</span> <span id="currGraphVer">1</span>
   </div>
   <div class="flex-none">
-    <span class="font-medium">Current Graph:</span> <span id="currGraph">cy0</span>
+    <span class="font-medium graphstuff">Current Graph:</span> <span id="currGraph" class="graphstuff">cy0</span>
   </div>
 </div>
 
@@ -296,7 +296,7 @@
   <button
     onclick="cycleLeft()"
     id="cycleLeft"
-    class="bg-[#800000] text-white px-4 py-2 rounded hover:bg-orange-500 focus:outline-none"
+    class="bg-[#800000] text-white px-4 py-2 rounded hover:bg-orange-500 focus:outline-none graphstuff"
   >
     Cycle Graph Left
   </button>
@@ -304,7 +304,7 @@
   <button
     onclick="cycleRight()"
     id="cycleRight"
-    class="bg-[#800000] text-white px-4 py-2 rounded hover:bg-orange-500 focus:outline-none"
+    class="bg-[#800000] text-white px-4 py-2 rounded hover:bg-orange-500 focus:outline-none graphstuff"
   >
     Cycle Graph Right
   </button>

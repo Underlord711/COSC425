@@ -31,15 +31,11 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
-// function updateDisplay() {
-//    if (dummy == 'grid') {
-//        dummy = 'circle';
-//    }
-//    else {
-//        dummy = 'grid';
-//    }
-//    drawCytoscapeGraph();
-// }
+$(document).ready(function() {
+  $('.graphstuff').hide();
+});
+
+
 function Slider(callback) {
   const slider = document.getElementById("mySlider");
   const sliderValue = document.getElementById("sliderValue");
@@ -323,6 +319,7 @@ function patchNotes() {
 }
 
 function addGraph() { // Currently shows and hides the second graph
+    $('.graphstuff').show();
     let graphs = Object.keys(displays);
     let dispnum = graphs.length;
     let dispname = 'cy'+ dispnum;
@@ -342,7 +339,11 @@ function addGraph() { // Currently shows and hides the second graph
 function removeGraph() { // Currently shows and hides the second graph
     let graphs = Object.keys(displays);
     let dispnum = graphs.length -1;
+    currGraph = 'cy' + (dispnum -1);
     let dispname = 'cy'+ dispnum;
+    if (dispnum == 1){
+      $('.graphstuff').hide();
+    }
     if (dispnum == 0){
       alert("Minimim # of Graphs Reached");
       return;
