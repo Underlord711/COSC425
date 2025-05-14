@@ -247,7 +247,7 @@ function toggleMatrix() {
       $("#offBody").text("");
       $("#offcanvasScrollingLabel").html("Node: " + node.id());
       for (const [destination, weight] of Object.entries(
-        graph["version" + version][node.id()]
+        graph["version" + displays[currGraph].version][node.id()]
       )) {
         text = destination + " : " + weight;
         $("#offBody").append("<li>" + text + "</li>");

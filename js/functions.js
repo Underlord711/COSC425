@@ -222,7 +222,7 @@ $("#play").on("click", function () {
     $("#play").text("■");
     isPlaying = true;
 
-    let start = version;
+    let start = displays[currGraph].version;
     let size = Object.entries(graph).length;
 
     // call next() every second while not at last version
@@ -255,6 +255,8 @@ function refresh() {
 }
 
 $(".btn-close").on("click", function () {
+  let tempvar = version;
+  version = displays[currGraph].version;
   //console.log("found");
   let stuff;
   let tempStr = $("#offBody li").text();
@@ -303,6 +305,7 @@ $(".btn-close").on("click", function () {
     }
   });
   refresh();
+  version = tempvar;
 });
 
 function patchNotes() {
