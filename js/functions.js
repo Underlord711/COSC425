@@ -156,6 +156,7 @@ function generateGraph() {
 
     refresh();
     $('.updateClass').css('display', 'inline');
+    $('#removeGraph').hide();
 }
 
 
