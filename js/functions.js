@@ -193,7 +193,6 @@ function uploadJSON() {
       document.getElementById("versionDisplay").innerText = version; // Update displayed version
       displayGraph();
       drawCytoscapeGraph();
-      drawCy2Graph();
       $(".updateClass").css("display", "inline");
     } catch (e) {
       alert("Error parsing JSON: " + e.message);
