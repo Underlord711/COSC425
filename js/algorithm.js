@@ -93,6 +93,7 @@ function runAlgorithm(number) {
     document.getElementById("versionDisplay").innerText = version;
   
     algorithm(source, target);
+    next();
     refresh();
     $("#offcanvasScrolling").html($("#offcanvasScrolling").html());
     updateEdgeSidebar(source, target);
@@ -116,6 +117,7 @@ function runAlgorithm(number) {
     } while (target === source || noClass.includes(target));
   
     algorithm(source, target);
+    next();
     refresh();
     $("#offcanvasScrolling").html($("#offcanvasScrolling").html());
     updateNodeSidebar(source);
