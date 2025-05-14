@@ -16,6 +16,8 @@ function toggleMatrix() {
 }
 
   function displayGraph() {
+    let tempint = version;
+    version = displays[currGraph].version;
     const table = document.getElementById("graphTable");
     table.innerHTML = ""; // Clear previous content
     let arr = Object.keys(graph["version" + version]);
@@ -52,7 +54,10 @@ function toggleMatrix() {
       }
       table.appendChild(row);
     }
+    version = tempint;
   }
+
+
   document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("changeLayout").onchange = function () {
       if (this.value === "Circle") layout = "circle";

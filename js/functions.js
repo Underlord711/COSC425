@@ -423,6 +423,7 @@ function cycleLeft(){
   currGraph = newStr;
   $("#currGraphVer").text(displays[currGraph]['version']);
   $("#currGraph").text(currGraph);
+  displayGraph();
 }
 
 function cycleRight(){
@@ -432,6 +433,7 @@ function cycleRight(){
   currGraph = newStr;
   $("#currGraphVer").text(displays[currGraph]['version']);
   $("#currGraph").text(currGraph);
+  displayGraph();
 }
 
 async function downloadExcel() {
