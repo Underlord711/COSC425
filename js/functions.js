@@ -87,6 +87,7 @@ function generateGraph() {
             if (w > MAX_WEIGHT && !one) {
                 w = 1;
                 one = true;
+                nodeWeightOne = vertex;
             } else if (w > MAX_WEIGHT) {
                 w = MAX_WEIGHT;
             }
@@ -109,6 +110,7 @@ function generateGraph() {
     if (!one) {
         let vertex = vertexes[Math.floor(Math.random() * vertexes.length)];
         graph['version' + version][vertex]['weight'] = 1;
+        nodeWeightOne = vertex;
     }
 
     if (!($('#noEdge').is(':checked'))){
