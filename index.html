@@ -39,13 +39,13 @@
             onclick="generateGraph()"
             class="underline mt-3 bg-maroon text-white px-5 py-3 text-lg rounded-md hover:bg-orange-500 hover:outline-white"
           >
-            Generate graph
+            Generate Graph
           </button>
         </li>
         <li>
           <button
             type="button"
-            class="btn underline mt-3 bg-maroon text-white px-5 py-3 text-lg rounded-md hover:bg-orange-500 hover:outline hover:outline-2 hover:outline-white hover:outline-offset-2"
+            class="btn underline mt-3 bg-maroon text-white px-5 py-3 text-lg rounded-md hover:bg-orange-500 hover:outline hover:outline-2 hover:outline-white"
             data-bs-toggle="modal"
             data-bs-target="#exampleModal"
           >
@@ -55,7 +55,7 @@
         <li>
           <button
             type="button"
-            class="btn underline mt-3 bg-maroon text-white px-5 py-3 text-lg rounded-md hover:bg-orange-500 hover:outline hover:outline-2 hover:outline-white hover:outline-offset-2"
+            class="btn underline mt-3 bg-maroon text-white px-5 py-3 text-lg rounded-md hover:bg-orange-500 hover:outline hover:outline-2 hover:outline-white"
             data-bs-toggle="modal"
             data-bs-target="#edgeModal"
           >
@@ -105,6 +105,13 @@
       </h1>
 
       <div class="space-y-4">
+          <input
+    type="file"
+    id="fileInput"
+    accept=".json"
+    onchange="uploadJSON()"
+    class="block w-full text-sm text-gray-500 border border-gray-300 rounded-lg cursor-pointer"
+  />
         <div>
           <label for="numVertices" class="block text-sm font-medium"
             >Number of Vertices:</label
@@ -191,13 +198,6 @@
 </button>
 
 <div class="mt-4">
-  <input
-    type="file"
-    id="fileInput"
-    accept=".json"
-    onchange="uploadJSON()"
-    class="block w-full text-sm text-gray-500 border border-gray-300 rounded-lg cursor-pointer"
-  />
   <button
     id="uploadBtn"
     style="display: none"
